@@ -23,15 +23,29 @@ namespace LaborCostAnalysis.Services
             SqlConnection con = DB.Connect();
             con.Open();
 
-            string str_cmd = "with normal as (select Job_ID,FORMAT(Working_Day,'yyyy') as Year, " +
-                                  "Month, " +
-                                  "Week, " +
-                                  "SUM(Hours) as Normal," +
-                                  "0 as OT_1_5, " +
-                                  "0 as OT_3 " +
-                             "FROM Hour " +
-                                  "group by Job_ID,FORMAT(Working_Day,'yyyy'),Month,Week " +
-                                  "union all select Job_ID,FORMAT(Recording_time,'yyyy') as Year,Month,Week,0 as Normal ,SUM(case when OT_1_5 is null then 0.00 else CONVERT(NUMERIC(18,2),(OT_1_5/60 + (OT_1_5 %60)/100.0)) end) as OT_1_5,SUM(case when OT_3 is null then 0.00 else CONVERT(NUMERIC(18,2),OT_3/60 + (OT_3 %60)/100.0) end) as OT_3 FROM OT group by Job_ID,Format(Recording_time,'yyyy'),Month ,Week) select Job_ID, Week, Month, Year, SUM(Normal) as Normal, SUM(OT_1_5) as OT_1_5, SUM(OT_3) as OT_3, SUM(SUM(case when Normal is null then 0.00 else Normal end + case when OT_1_5 is null then 0.00 else OT_1_5 end  + case when OT_3 is null then 0.00 else OT_3 end))  OVER (partition by Job_ID ORDER BY Job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as Acc_Hour from normal group by Job_ID, Year, Month, Week";
+            string str_cmd = "with normal as ( select Job_ID,FORMAT(Working_Day,'yyyy') as Year," +
+                                            "Month, " +
+                                            "Week, " +
+                                            "SUM(Hours) as Normal, " +
+                                            "0 as OT_1_5, " +
+                                            "0 as OT_3 " +
+                              "FROM Hour " +
+                                            "group by Job_ID,FORMAT(Working_Day,'yyyy'),Month,Week " +
+                                            "union all " +
+                                            "select Job_ID, " +
+                                            "FORMAT(Recording_time,'yyyy') as Year, " +
+                                            "Month, " +
+                                            "Week, " +
+                                            "0 as Normal, " +
+                                            "SUM(case when OT_1_5 is null then 0 else OT_1_5 end) as OT_1_5, " +
+                                            "SUM(case when OT_3 is null then 0 else OT_3 end) as OT_3 " +
+                               "FROM OT group by Job_ID,Format(Recording_time,'yyyy'), Month, Week ) " +
+                                            "select Job_ID,Week,Month,Year,SUM(Normal) as Normal, " +
+                                            "SUM(CONVERT(NUMERIC(18,2),(OT_1_5/60 + (OT_1_5 %60)/100.0))) as OT_1_5, " +
+                                            "SUM(CONVERT(NUMERIC(18,2),(OT_3/60 + (OT_3 %60)/100.0))) as OT_3, " +
+                                            "SUM(SUM(case when Normal is null then 0.00 else Normal end + case when OT_1_5 is null then 0.00 else CONVERT(NUMERIC(18,2),(OT_1_5/60 + (OT_1_5 %60)/100.0)) end  + case when OT_3 is null then 0.00 else CONVERT(NUMERIC(18,2),(OT_3/60 + (OT_3 %60)/100.0)) end)) OVER (partition by Job_ID ORDER BY Job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)as Acc_Hour " +
+                                            "from normal " +
+                                            "group by Job_ID,Year,Month,Week";
 
             SqlCommand cmd = new SqlCommand(str_cmd, con);
             SqlDataReader dr = cmd.ExecuteReader();
@@ -72,18 +86,30 @@ namespace LaborCostAnalysis.Services
             SqlConnection con = DB.Connect();
             con.Open();
 
-            string str_cmd = "with normal as (select Job_ID,FORMAT(Working_Day,'yyyy') as Year, " +
-                                  "Month, " +
-                                  "Week, " +
-                                  "SUM(Hours) as Normal," +
-                                  "0 as OT_1_5, " +
-                                  "0 as OT_3 " +
-                             "FROM Hour " +
-                                  "group by Job_ID,FORMAT(Working_Day,'yyyy'),Month,Week " +
-                                  "union all select Job_ID,FORMAT(Recording_time,'yyyy') as Year,Month,Week,0 as Normal ,SUM(case when OT_1_5 is null then 0.00 else CONVERT(NUMERIC(18,2),(OT_1_5/60 + (OT_1_5 %60)/100.0)) end) as OT_1_5,SUM(case when OT_3 is null then 0.00 else CONVERT(NUMERIC(18,2),OT_3/60 + (OT_3 %60)/100.0) end) as OT_3 FROM OT group by Job_ID,Format(Recording_time,'yyyy'),Month ,Week) select Job_ID, Week, Month, Year, SUM(Normal) as Normal, SUM(OT_1_5) as OT_1_5, SUM(OT_3) as OT_3, SUM(SUM(case when Normal is null then 0.00 else Normal end + case when OT_1_5 is null then 0.00 else OT_1_5 end  + case when OT_3 is null then 0.00 else OT_3 end))  OVER (partition by Job_ID ORDER BY Job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as Acc_Hour from normal " +
-                                  "where Job_ID = '" + job_id + "' " +
-                                  "group by Job_ID, Year, Month, Week";
-
+            string str_cmd = "with normal as ( select Job_ID,FORMAT(Working_Day,'yyyy') as Year," +
+                                            "Month, " +
+                                            "Week, " +
+                                            "SUM(Hours) as Normal, " +
+                                            "0 as OT_1_5, " +
+                                            "0 as OT_3 " +
+                              "FROM Hour " +
+                                            "group by Job_ID,FORMAT(Working_Day,'yyyy'),Month,Week " +
+                                            "union all " +
+                                            "select Job_ID, " +
+                                            "FORMAT(Recording_time,'yyyy') as Year, " +
+                                            "Month, " +
+                                            "Week, " +
+                                            "0 as Normal, " +
+                                            "SUM(case when OT_1_5 is null then 0 else OT_1_5 end) as OT_1_5, " +
+                                            "SUM(case when OT_3 is null then 0 else OT_3 end) as OT_3 " +
+                               "FROM OT group by Job_ID,Format(Recording_time,'yyyy'), Month, Week ) " +
+                                            "select Job_ID,Week,Month,Year,SUM(Normal) as Normal, " +
+                                            "SUM(CONVERT(NUMERIC(18,2),(OT_1_5/60 + (OT_1_5 %60)/100.0))) as OT_1_5, " +
+                                            "SUM(CONVERT(NUMERIC(18,2),(OT_3/60 + (OT_3 %60)/100.0))) as OT_3, " +
+                                            "SUM(SUM(case when Normal is null then 0.00 else Normal end + case when OT_1_5 is null then 0.00 else CONVERT(NUMERIC(18,2),(OT_1_5/60 + (OT_1_5 %60)/100.0)) end  + case when OT_3 is null then 0.00 else CONVERT(NUMERIC(18,2),(OT_3/60 + (OT_3 %60)/100.0)) end)) OVER (partition by Job_ID ORDER BY Job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)as Acc_Hour " +
+                                            "from normal " +
+                                            "where Job_ID = '" + job_id + "' " +
+                                            "group by Job_ID,Year,Month,Week";
 
             SqlCommand cmd = new SqlCommand(str_cmd, con);
             SqlDataReader dr = cmd.ExecuteReader();
@@ -124,17 +150,30 @@ namespace LaborCostAnalysis.Services
             SqlConnection con = DB.Connect();
             con.Open();
 
-            string str_cmd = "with normal as (select Job_ID,FORMAT(Working_Day,'yyyy') as Year, " +
-                                  "Month, " +
-                                  "Week, " +
-                                  "SUM(Hours) as Normal," +
-                                  "0 as OT_1_5, " +
-                                  "0 as OT_3 " +
-                             "FROM Hour " +
-                                  "group by Job_ID,FORMAT(Working_Day,'yyyy'),Month,Week " +
-                                  "union all select Job_ID,FORMAT(Recording_time,'yyyy') as Year,Month,Week,0 as Normal ,SUM(case when OT_1_5 is null then 0.00 else CONVERT(NUMERIC(18,2),(OT_1_5/60 + (OT_1_5 %60)/100.0)) end) as OT_1_5,SUM(case when OT_3 is null then 0.00 else CONVERT(NUMERIC(18,2),OT_3/60 + (OT_3 %60)/100.0) end) as OT_3 FROM OT group by Job_ID,Format(Recording_time,'yyyy'),Month ,Week) select Job_ID, Week, Month, Year, SUM(Normal) as Normal, SUM(OT_1_5) as OT_1_5, SUM(OT_3) as OT_3, SUM(SUM(case when Normal is null then 0.00 else Normal end + case when OT_1_5 is null then 0.00 else OT_1_5 end  + case when OT_3 is null then 0.00 else OT_3 end))  OVER (partition by Job_ID ORDER BY Job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as Acc_Hour from normal " +
-                                  "where Job_ID = '" + job_id + "' " +
-                                  "group by Job_ID, Year, Month, Week";
+            string str_cmd = "with normal as ( select Job_ID,FORMAT(Working_Day,'yyyy') as Year," +
+                                            "Month, " +
+                                            "Week, " +
+                                            "SUM(Hours) as Normal, " +
+                                            "0 as OT_1_5, " +
+                                            "0 as OT_3 " +
+                              "FROM Hour " +
+                                            "group by Job_ID,FORMAT(Working_Day,'yyyy'),Month,Week " +
+                                            "union all " +
+                                            "select Job_ID, " +
+                                            "FORMAT(Recording_time,'yyyy') as Year, " +
+                                            "Month, " +
+                                            "Week, " +
+                                            "0 as Normal, " +
+                                            "SUM(case when OT_1_5 is null then 0 else OT_1_5 end) as OT_1_5, " +
+                                            "SUM(case when OT_3 is null then 0 else OT_3 end) as OT_3 " +
+                               "FROM OT group by Job_ID,Format(Recording_time,'yyyy'), Month, Week ) " +
+                                            "select Job_ID,Week,Month,Year,SUM(Normal) as Normal, " +
+                                            "SUM(CONVERT(NUMERIC(18,2),(OT_1_5/60 + (OT_1_5 %60)/100.0))) as OT_1_5, " +
+                                            "SUM(CONVERT(NUMERIC(18,2),(OT_3/60 + (OT_3 %60)/100.0))) as OT_3, " +
+                                            "SUM(SUM(case when Normal is null then 0.00 else Normal end + case when OT_1_5 is null then 0.00 else CONVERT(NUMERIC(18,2),(OT_1_5/60 + (OT_1_5 %60)/100.0)) end  + case when OT_3 is null then 0.00 else CONVERT(NUMERIC(18,2),(OT_3/60 + (OT_3 %60)/100.0)) end)) OVER (partition by Job_ID ORDER BY Job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)as Acc_Hour " +
+                                            "from normal " +
+                                            "where Job_ID = '" + job_id + "' " +
+                                            "group by Job_ID,Year,Month,Week";
 
             SqlCommand cmd = new SqlCommand(str_cmd, con);
             SqlDataReader dr = cmd.ExecuteReader();
