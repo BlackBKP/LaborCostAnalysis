@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace LaborCostAnalysis.Interfaces
 {
-    interface INormalOvertime
+    interface IProgress
     {
-        List<NormalOvertimeModel> NormalPerOvertime();
-
-        List<NormalOvertimeModel> NormalPerOvertime(string job_id);
+        List<JobSummaryModel> GetJobProgress(string job_id);
     }
 }
