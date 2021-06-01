@@ -105,16 +105,12 @@ namespace LaborCostAnalysis.Controllers
                 IRow headerRow = sheet.GetRow(0);
                 int cellCount = headerRow.LastCellNum;
                 IRow row;
-                for (int i = 0; i <= sheet.LastRowNum; i++)
+                for (int i = 1; i <= sheet.LastRowNum; i++)
                 {
                     row = sheet.GetRow(i);
                     if (row == null)
                         break;
-                    if (row.Cells.All(d => d.CellType == CellType.Blank))
-                        break;
-                    if (row.Cells.All(c => c.NumericCellValue == 0))
-                        break;
-                    if (row.GetCell(5).DateCellValue.ToString() == "31/12/99 00:00:00")
+                    if (row.GetCell(5).CellType == CellType.Blank)
                         break;
                     WorkingHoursModel wh = new WorkingHoursModel();
                     wh.job_id = job_id;
