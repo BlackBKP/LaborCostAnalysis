@@ -33,6 +33,7 @@ namespace LaborCostAnalysis.Controllers
         public JsonResult GetJobs()
         {
             List<JobModel> jobs = JobInterface.GetJobs();
+            jobs = jobs.OrderByDescending(o => o.job_id).ToList();
             return Json(jobs);
         }
 

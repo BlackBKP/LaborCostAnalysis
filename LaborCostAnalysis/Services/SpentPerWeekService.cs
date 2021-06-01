@@ -64,7 +64,6 @@ namespace LaborCostAnalysis.Services
                 }
                 dr.Close();
             }
-
             con.Close();
             return spws;
         }
@@ -93,6 +92,31 @@ namespace LaborCostAnalysis.Services
                                     "order by Labor_Costs.job_ID,Labor_Costs.Year,Labor_Costs.Month,Labor_Costs.week";
 
             SqlCommand cmd = new SqlCommand(str_cmd, con);
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            if (dr.HasRows)
+            {
+                while (dr.Read())
+                {
+                    SpentPerWeekModel spw = new SpentPerWeekModel()
+                    {
+                        job_id = dr["Job_ID"] != DBNull.Value ? dr["Job_ID"].ToString() : "",
+                        week = dr["week"] != DBNull.Value ? Convert.ToInt32(dr["week"]) : 0,
+                        month = dr["Month"] != DBNull.Value ? Convert.ToInt32(dr["Month"]) : 0,
+                        year = dr["Year"] != DBNull.Value ? Convert.ToInt32(dr["Year"]) : 0,
+                        budget100 = dr["Budget100"] != DBNull.Value ? Convert.ToInt32(dr["budget100"]) : 0,
+                        budget80 = dr["Budget80"] != DBNull.Value ? Convert.ToInt32(dr["Budget80"]) : 0,
+                        budget70 = dr["Budget70"] != DBNull.Value ? Convert.ToInt32(dr["Budget70"]) : 0,
+                        budget50 = dr["Budget50"] != DBNull.Value ? Convert.ToInt32(dr["Budget50"]) : 0,
+                        progress = dr["Progress"] != DBNull.Value ? Convert.ToInt32(dr["Progress"]) : 0,
+                        spent_cost = dr["spent_cost"] != DBNull.Value ? Convert.ToInt32(dr["spent_cost"]) : 0,
+                        acc_cost = dr["Acc_Cost"] != DBNull.Value ? Convert.ToInt32(dr["Acc_Cost"]) : 0,
+                    };
+                    spws.Add(spw);
+                }
+                dr.Close();
+            }
+            con.Close();
             return spws;
         }
     }
