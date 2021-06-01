@@ -1,4 +1,4 @@
-﻿<!-- Project Index -->
+﻿<!-- Job Management Index -->
 @{
     ViewData["Title"] = "Job Management";
 }
@@ -10,38 +10,24 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-6">
-            <div class="info-box bg-dark" style="height:100%">
-                <i class="info-box-icon fas fa-list"></i>
-                <div class="info-box-content">
-                    <span class="info-box-text">TOTAL JOBS</span>
-                    <span id="total_jobs" class="info-box-number">3/3</span>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <button id="btn_add_job" class="btn btn-dark" style="width:100%;height:100%">
-                <i class="fa fa-plus"></i>
-                Add Job
-            </button>
-        </div>
-        <div class="col-3">
-            <button id="btn_import_job" class="btn btn-dark" style="width:100%;height:100%">
-                <i class="fa fa-upload"></i>
-                Import Jobs
-            </button>
-        </div>
-    </div>
-
-    <br />
-
     <div class="card card-dark">
         <div class="card-header">
             <span class="card-title">Job(s)</span>
+            <div class="card-tools">
+                <button id="btn_add_job" type="button" class="btn btn-dark">
+                    <i class="fas fa-plus"></i> Add Job
+                </button>
+                <button type="button" class="btn btn-dark" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-dark btn-sm" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
         </div>
+
         <div class="card-body">
-            <table id="project_table" class="table table-sm table-hover">
+            <table id="project_table" class="table table-sm table-hover" style="width:100%">
                 <thead>
                     <tr>
                         <th>JOB ID</th>
@@ -92,11 +78,6 @@
             <!-- Modal Body -->
             <div class="modal-body">
                 <form>
-                    <div style="display:none">
-                        <label for="input_job_id">Job ID</label>
-                        <input id="input_job_id" class="form-control" type="text" placeholder="JYY-XXXX" disabled />
-                        <br />
-                    </div>
 
                     <label for="input_job_year">Job Year</label>
                     <input id="input_job_year" class="form-control" type="text" placeholder="YYYY" />
@@ -110,8 +91,6 @@
                     <input id="input_job_name" class="form-control" type="text" placeholder="Job Name" />
                     <br />
 
-                    @*<label for="input_job_budget">Budget</label>
-                        <input id="input_job_budget" class="form-control" type="text" placeholder="Estimated Budget" />*@
                 </form>
             </div>
 
@@ -121,64 +100,6 @@
                     Add
                 </button>
 
-                <button class="btn btn-danger" type="button" data-dismiss="modal">
-                    Cancel
-                </button>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-<!-- Import Job Modal -->
-<div class="modal" id="ModalImportJobs">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h5>Import Jobs</h5>
-                <button class="close" type="button" data-dismiss="modal">
-                    &times;
-                </button>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="modal-body">
-                <form>
-                    <label id="import_file_label">Select File</label>
-                    <input id="import_file" class="form-control-file" type="file" />
-                    <div id="div_upload" style="display:none">
-                        <hr />
-                        <label for="UploadedJobs">Uploaded Jobs</label>
-                        <table id="UploadedJobs" class="table table-sm table-hover" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th>Job ID</th>
-                                    <th>Job Number</th>
-                                    <th>Job Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>J21-0001</td>
-                                    <td>TESTJOB (A)</td>
-                                </tr>
-                                <tr>
-                                    <td>J21-0002</td>
-                                    <td>TESTJOB (B)</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="modal-footer">
-                <button id="btn_confirm_import" class="btn btn-primary" disabled>
-                    Confirm
-                </button>
                 <button class="btn btn-danger" type="button" data-dismiss="modal">
                     Cancel
                 </button>
@@ -243,14 +164,10 @@
         });
 
         $('#input_job_year').on('keyup', function () {
-            var job_id = "J" + $('#input_job_year').val().substring($('#input_job_year').val().length-2) + "-" + $('#input_job_number').val();
-            $('#input_job_id').val(job_id);
             EnableAddJob();
         });
 
         $('#input_job_number').on('keyup', function () {
-            var job_id = "J" + $('#input_job_year').val().substring($('#input_job_year').val().length - 2) + "-" + $('#input_job_number').val();
-            $('#input_job_id').val(job_id);
             EnableAddJob();
         });
 
@@ -268,7 +185,6 @@
         }
 
         $('#btn_confirm_add').on('click', async function () {
-            var id = $('#input_job_id').val();
             var number = $('#input_job_number').val();
             var name = $('#input_job_name').val();
             var year = $('#input_job_year').val();
@@ -277,7 +193,7 @@
                 url: '@Url.Action("AddJob", "JobManagement")',
 	            contentType: 'application/x-www-form-urlencoded',
                 data: {
-                    id, number, name, year
+                    number, name, year
                 },
                 success: function (response) {
                     window.location.reload();
@@ -285,105 +201,5 @@
             })
         });
 
-
-        $('#btn_import_job').on('click', function () {
-            $('#ModalImportJobs').modal("show");
-            $('#div_upload').hide();
-            $('#btn_confirm_import').attr('disabled', true);
-            import_table = null;
-            $('#import_file').val(null);
-            $('#import_file_label').text("Select File");
-        });
-
-        var duplicate_jobs = [];
-        var import_jobs = [];
-        $('#import_file').on('change', async function () {
-            var fileExtension = ['xls', 'xlsx'];
-            var filename = $('#import_file').val();
-
-            if (filename.length == 0) {
-                alert("Please Select a File");
-            }
-            else {
-                var extension = filename.replace(/^.*\./, '');
-                if ($.inArray(extension, fileExtension) == -1) {
-                    alert("Please select only excel files.");
-                }
-            }
-
-            var fdata = new FormData();
-            var fileupload = $('#import_file').get(0);
-            var files = fileupload.files;
-
-            fdata.append(files[0].name, files[0]);
-            $('#import_file_label').text(files[0].name);
-
-            await $.ajax({
-                type: "POST",
-                url: "JobManagement/Import",
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("XSRF-TOKEN",
-                        $('input:hidden[name="__RequestVerificationToken"]').val());
-                },
-                data: fdata,
-                contentType: false,
-                processData: false,
-                success: function (response) {
-                    if (response.length == 0)
-                        alert('Some error occured while uploading');
-                    else {
-                        console.log("Response");
-                        console.log(response);
-                        import_jobs = response[0];
-                        duplicate_jobs = response[1];
-                        GenUploadData();
-                    }
-                },
-            });
-        });
-
-        var import_table;
-        function GenUploadData() {
-            import_jobs.length > 0 ? $('#btn_confirm_import').attr('disabled', false) : $('#btn_confirm_import').attr('disabled', true);
-            $('#div_upload').show();
-            var datas = [];
-            for (var i = 0; i < import_jobs.length; i++) {
-                datas.push([
-                    import_jobs[i].job_id,
-                    import_jobs[i].job_number,
-                    import_jobs[i].job_name,
-                    import_jobs[i].job_year,
-                ]);
-            }
-
-            if (import_table != null)
-                $('#UploadedJobs').DataTable().destroy();
-
-            import_table = $('#UploadedJobs').DataTable({
-                data: datas,
-                pagingType: "full_numbers",
-                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
-            });
-        }
-
-        $('#btn_confirm_import').on('click', function () {
-            ConfirmImport();
-        });
-
-        function ConfirmImport() {
-            $('#btn_confirm_import').attr('disabled', true);
-            $('#modal_upload').modal("show");
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("ConfirmImport", "JobManagement")',
-	            contentType: 'application/x-www-form-urlencoded',
-                data: {
-
-                },
-                success: function (response) {
-                    $('#modal_upload').hide();
-                }
-            })
-        }
     </script>
 }

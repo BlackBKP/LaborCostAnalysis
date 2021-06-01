@@ -1,5 +1,241 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿<!-- Import Job Index -->
 @{
+    ViewData["Title"] = "Import Job";
+}
+<div class="container-fluid" style="padding-top:10px">
+
+    <div class="info-box bg-dark">
+        <div class="info-box-content">
+            <h3 class="info-box-text">IMPORT JOB</h3>
+        </div>
+    </div>
+
+    <div class="card card-dark">
+        <div class="card-header">
+            <span class="card-title">Select File to Upload</span>
+            <div class="card-tools">
+                <button type="button" class="btn btn-dark btn-sm" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-dark btn-sm" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <label id="import_file_label">Choose File</label>
+            <input id="import_file" class="form-control-file" type="file" />
+        </div>
+    </div>
+
+</div>
+
+<!-- Import Job Modal -->
+<div class="modal" id="ModalImportJobs">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5>Import Jobs</h5>
+                <button class="close" type="button" data-dismiss="modal">
+                    &times;
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form>
+                    <label id="import_file_label">Select File</label>
+                    <input id="import_file" class="form-control-file" type="file" />
+                    <div id="div_upload" style="display:none">
+                        <hr />
+                        <label for="UploadedJobs">Uploaded Jobs</label>
+                        <table id="UploadedJobs" class="table table-sm table-hover" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Job ID</th>
+                                    <th>Job Number</th>
+                                    <th>Job Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>J21-0001</td>
+                                    <td>TESTJOB (A)</td>
+                                </tr>
+                                <tr>
+                                    <td>J21-0002</td>
+                                    <td>TESTJOB (B)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button id="btn_confirm_import" class="btn btn-primary" disabled>
+                    Confirm
+                </button>
+                <button class="btn btn-danger" type="button" data-dismiss="modal">
+                    Cancel
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            @*GetJobLists();*@
+        });
+
+        var jobs = [];
+        async function GetJobLists() {
+            await $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetJobs", "ImportJob")',
+	            contentType: 'application/x-www-form-urlencoded',
+                data: {
+
+                },
+                success: function (response) {
+                    //console.log("Response");
+                    //console.log(response);
+                    jobs = response;
+                    GenerateJobsList();
+                }
+            });
+        }
+
+        var table;
+        function GenerateJobsList() {
+            var datas = [];
+            $('#total_jobs').val(jobs.length)
+            for (var i = 0; i < jobs.length; i++) {
+                var jnum = jobs[i].job_number != "" ? jobs[i].job_number : jobs[i].job_id.substring(0,3) + '-' + jobs[i].job_id.substring(3);
+                datas.push([
+                    jnum,
+                    jobs[i].job_name,
+                    jobs[i].estimated_budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+                ]);
+            }
+
+            if (table != null)
+                $('#project_table').DataTable().destroy();
+
+            table = $('#project_table').DataTable({
+                data: datas,
+                pagingType: "full_numbers",
+                order: [
+                    [0, "desc"]
+                ],
+            });
+        };
+
+        $('#btn_import_job').on('click', function () {
+            $('#ModalImportJobs').modal("show");
+            $('#div_upload').hide();
+            $('#btn_confirm_import').attr('disabled', true);
+            import_table = null;
+            $('#import_file').val(null);
+            $('#import_file_label').text("Select File");
+        });
+
+        var duplicate_jobs = [];
+        var import_jobs = [];
+        $('#import_file').on('change', async function () {
+            var fileExtension = ['xls', 'xlsx'];
+            var filename = $('#import_file').val();
+
+            if (filename.length == 0) {
+                alert("Please Select a File");
+            }
+            else {
+                var extension = filename.replace(/^.*\./, '');
+                if ($.inArray(extension, fileExtension) == -1) {
+                    alert("Please select only excel files.");
+                }
+            }
+
+            var fdata = new FormData();
+            var fileupload = $('#import_file').get(0);
+            var files = fileupload.files;
+
+            fdata.append(files[0].name, files[0]);
+            $('#import_file_label').text(files[0].name);
+
+            await $.ajax({
+                type: "POST",
+                url: "ImportJob/Import",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: fdata,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.length == 0)
+                        alert('Some error occured while uploading');
+                    else {
+                        console.log("Response");
+                        console.log(response);
+                        import_jobs = response[0];
+                        duplicate_jobs = response[1];
+                        GenUploadData();
+                    }
+                },
+            });
+        });
+
+        var import_table;
+        function GenUploadData() {
+            import_jobs.length > 0 ? $('#btn_confirm_import').attr('disabled', false) : $('#btn_confirm_import').attr('disabled', true);
+            $('#div_upload').show();
+            var datas = [];
+            for (var i = 0; i < import_jobs.length; i++) {
+                datas.push([
+                    import_jobs[i].job_id,
+                    import_jobs[i].job_number,
+                    import_jobs[i].job_name,
+                    import_jobs[i].job_year,
+                ]);
+            }
+
+            if (import_table != null)
+                $('#UploadedJobs').DataTable().destroy();
+
+            import_table = $('#UploadedJobs').DataTable({
+                data: datas,
+                pagingType: "full_numbers",
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
+            });
+        }
+
+        $('#btn_confirm_import').on('click', function () {
+            ConfirmImport();
+        });
+
+        function ConfirmImport() {
+            $('#btn_confirm_import').attr('disabled', true);
+            $('#modal_upload').modal("show");
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ConfirmImport", "ImportJob")',
+	            contentType: 'application/x-www-form-urlencoded',
+                data: {
+
+                },
+                success: function (response) {
+                    $('#modal_upload').hide();
+                }
+            })
+        }
+    </script>
 }

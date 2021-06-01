@@ -69,31 +69,6 @@ namespace LaborCostAnalysis.Controllers
             return Json(jobs);
         }
 
-        [HttpPost]
-        public JsonResult AddJob(string id, string number, string name, int year)
-        {
-            this.DB = new ConnectDB();
-            SqlConnection con = DB.Connect();
-            using (SqlCommand cmd = new SqlCommand("INSERT INTO Job(Job_ID, Job_Number, Job_Name, Job_Year) " +
-                                                   "VALUES(@Job_ID, @Job_Number, @Job_Name, @Job_Year)", con))
-            {
-                con.Open();
-                cmd.CommandType = CommandType.Text;
-                cmd.Connection = con;
-                cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Job_Number", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Job_Name", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Job_Year", SqlDbType.Int);
-                cmd.Parameters[0].Value = id.Replace("-", String.Empty);
-                cmd.Parameters[1].Value = id;
-                cmd.Parameters[2].Value = name;
-                cmd.Parameters[3].Value = year;
-                cmd.ExecuteNonQuery();
-                con.Close();
-            }
-            return Json("Done");
-        }
-
         public JsonResult Import()
         {
             IFormFile file = Request.Form.Files[0];

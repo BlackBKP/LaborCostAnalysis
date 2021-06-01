@@ -1,10 +1,10 @@
-﻿@*@using Microsoft.AspNetCore.Http
+﻿@using Microsoft.AspNetCore.Http
 @{
     var UserID = Context.Session.GetString("UserID");
     byte[] image = Context.Session.Get("Image");
     var base64 = Convert.ToBase64String(image);
     var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
-}*@
+}
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
@@ -19,10 +19,10 @@
             <!-- User Panel -->
             <div class="user-panel d-flex">
                 <div class="image">
-                    <img @*src="@imgSrc"*@ class="img-circle elevation-2" alt="User Image">
+                    <img src="@imgSrc" class="img-circle elevation-2" alt="User Image">
                 </div>
                 <div class="info">
-                    <a href="#" class="d-block">@*@UserID*@</a>
+                    <a href="#" class="d-block">@UserID</a>
                 </div>
             </div>
         </li>
