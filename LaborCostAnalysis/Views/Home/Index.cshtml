@@ -1,4 +1,4 @@
-﻿<!-- Project View Index -->
+﻿<!-- Job View Index -->
 @{
     ViewData["Title"] = "Job View";
 }
@@ -207,7 +207,7 @@
                 //console.log("Get All Job");
                 $.ajax({
                 type: "GET",
-                url: '@Url.Action("GetJobs", "ProjectView")',
+                url: '@Url.Action("GetJobs", "Home")',
 	            contentType: 'application/x-www-form-urlencoded',
                 data: {
 
@@ -224,7 +224,7 @@
                 //console.log("Get Job in " + year);
                 $.ajax({
                 type: "GET",
-                url: '@Url.Action("GetJobsByYear", "ProjectView")',
+                url: '@Url.Action("GetJobsByYear", "Home")',
 	            contentType: 'application/x-www-form-urlencoded',
                 data: {
                     year
@@ -270,7 +270,7 @@
         function GetJobProgress(job_id) {
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("GetJobProgress", "ProjectView")',
+                url: '@Url.Action("GetJobProgress", "Home")',
                 contentType: 'application/x-www-form-urlencoded',
                 data: {
                     job_id
@@ -312,7 +312,7 @@
         function GetHalfMonthSpent(job_id) {
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("GetHalfMonthSpent", "ProjectView")',
+                url: '@Url.Action("GetHalfMonthSpent", "Home")',
                 contentType: 'application/x-www-form-urlencoded',
                 data: {
                     job_id
@@ -328,7 +328,7 @@
         function GetManPower(job_id) {
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("GetManPower", "ProjectView")',
+                url: '@Url.Action("GetManPower", "Home")',
                 contentType: 'application/x-www-form-urlencoded',
                 data: {
                     job_id
@@ -344,7 +344,7 @@
         function GetNormalOvertimeRatio(job_id) {
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("GetNormalOvertimeRatio", "ProjectView")',
+                url: '@Url.Action("GetNormalOvertimeRatio", "Home")',
                 contentType: 'application/x-www-form-urlencoded',
                 data: {
                     job_id
