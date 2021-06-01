@@ -399,7 +399,8 @@
                 card.style.display = "block";
                 $('#job_number_detail').text("Job Number: " + jobs[index][0].job_number);
                 $('#job_name').val(jobs[index][0].job_name);
-                $('#job_estimated_budget').val(jobs[index][0].estimated_budget);
+                var budget = jobs[index][0].estimated_budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                $('#job_estimated_budget').val(budget);
             }
 
             if(table_details != null)
