@@ -48,8 +48,6 @@
                             <h4 id="job_id" class="info-box-text">
                                 Please Select Job
                             </h4>
-                            @*<h4 id="job_name" class="info-box-text">
-                                </h4>*@
                         </div>
                     </div>
                 </div>
@@ -85,21 +83,6 @@
                         </div>
                     </div>
                 </div>
-                @*<div class="col-3">
-                        <div id="ib_remain" class="info-box bg-dark" style="height:90px;display:none">
-                            <i class="fas fa-coins info-box-icon bg-danger"></i>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Budget Remain</span>
-                                <span id="ib_remain_number" class="info-box-number">25/100</span>
-                                <div class="progress bg-white">
-                                    <div id="pb_remain" class="progress-bar bg-danger" style="width:25%"></div>
-                                </div>
-                                <span id="pb_remain_description" class="progress-description">
-                                    25% of Budget left
-                                </span>
-                            </div>
-                        </div>
-                    </div>*@
                 <div class="col-4">
                     <div id="ib_labor" class="info-box bg-dark" style="height:90px;display:none">
                         <i class="fas fa-users info-box-icon bg-warning"></i>
@@ -304,8 +287,8 @@
                     job_id
                 },
                 success: function (response) {
-                    console.log("Half Month Spent");
-                    console.log(response);
+                    //console.log("Half Month Spent");
+                    //console.log(response);
                     GenSPFChart(response);
                 }
             });
@@ -320,8 +303,8 @@
                     job_id
                 },
                 success: function (response) {
-                    console.log("Man Power");
-                    console.log(response);
+                    //console.log("Man Power");
+                    //console.log(response);
                     GenMPHChart(response);
                 }
             });
@@ -336,8 +319,8 @@
                     job_id
                 },
                 success: function (response) {
-                    console.log("Normal Overtime Ratio");
-                    console.log(response);
+                    //console.log("Normal Overtime Ratio");
+                    //console.log(response);
                     GenNPOChart(response);
                 }
             });
