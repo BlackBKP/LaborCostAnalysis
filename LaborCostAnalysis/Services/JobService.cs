@@ -55,7 +55,6 @@ namespace LaborCostAnalysis.Services
         public string AddJob(string job_number, string job_name, int job_year)
         {
             SqlConnection con = DB.Connect();
-            con.Open();
             using (SqlCommand cmd = new SqlCommand("INSERT INTO Job(Job_ID, Job_Number, Job_Name, Job_Year) " +
                                                    "VALUES(@Job_ID, @Job_Number, @Job_Name, @Job_Year)", con))
             {

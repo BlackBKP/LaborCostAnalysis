@@ -91,52 +91,6 @@
 @section Scripts
 {
     <script type="text/javascript">
-        $(document).ready(function () {
-            @*GetJobLists();*@
-        });
-
-        var jobs = [];
-        async function GetJobLists() {
-            await $.ajax({
-                type: "GET",
-                url: '@Url.Action("GetJobs", "ImportJob")',
-	            contentType: 'application/x-www-form-urlencoded',
-                data: {
-
-                },
-                success: function (response) {
-                    //console.log("Response");
-                    //console.log(response);
-                    jobs = response;
-                    GenerateJobsList();
-                }
-            });
-        }
-
-        var table;
-        function GenerateJobsList() {
-            var datas = [];
-            $('#total_jobs').val(jobs.length)
-            for (var i = 0; i < jobs.length; i++) {
-                var jnum = jobs[i].job_number != "" ? jobs[i].job_number : jobs[i].job_id.substring(0,3) + '-' + jobs[i].job_id.substring(3);
-                datas.push([
-                    jnum,
-                    jobs[i].job_name,
-                    jobs[i].estimated_budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-                ]);
-            }
-
-            if (table != null)
-                $('#project_table').DataTable().destroy();
-
-            table = $('#project_table').DataTable({
-                data: datas,
-                pagingType: "full_numbers",
-                order: [
-                    [0, "desc"]
-                ],
-            });
-        };
 
         $('#btn_import_job').on('click', function () {
             $('#ModalImportJobs').modal("show");
@@ -234,6 +188,7 @@
                 },
                 success: function (response) {
                     $('#modal_upload').hide();
+                    window.location.reload();
                 }
             })
         }

@@ -19,7 +19,7 @@ namespace LaborCostAnalysis.Controllers
 
         public HomeController()
         {
-            this.JobInterface = new JobService();
+            JobInterface = new JobService();
         }
 
         [HttpGet]
