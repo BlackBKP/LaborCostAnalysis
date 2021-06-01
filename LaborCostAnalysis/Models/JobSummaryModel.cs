@@ -29,17 +29,17 @@ namespace LaborCostAnalysis.Models
 
         public int work_completion { get; set; }
 
-        public int hours { get; set; }
+        public double hours { get; set; }
 
-        public int ot_1_5 { get; set; }
+        public double ot_1_5 { get; set; }
 
-        public int ot_3 { get; set; }
+        public double ot_3 { get; set; }
 
-        public int total_man_hour { get; set; }
+        public double total_man_hour { get; set; }
 
         public int no_of_labor { get; set; }
 
-        public int avg_labor_cost_per_hour { get; set; }
+        public double avg_labor_cost_per_hour { get; set; }
 
     }
 }

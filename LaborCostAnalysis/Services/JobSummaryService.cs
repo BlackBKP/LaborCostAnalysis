@@ -25,27 +25,7 @@ namespace LaborCostAnalysis.Services
 
             string str_cmd = "select job.Job_ID, " +
                                     "job.Estimated_Budget, " +
-                                    "s1.Labor_Cost, " +
-                                    "s1.OT_Labor_Cost, " +
-                                    "s1.Accommodation_Cost, " +
-                                    "s1.Compensation_Cost, " +
-                                    "isnull(s1.Social_Security,0) as Social_Security, " +
-                                    "s1.Cost_to_Date, (cast(job.Estimated_Budget as int) - cast(s1.Cost_to_Date as int)) as Remaining_Cost, " +
-                                    "((cast(s1.Cost_to_Date as float) / cast(job.Estimated_Budget as float)) *100) as Cost_Usage, " +
-                                    "s4.Last_Progress as Work_Completion, " +
-                                    "s2.Hours, " +
-                                    "s3.OT_1_5, " +
-                                    "s3.OT_3, " +
-                                    "(s2.Hours + s3.OT_1_5 + s3.OT_3) as Total_Man_Hour, " +
-                                    "s5.No_Of_Labor_Week as No_Of_Labor, " +
-                                    "(cast(s1.Cost_to_Date as float) / (s2.Hours + s3.OT_1_5 + s3.OT_3)) as avg_labor_cost_per_hour " +
-                                    "from job " +
-                                    "left join (select job_ID, SUM(cast(Labor_Cost as int))as Labor_Cost, SUM(cast(OT_Labor_Cost as int)) as OT_Labor_Cost, SUM(cast(Accommodation_Cost as int)) as Accommodation_Cost, SUM(cast(Compensation_Cost as int)) as Compensation_Cost, SUM(isnull(Social_Security,0)) as Social_Security, (SUM(cast(Labor_Cost as int)) + SUM(cast(OT_Labor_Cost as int)) + SUM(cast(Accommodation_Cost as int)) + SUM(cast(Compensation_Cost as int)) + SUM(isnull(Social_Security,0))) as Cost_to_Date from Labor_Costs group by job_ID) as s1 ON s1.job_ID = job.job_ID " +
-                                    "left join (select job_ID,SUM(Hours) as Hours from Hour group by Job_ID) as s2 ON s2.job_ID = job.job_ID " +
-                                    "left join (select job_ID,SUM(OT_1_5) as OT_1_5 , SUM(OT_3) as OT_3 from OT group by job_ID) as s3 ON s3.job_ID = job.job_ID " +
-                                    "left join (select Job_ID,Max(cast(Job_Progress as int)) as Last_Progress from Progress group by Job_ID) as s4 ON s4.Job_ID = job.Job_ID " +
-                                    "left join (select Job_ID,Max(cast(No_Of_Labor_Week as int)) as No_Of_Labor_Week from Labor_Costs group by Job_ID) as s5 ON s5.Job_ID = job.Job_ID";
-
+                                    "s1.Labor_Cost, s1.OT_Labor_Cost, s1.Accommodation_Cost, s1.Compensation_Cost, isnull(s1.Social_Security,0) as Social_Security, s1.Cost_to_Date, (cast(job.Estimated_Budget as int) - cast(s1.Cost_to_Date as int)) as Remaining_Cost, ((cast(s1.Cost_to_Date as float) / cast(job.Estimated_Budget as float)) *100) as Cost_Usage, s4.Last_Progress as Work_Completion, s2.Hours, s3.OT_1_5, s3.OT_3, (s2.Hours + isnull(s3.OT_1_5,0) + isnull(s3.OT_3,0)) as Total_Man_Hour, s5.No_Of_Labor_Week as No_Of_Labor, (cast(s1.Cost_to_Date as float) / (s2.Hours + isnull(s3.OT_1_5,0) + isnull(s3.OT_3,0))) as avg_labor_cost_per_hour from job left join (select job_ID, SUM(cast(Labor_Cost as int))as Labor_Cost, SUM(cast(OT_Labor_Cost as int)) as OT_Labor_Cost, SUM(cast(Accommodation_Cost as int)) as Accommodation_Cost, SUM(cast(Compensation_Cost as int)) as Compensation_Cost, SUM(isnull(Social_Security,0)) as Social_Security, (SUM(cast(Labor_Cost as int))  + SUM(cast(OT_Labor_Cost as int)) + SUM(cast(Accommodation_Cost as int))  + SUM(cast(Compensation_Cost as int)) + SUM(isnull(Social_Security,0))) as Cost_to_Date from Labor_Costs group by job_ID) as s1 ON s1.job_ID = job.job_ID left join (select job_ID,SUM(Hours) as Hours from Hour group by Job_ID) as s2 ON s2.job_ID = job.job_ID left join (select job_ID,SUM(CONVERT(NUMERIC(18,2),(OT_1_5/60 + (OT_1_5 %60)/100.0))) as OT_1_5 , SUM(CONVERT(NUMERIC(18,2),(OT_3/60 + (OT_3 %60)/100.0))) as OT_3 from OT group by job_ID) as s3 ON s3.job_ID = job.job_ID left join (select Job_ID,Max(cast(Job_Progress as int)) as Last_Progress from Progress group by Job_ID) as s4 ON s4.Job_ID = job.Job_ID left join (select Job_ID,Max(cast(No_Of_Labor_Week as int)) as No_Of_Labor_Week from Labor_Costs group by Job_ID) as s5 ON s5.Job_ID = job.Job_ID";
             SqlCommand cmd = new SqlCommand(str_cmd, con);
             SqlDataReader dr = cmd.ExecuteReader();
 
@@ -66,12 +46,12 @@ namespace LaborCostAnalysis.Services
                         remainning_cost = dr["Remaining_Cost"] != DBNull.Value ? Convert.ToInt32(dr["Remaining_Cost"]) : 0,
                         cost_usage = dr["Cost_Usage"] != DBNull.Value ? Convert.ToInt32(dr["Cost_Usage"]) : 0,
                         work_completion = dr["Work_Completion"] != DBNull.Value ? Convert.ToInt32(dr["Work_Completion"]) : 0,
-                        hours = dr["Hours"] != DBNull.Value ? Convert.ToInt32(dr["Hours"]) : 0,
-                        ot_1_5 = dr["OT_1_5"] != DBNull.Value ? Convert.ToInt32(dr["OT_1_5"]) : 0,
-                        ot_3 = dr["OT_3"] != DBNull.Value ? Convert.ToInt32(dr["OT_3"]) : 0,
-                        total_man_hour = dr["Total_Man_Hour"] != DBNull.Value ? Convert.ToInt32(dr["Total_Man_Hour"]) : 0,
+                        hours = dr["Hours"] != DBNull.Value ? Convert.ToDouble(dr["Hours"]) : 0,
+                        ot_1_5 = dr["OT_1_5"] != DBNull.Value ? Convert.ToDouble(dr["OT_1_5"]) : 0,
+                        ot_3 = dr["OT_3"] != DBNull.Value ? Convert.ToDouble(dr["OT_3"]) : 0,
+                        total_man_hour = dr["Total_Man_Hour"] != DBNull.Value ? Convert.ToDouble(dr["Total_Man_Hour"]) : 0,
                         no_of_labor = dr["No_Of_Labor"] != DBNull.Value ? Convert.ToInt32(dr["No_Of_Labor"]) : 0,
-                        avg_labor_cost_per_hour = dr["avg_labor_cost_per_hour"] != DBNull.Value ? Convert.ToInt32(dr["avg_labor_cost_per_hour"]) : 0,
+                        avg_labor_cost_per_hour = dr["avg_labor_cost_per_hour"] != DBNull.Value ? Convert.ToDouble(dr["avg_labor_cost_per_hour"]) : 0,
                     };
                     jobs.Add(job);
                 }

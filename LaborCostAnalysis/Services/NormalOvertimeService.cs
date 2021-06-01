@@ -24,11 +24,12 @@ namespace LaborCostAnalysis.Services
             con.Open();
 
             string str_cmd = "select Hour.Job_ID, " +
-                                    "SUM(Hours)as Normal, " +
+                                    "SUM(Hours) as Normal, " +
                                     "s1.OT " +
-                                    "from Hour " +
-                                    "left join (select job_ID,(SUM(isnull(OT_1_5,0)) + SUM(isnull(OT_3,0))) as OT from OT group by Job_ID) as s1 ON s1.job_ID = Hour.job_ID " +
-                                    "group by Hour.Job_ID,s1.OT order by Job_ID";
+                             "from Hour " +
+                                    "left join (select job_ID,(SUM(isnull(CONVERT(NUMERIC(8,2),(OT_1_5/60 + (OT_1_5 %60)/100.0)),0)) + SUM(isnull(CONVERT(NUMERIC(18,2),(OT_3/60 + (OT_3 %60)/100.0)),0))) as OT from OT group by Job_ID) as s1 ON s1.job_ID = Hour.job_ID " +
+                                    "group by Hour.Job_ID,s1.OT " +
+                                    "order by Job_ID";
 
             SqlCommand cmd = new SqlCommand(str_cmd, con);
             SqlDataReader dr = cmd.ExecuteReader();
@@ -40,8 +41,8 @@ namespace LaborCostAnalysis.Services
                     NormalOvertimeModel npr = new NormalOvertimeModel()
                     {
                         job_id = dr["Job_ID"] != DBNull.Value ? dr["Job_ID"].ToString() : "",
-                        normal = dr["Normal"] != DBNull.Value ? Convert.ToInt32(dr["Normal"]) : 0,
-                        overtime = dr["OT"] != DBNull.Value ? Convert.ToInt32(dr["OT"]) : 0,
+                        normal = dr["Normal"] != DBNull.Value ? Convert.ToDouble(dr["Normal"]) : 0,
+                        overtime = dr["OT"] != DBNull.Value ? Convert.ToDouble(dr["OT"]) : 0,
                     };
                     nprs.Add(npr);
                 }
@@ -59,12 +60,13 @@ namespace LaborCostAnalysis.Services
             con.Open();
 
             string str_cmd = "select Hour.Job_ID, " +
-                                    "SUM(Hours)as Normal, " +
+                                    "SUM(Hours) as Normal, " +
                                     "s1.OT " +
-                                    "from Hour " +
-                                    "left join (select job_ID,(SUM(isnull(OT_1_5,0)) + SUM(isnull(OT_3,0))) as OT from OT group by Job_ID) as s1 ON s1.job_ID = Hour.job_ID " +
-                                    "where Hour.Job_ID = '" + job_id + "' "+
-                                    "group by Hour.Job_ID,s1.OT order by Job_ID";
+                             "from Hour " +
+                                    "left join (select job_ID,(SUM(isnull(CONVERT(NUMERIC(8,2),(OT_1_5/60 + (OT_1_5 %60)/100.0)),0)) + SUM(isnull(CONVERT(NUMERIC(18,2),(OT_3/60 + (OT_3 %60)/100.0)),0))) as OT from OT group by Job_ID) as s1 ON s1.job_ID = Hour.job_ID " +
+                                    "where Hour.Job_ID = '" + job_id + "' " +
+                                    "group by Hour.Job_ID,s1.OT " +
+                                    "order by Job_ID";
 
             SqlCommand cmd = new SqlCommand(str_cmd, con);
             SqlDataReader dr = cmd.ExecuteReader();
@@ -76,8 +78,8 @@ namespace LaborCostAnalysis.Services
                     NormalOvertimeModel npr = new NormalOvertimeModel()
                     {
                         job_id = dr["Job_ID"] != DBNull.Value ? dr["Job_ID"].ToString() : "",
-                        normal = dr["Normal"] != DBNull.Value ? Convert.ToInt32(dr["Normal"]) : 0,
-                        overtime = dr["OT"] != DBNull.Value ? Convert.ToInt32(dr["OT"]) : 0,
+                        normal = dr["Normal"] != DBNull.Value ? Convert.ToDouble(dr["Normal"]) : 0,
+                        overtime = dr["OT"] != DBNull.Value ? Convert.ToDouble(dr["OT"]) : 0,
                     };
                     nprs.Add(npr);
                 }

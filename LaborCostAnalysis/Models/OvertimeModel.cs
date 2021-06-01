@@ -11,11 +11,11 @@ namespace LaborCostAnalysis.Models
 
         public string employee_id { get; set; }
 
-        public int ot_1_5 { get; set; }
+        public double ot_1_5 { get; set; }
 
-        public int ot_3 { get; set; }
+        public double ot_3 { get; set; }
 
-        public int ot_sum { get; set; }
+        public double ot_sum { get; set; }
 
         public int week { get; set; }
 

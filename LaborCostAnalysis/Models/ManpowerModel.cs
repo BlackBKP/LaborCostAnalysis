@@ -15,13 +15,13 @@ namespace LaborCostAnalysis.Models
 
         public int month { get; set; }
 
-        public int normal { get; set; }
+        public double normal { get; set; }
 
-        public int ot_1_5 { get; set; }
+        public double ot_1_5 { get; set; }
 
-        public int ot_3 { get; set; }
+        public double ot_3 { get; set; }
 
-        public int acc_hour { get; set; }
+        public double acc_hour { get; set; }
 
     }
 }

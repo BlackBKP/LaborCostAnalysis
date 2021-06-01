@@ -157,9 +157,9 @@
 {
     <script type="text/javascript">
         var list_job_id = [];
-        var chart;
-        var chart2;
-        var chart4;
+        var chart_spent;
+        var chart_manpower;
+        var chart_normalovertime;
 
         $(document).ready(function () {
             SetScreenSize();
@@ -204,38 +204,32 @@
         function GetJobID() {
             var year = $('#ProjectYears').val();
             if (year == "ALL") {
-                //console.log("Get All Job");
                 $.ajax({
-                type: "GET",
-                url: '@Url.Action("GetJobs", "Home")',
-	            contentType: 'application/x-www-form-urlencoded',
-                data: {
+                    type: "GET",
+                    url: '@Url.Action("GetJobs", "Home")',
+	                contentType: 'application/x-www-form-urlencoded',
+                    data: {
 
-                },
-                success: function (response) {
-                    //console.log("Response");
-                    //console.log(response);
-                    jobs = response;
-                    GenProjectOptions();
-                }
-            });
+                    },
+                    success: function (response) {
+                        jobs = response;
+                        GenProjectOptions();
+                    }
+                });
             }
             else {
-                //console.log("Get Job in " + year);
                 $.ajax({
-                type: "GET",
-                url: '@Url.Action("GetJobsByYear", "Home")',
-	            contentType: 'application/x-www-form-urlencoded',
-                data: {
-                    year
-                },
-                success: function (response) {
-                    //console.log("Response");
-                    //console.log(response);
-                    jobs = response;
-                    GenProjectOptions();
-                }
-            });
+                    type: "GET",
+                    url: '@Url.Action("GetJobsByYear", "Home")',
+	                contentType: 'application/x-www-form-urlencoded',
+                    data: {
+                        year
+                    },
+                    success: function (response) {
+                        jobs = response;
+                        GenProjectOptions();
+                    }
+                });
             }
         }
 
@@ -258,8 +252,7 @@
                 if (jobs[i].job_id == job_id)
                     index = i;
             }
-            $('#job_id').html("<strong>JOB NUMBER: </strong>" + jobs[index].job_number  +"   " + "<strong>JOB NAME: </strong>" + jobs[index].job_name);
-           // $('#job_name').html("JOB NAME: " + jobs[index].job_name);
+            $('#job_id').html("<strong>JOB NUMBER: </strong>" + jobs[index].job_number  + " " + "<strong>JOB NAME: </strong>" + jobs[index].job_name);
             GetJobProgress(job_id);
             $('#div_content').show();
             GetHalfMonthSpent(job_id);
@@ -295,13 +288,6 @@
                     //$('#pb_spent_description').html(percentage_spent + "% Budget Spent");
                     $('#pb_spent_description').html(remain_str);
 
-                    //Remain
-                    @*var percentage_remain = Math.round((response[0].remainning_cost / response[0].estimated_budget) * 100);
-                    $('#ib_remain').show();
-                    $('#ib_remain_number').html(response[0].remainning_cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "/" + response[0].estimated_budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                    $('#pb_remain').width(percentage_remain + "%");
-                    $('#pb_remain_description').html(percentage_remain + "% Budget Remain");*@
-
                     //Labor
                     $('#ib_labor').show();
                     $('#ib_labor_number').html(response[0].no_of_labor);
@@ -318,8 +304,8 @@
                     job_id
                 },
                 success: function (response) {
-                    //console.log("Half Month Spent");
-                    //console.log(response);
+                    console.log("Half Month Spent");
+                    console.log(response);
                     GenSPFChart(response);
                 }
             });
@@ -334,8 +320,8 @@
                     job_id
                 },
                 success: function (response) {
-                    //console.log("Man Power");
-                    //console.log(response);
+                    console.log("Man Power");
+                    console.log(response);
                     GenMPHChart(response);
                 }
             });
@@ -350,8 +336,8 @@
                     job_id
                 },
                 success: function (response) {
-                    //console.log("Normal Overtime Ratio");
-                    //console.log(response);
+                    console.log("Normal Overtime Ratio");
+                    console.log(response);
                     GenNPOChart(response);
                 }
             });
@@ -359,8 +345,8 @@
 
         //Spent per 15 days
         function GenSPFChart(job) {
-            if (chart != null)
-                chart.destroy();
+            if (chart_spent != null)
+                chart_spent.destroy();
             if (job.length > 0) {
                 $('#card_spf').show();
                 var months = ["", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -385,7 +371,7 @@
                     spent_cost.push(job[i].spent_cost);
                 }
                 var ctx = document.getElementById('canvas_1').getContext('2d');
-                chart = new Chart(ctx, {
+                chart_spent = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: weeks,
@@ -512,8 +498,8 @@
 
         //Manpower per hour
         function GenMPHChart(job) {
-            if (chart2 != null)
-                chart2.destroy();
+            if (chart_manpower != null)
+                chart_manpower.destroy();
             if (job.length > 0) {
                 $('#card_mph').show();
                 var months = ["", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -535,7 +521,7 @@
                 var col_ot03 = 'rgba(72,202,228,';
                 var col_acc = 'rgba(3,4,94,';
                 var ctx2 = document.getElementById('canvas_2').getContext('2d');
-                chart2 = new Chart(ctx2, {
+                chart_manpower = new Chart(ctx2, {
                     type: 'bar',
                     data: {
                         labels: weeks,
@@ -599,12 +585,12 @@
 
         //Normal Overtime Ratio
         function GenNPOChart(job) {
-            if (chart4 != null)
-                chart4.destroy();
+            if (chart_normalovertime != null)
+                chart_normalovertime.destroy();
             if (job.length > 0) {
                 $('#card_npero').show();
                 var ctx4 = document.getElementById('canvas_4').getContext('2d');
-                chart4 = new Chart(ctx4, {
+                chart_normalovertime = new Chart(ctx4, {
                     type: 'doughnut',
                     data: {
                         labels: ['Normal', 'Overtime'],

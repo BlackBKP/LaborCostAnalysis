@@ -108,9 +108,9 @@
                     summaries[i].hours.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
                     summaries[i].ot_1_5.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
                     summaries[i].ot_3.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-                    summaries[i].total_man_hour.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+                    summaries[i].total_man_hour.toString(),
                     summaries[i].no_of_labor.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-                    summaries[i].avg_labor_cost_per_hour.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+                    Math.round(summaries[i].avg_labor_cost_per_hour*100)/100,
                 ]);
             }
 
