@@ -84,7 +84,7 @@
                     <br />
 
                     <label for="input_job_number">Job Number</label>
-                    <input id="input_job_number" class="form-control" type="text" placeholder="Job Number" />
+                    <input id="input_job_number" class="form-control" type="text" placeholder="Job Number: JXX-XXXX" />
                     <br />
 
                     <label for="input_job_name">Job Name</label>
@@ -160,7 +160,10 @@
         };
 
         $('#btn_add_job').on('click', function () {
-            $('#modal_add_job').modal();
+            $('#modal_add_job').modal("show");
+            $('#input_job_year').val(null);
+            $('#input_job_number').val(null);
+            $('#input_job_name').val(null);
         });
 
         $('#input_job_year').on('keyup', function () {
