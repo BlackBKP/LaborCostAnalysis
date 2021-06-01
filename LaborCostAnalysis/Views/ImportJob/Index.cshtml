@@ -28,6 +28,59 @@
         </div>
     </div>
 
+    <div class="card card-dark">
+        <div class="card-header">
+            <span class="card-title">Jobs Available to Import</span>
+        </div>
+        <div class="card-body">
+            <table id="table_import" class="table table-sm table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Job ID</th>
+                        <th>Job Number</th>
+                        <th>Job Name</th>
+                        <th>Job Year</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-primary float-right" type="button">
+                Import
+            </button>
+            <button class="btn btn-danger float-right" type="button">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <div class="card card-dark">
+        <div class="card-header">
+            <span class="card-title">Duplicated Job</span>
+        </div>
+        <div class="card-body">
+            <table id="table_duplicate" class="table table-sm table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Job ID</th>
+                        <th>Job Number</th>
+                        <th>Job Name</th>
+                        <th>Job Year</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+
+        </div>
+    </div>
+
 </div>
 
 <!-- Import Job Modal -->
@@ -142,14 +195,15 @@
                         console.log(response);
                         import_jobs = response[0];
                         duplicate_jobs = response[1];
-                        GenUploadData();
+                        GenImportTable();
+                        GenDuplicateTable();
                     }
                 },
             });
         });
 
         var import_table;
-        function GenUploadData() {
+        function GenImportTable() {
             import_jobs.length > 0 ? $('#btn_confirm_import').attr('disabled', false) : $('#btn_confirm_import').attr('disabled', true);
             $('#div_upload').show();
             var datas = [];
@@ -162,14 +216,24 @@
                 ]);
             }
 
-            if (import_table != null)
-                $('#UploadedJobs').DataTable().destroy();
+            @*if (import_table != null)
+                $('#UploadedJobs').DataTable().destroy();*@
 
-            import_table = $('#UploadedJobs').DataTable({
+            @*import_table = $('#UploadedJobs').DataTable({
+                data: datas,
+                pagingType: "full_numbers",
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
+            });*@
+
+            if (import_table != null)
+                $('#table_import').DataTable().destroy();
+
+            import_table = $('#table_import').DataTable({
                 data: datas,
                 pagingType: "full_numbers",
                 lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
             });
+
         }
 
         $('#btn_confirm_import').on('click', function () {
@@ -192,5 +256,31 @@
                 }
             })
         }
+
+        var duplicate_table;
+        function GenDuplicateTable() {
+            console.log("Duplicate Job");
+            console.log(duplicate_jobs);
+            if (duplicate_table != null)
+                $('#table_duplicate').DataTable().destroy();
+            var datas = [];
+            if (duplicate_jobs.length > 0) {
+                for (var i = 0; i < duplicate_jobs.length; i++) {
+                    datas.push([
+                        duplicate_jobs[i].job_id,
+                        duplicate_jobs[i].job_number,
+                        duplicate_jobs[i].job_name,
+                        duplicate_jobs[i].job_year,
+                    ]);
+                }
+
+                duplicate_table = $('#table_duplicate').DataTable({
+                    data: datas,
+                    pagingType: "full_numbers",
+                    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
+                });
+            }
+        }
+
     </script>
 }

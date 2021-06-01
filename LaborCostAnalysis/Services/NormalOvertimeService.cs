@@ -63,7 +63,7 @@ namespace LaborCostAnalysis.Services
                                     "SUM(Hours) as Normal, " +
                                     "CONVERT(NUMERIC(18,2),(s1.OT/60 + (s1.OT %60)/100.0)) as OT " +
                              "from Hour " +
-                                    "left join (select job_ID,(SUM(isnull(OT_1_5,0)) + SUM(isnull(OT_3,0))) as OT from OT group by Job_ID) as s1ON s1.job_ID = Hour.job_ID " +
+                                    "left join (select job_ID,(SUM(isnull(OT_1_5,0)) + SUM(isnull(OT_3,0))) as OT from OT group by Job_ID) as s1 ON s1.job_ID = Hour.job_ID " +
                                     "where Hour.Job_ID = '" + job_id + "' " +
                                     "group by Hour.Job_ID, s1.OT " +
                                     "order by Job_ID";
