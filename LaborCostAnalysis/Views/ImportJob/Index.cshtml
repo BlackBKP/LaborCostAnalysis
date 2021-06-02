@@ -236,8 +236,8 @@
         });
 
         function ConfirmImport() {
-            $('#btn_confirm_import').attr('disabled', true);
-            $('#modal_upload').modal("show");
+            //$('#btn_confirm_import').attr('disabled', true);
+            //$('#modal_upload').modal("show");
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("ConfirmImport", "ImportJob")',
@@ -246,7 +246,7 @@
 
                 },
                 success: function (response) {
-                    $('#modal_upload').hide();
+                    //$('#modal_upload').hide();
                     window.location.reload();
                 }
             })
