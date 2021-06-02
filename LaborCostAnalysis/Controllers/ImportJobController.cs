@@ -21,7 +21,16 @@ namespace LaborCostAnalysis.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         IConnectDB DB;
+        IJob JobInterface;
+
         static List<JobModel> import_jobs;
+        static List<JobModel> duplicated_jobs;
+
+        public ImportJobController()
+        {
+            this.DB = new ConnectDB();
+            this.JobInterface = new JobService();
+        }
 
         public ImportJobController(IHostingEnvironment hostingEnvironment)
         {
@@ -36,36 +45,7 @@ namespace LaborCostAnalysis.Controllers
         [HttpGet]
         public JsonResult GetJobs()
         {
-            List<JobModel> jobs = new List<JobModel>();
-            this.DB = new ConnectDB();
-            SqlConnection con = DB.Connect();
-            con.Open();
-
-            string str_cmd = "select Job_ID," +
-                                    "Job_Number, " +
-                                    "Job_Name, " +
-                                    "Estimated_Budget, " +
-                                    "Job_Year " +
-                                    "from Job";
-
-            SqlCommand cmd = new SqlCommand(str_cmd, con);
-            SqlDataReader dr = cmd.ExecuteReader();
-            if (dr.HasRows)
-            {
-                while (dr.Read())
-                {
-                    JobModel job = new JobModel()
-                    {
-                        job_id = dr["Job_ID"] != DBNull.Value ? dr["Job_ID"].ToString() : "",
-                        job_number = dr["Job_Number"] != DBNull.Value ? dr["Job_Number"].ToString() : "",
-                        job_name = dr["Job_Name"] != DBNull.Value ? dr["Job_Name"].ToString() : "",
-                        estimated_budget = dr["Estimated_Budget"] != DBNull.Value ? Convert.ToInt32(dr["Estimated_Budget"]) : 0,
-                        job_year = dr["Job_Year"] != DBNull.Value ? Convert.ToInt32(dr["Job_Year"]) : 0,
-                    };
-                    jobs.Add(job);
-                }
-                dr.Close();
-            }
+            List<JobModel> jobs = JobInterface.GetJobs();
             return Json(jobs);
         }
 
@@ -75,9 +55,10 @@ namespace LaborCostAnalysis.Controllers
             string folderName = "files";
             string webRootPath = _hostingEnvironment.WebRootPath;
             string newPath = Path.Combine(webRootPath, folderName);
-            List<string> job_ids = GetJobID();
+
             import_jobs = new List<JobModel>();
-            List<JobModel> duplicated = new List<JobModel>();
+            duplicated_jobs = new List<JobModel>();
+
             if (!Directory.Exists(newPath))
             {
                 Directory.CreateDirectory(newPath);
@@ -119,50 +100,23 @@ namespace LaborCostAnalysis.Controllers
                     job.job_number = row.GetCell(0).StringCellValue.Trim();
                     job.job_name = row.GetCell(1).StringCellValue;
                     job.job_year = Convert.ToInt32(row.GetCell(2).NumericCellValue);
-                    int ind = import_jobs.FindIndex(f => f.job_id == job.job_id);
-                    int ind2 = job_ids.IndexOf(job.job_id);
-                    if (ind < 0 && ind2 < 0)
-                        import_jobs.Add(job);
-                    else
-                        duplicated.Add(job);
+                    import_jobs.Add(job);
                 }
             }
-            List<List<JobModel>> gg = new List<List<JobModel>>();
-            gg.Add(import_jobs);
-            gg.Add(duplicated);
-            return Json(gg);
-        }
 
-        public List<string> GetJobID()
-        {
-            List<string> job_ids = new List<string>();
-            this.DB = new ConnectDB();
-            SqlConnection con = DB.Connect();
-            con.Open();
-            string str_cmd = "select Job_ID from Job";
-            SqlCommand cmd = new SqlCommand(str_cmd, con);
-            SqlDataReader dr = cmd.ExecuteReader();
-            if (dr.HasRows)
-            {
-                while (dr.Read())
-                {
-                    string id = dr["Job_ID"].ToString().Trim();
-                    job_ids.Add(id);
-                }
-                dr.Close();
-            }
-            con.Close();
-            return job_ids;
+            List<List<JobModel>> list_jobs = new List<List<JobModel>>();
+            List<JobModel> jobs = JobInterface.GetJobs();
+            duplicated_jobs = import_jobs.Where(w => !jobs.Any(a => a.job_id == w.job_id)).ToList();
+            import_jobs = import_jobs.Where(w => !duplicated_jobs.Any(a => a.job_id == w.job_id)).ToList();
+            list_jobs.Add(import_jobs);
+            list_jobs.Add(duplicated_jobs);
+            return Json(list_jobs);
         }
 
         [HttpPost]
         public JsonResult ConfirmImport()
         {
-            this.DB = new ConnectDB();
             SqlConnection con = DB.Connect();
-            List<string> job_ids = GetJobID();
-            List<JobModel> inserted_jobs = new List<JobModel>();
-            List<JobModel> duplicated_jobs = new List<JobModel>();
             using (SqlCommand cmd = new SqlCommand("INSERT INTO Job(Job_ID, Job_Number, Job_Name, Job_Year) " +
                                                    "VALUES(@Job_ID, @Job_Number, @Job_Name, @Job_Year)", con))
             {

@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <div class="card card-dark">
+    <div id="card_table_import" class="card card-dark" style="display:none">
         <div class="card-header">
             <span class="card-title">Jobs Available to Import</span>
         </div>
@@ -48,16 +48,13 @@
             </table>
         </div>
         <div class="card-footer">
-            <button class="btn btn-primary float-right" type="button">
-                Import
-            </button>
-            <button class="btn btn-danger float-right" type="button">
-                Cancel
+            <button class="col-1 form-control btn btn-primary float-right" type="button">
+                Confirm Import
             </button>
         </div>
     </div>
 
-    <div class="card card-dark">
+    <div id="card_table_duplicate" class="card card-dark" style="display:none">
         <div class="card-header">
             <span class="card-title">Duplicated Job</span>
         </div>
@@ -75,9 +72,6 @@
 
                 </tbody>
             </table>
-        </div>
-        <div class="card-footer">
-
         </div>
     </div>
 
@@ -204,6 +198,7 @@
 
         var import_table;
         function GenImportTable() {
+            $('#card_table_import').show();
             import_jobs.length > 0 ? $('#btn_confirm_import').attr('disabled', false) : $('#btn_confirm_import').attr('disabled', true);
             $('#div_upload').show();
             var datas = [];
@@ -261,6 +256,7 @@
         function GenDuplicateTable() {
             console.log("Duplicate Job");
             console.log(duplicate_jobs);
+            $('#card_table_duplicate').show();
             if (duplicate_table != null)
                 $('#table_duplicate').DataTable().destroy();
             var datas = [];
