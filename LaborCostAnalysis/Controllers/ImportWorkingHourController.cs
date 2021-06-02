@@ -22,6 +22,8 @@ namespace LaborCostAnalysis.Controllers
         private readonly IHostingEnvironment _hostingEnvironment;
         static List<WorkingHoursModel> working_hours;
         IConnectDB DB;
+        IJob JobInterface;
+        IWorkingHour WorkingHourInterface;
 
         static string job_id;
         static int year;
@@ -30,6 +32,8 @@ namespace LaborCostAnalysis.Controllers
         public ImportWorkingHourController(IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
+            this.JobInterface = new JobService();
+            this.WorkingHourInterface = new WorkingHourService();
         }
 
         public IActionResult Index()
@@ -37,32 +41,11 @@ namespace LaborCostAnalysis.Controllers
             return View();
         }
 
-        public List<string> GetJobID()
-        {
-            List<string> job_ids = new List<string>();
-            this.DB = new ConnectDB();
-            SqlConnection con = DB.Connect();
-            con.Open();
-            string str_cmd = "select Job_ID from Job";
-            SqlCommand cmd = new SqlCommand(str_cmd, con);
-            SqlDataReader dr = cmd.ExecuteReader();
-            if (dr.HasRows)
-            {
-                while (dr.Read())
-                {
-                    string id = dr["Job_ID"].ToString().Trim();
-                    job_ids.Add(id);
-                }
-                dr.Close();
-            }
-            con.Close();
-            return job_ids;
-        }
-
         [HttpGet]
         public JsonResult GetJobNumbers()
         {
-            return Json(GetJobID());
+            var job_ids = JobInterface.GetJobs().OrderByDescending(o => o.job_id).Select(s => s.job_id).ToList();
+            return Json(job_ids);
         }
 
         [HttpPost]
@@ -110,63 +93,31 @@ namespace LaborCostAnalysis.Controllers
                     row = sheet.GetRow(i);
                     if (row == null)
                         break;
-                    if (row.GetCell(5).CellType == CellType.Blank)
+                    if (row.GetCell(4).CellType == CellType.Blank)
+                        break;
+                    if (row.GetCell(4).NumericCellValue == 0)
                         break;
                     WorkingHoursModel wh = new WorkingHoursModel();
                     wh.job_id = job_id;
                     wh.employee_id = row.GetCell(4).StringCellValue;
                     wh.working_day = row.GetCell(5).DateCellValue;
                     wh.week = Convert.ToInt32(month.Split(' ')[1]);
-                    string[] months = new string[] { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
-                    wh.month = Array.IndexOf(months, month.Split(' ')[0]) + 1;
+                    string[] months = new string[] { "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
+                    wh.month = Array.IndexOf(months, month.Split(' ')[0]);
                     wh.hours = Convert.ToInt32(row.GetCell(6).StringCellValue.Split(':')[0]);
                     working_hours.Add(wh);
                 }
             }
+            List<WorkingHoursModel> whs = WorkingHourInterface.GetWorkingHours(job_id);
+            working_hours = working_hours.Where(w => !whs.Any(a => a.job_id == w.job_id && a.employee_id == w.employee_id && a.month == w.month && a.week == w.week)).ToList();
             return Json(working_hours);
         }
 
         [HttpPost]
         public JsonResult ConfirmImport()
         {
-            this.DB = new ConnectDB();
-            SqlConnection con = DB.Connect();
-            using (SqlCommand cmd = new SqlCommand("INSERT INTO Hour(" +
-                                                                "Job_ID, " +
-                                                                "Employee_ID, " +
-                                                                "Working_Day, " +
-                                                                "Week, " +
-                                                                "Month, " +
-                                                                "Hours) " +
-                                                     "VALUES(@Job_ID," +
-                                                            "@Employee_ID, " +
-                                                            "@Working_Day, " +
-                                                            "@Week, " +
-                                                            "@Month, " +
-                                                            "@Hours)", con))
-            {
-                con.Open();
-                cmd.CommandType = CommandType.Text;
-                cmd.Connection = con;
-                cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Employee_ID", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Working_Day", SqlDbType.Date);
-                cmd.Parameters.Add("@Week", SqlDbType.Int);
-                cmd.Parameters.Add("@Month", SqlDbType.Int);
-                cmd.Parameters.Add("@Hours", SqlDbType.Int);
-
-                for (int i = 0; i < working_hours.Count; i++)
-                {
-                    cmd.Parameters[0].Value = working_hours[i].job_id;
-                    cmd.Parameters[1].Value = working_hours[i].employee_id;
-                    cmd.Parameters[2].Value = working_hours[i].working_day;
-                    cmd.Parameters[3].Value = working_hours[i].week;
-                    cmd.Parameters[4].Value = working_hours[i].month;
-                    cmd.Parameters[5].Value = working_hours[i].hours;
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            return Json("Done");
+            string result = WorkingHourInterface.InsertWorkingHours(working_hours);
+            return Json(result);
         }
     }
 }
