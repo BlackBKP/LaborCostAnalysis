@@ -77,7 +77,14 @@
                 <h5 class="modal-title">Upload</h5>
             </div>
             <div class="modal-body">
-                Uploading Please Wait
+                <span id="modal_upload_text">
+                    Uploading Please Wait
+                </span>
+            </div>
+            <div id="modal_upload_footer" class="modal-footer" style="display:none">
+                <button id="btn_done_upload" class="btn btn-primary float-right">
+                    Done
+                </button>
             </div>
         </div>
     </div>
@@ -86,9 +93,9 @@
 @section Scripts
 {
     <script type="text/javascript">
-        var table;
-        var jobs = [];
-
+        
+        var import_jobs = [];
+        var duplicate_jobs = [];
         $('#import_file').on('change', async function () {
             var fileExtension = ['xls', 'xlsx'];
             var filename = $('#import_file').val();
@@ -123,29 +130,29 @@
                     if (response.length == 0)
                         alert('Some error occured while uploading');
                     else {
-                        //console.log("Response");
-                        //console.log(response);
-                        jobs = response;
+                        import_jobs = response[0];
+                        duplicate_jobs = response[1];
                         GenUploadData();
                     }
                 },
             });
         });
 
+        var table;
         function GenUploadData() {
             $('#card_upload').show();
             var datas = [];
-            for (var i = 0; i < jobs.length; i++) {
+            for (var i = 0; i < import_jobs.length; i++) {
                 datas.push([
-                    jobs[i].job_id,
-                    jobs[i].job_name,
-                    jobs[i].week_time,
-                    jobs[i].labor_cost,
-                    jobs[i].ot_cost,
-                    jobs[i].accomodate,
-                    jobs[i].compensate,
-                    jobs[i].social_security,
-                    jobs[i].number_of_labor
+                    import_jobs[i].job_id,
+                    import_jobs[i].job_name,
+                    import_jobs[i].week_time,
+                    import_jobs[i].labor_cost,
+                    import_jobs[i].ot_cost,
+                    import_jobs[i].accomodate,
+                    import_jobs[i].compensate,
+                    import_jobs[i].social_security,
+                    import_jobs[i].number_of_labor
                 ]);
             }
 
@@ -162,6 +169,7 @@
         $('#btn_import').on('click', function () {
             $('#btn_import').attr('disabled', true);
             $('#modal_upload').modal("show");
+            $('#modal_upload_text').html("Uploading Please Wait");
             ConfirmUpload();
         });
 
@@ -174,20 +182,15 @@
 
                 },
                 success: function (response) {
-                    if (response != "Done") {
-                        $('#modal_upload').modal("hide");
-                        $('#btn_import').attr('disabled', false);
-                        alert("please add job " + response);
-                    }
-                    else {
-                        $('#modal_upload').modal("hide");
-                        $('#btn_import').attr('disabled', false);
-                        alert("Done");
-                    }
-                    window.location.reload();
+                    $('#modal_upload_text').html(import_jobs.length + " rows successfully import");
+                    $('#modal_upload_footer').show();
                 }
             });
         }
+
+        $('#btn_done_upload').on('click', function () {
+            window.location.reload();
+        });
 
     </script>
 }
