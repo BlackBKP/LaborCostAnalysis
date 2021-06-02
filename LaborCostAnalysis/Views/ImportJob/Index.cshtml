@@ -77,60 +77,20 @@
 
 </div>
 
-<!-- Import Job Modal -->
-<div class="modal" id="ModalImportJobs">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+<div id="modal_success_import" class="modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-
-            <!-- Modal Header -->
             <div class="modal-header">
-                <h5>Import Jobs</h5>
-                <button class="close" type="button" data-dismiss="modal">
-                    &times;
-                </button>
+                <span class="modal-title">Import Jobs Successfully</span>
             </div>
-
-            <!-- Modal Body -->
             <div class="modal-body">
-                <form>
-                    <label id="import_file_label">Select File</label>
-                    <input id="import_file" class="form-control-file" type="file" />
-                    <div id="div_upload" style="display:none">
-                        <hr />
-                        <label for="UploadedJobs">Uploaded Jobs</label>
-                        <table id="UploadedJobs" class="table table-sm table-hover" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th>Job ID</th>
-                                    <th>Job Number</th>
-                                    <th>Job Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>J21-0001</td>
-                                    <td>TESTJOB (A)</td>
-                                </tr>
-                                <tr>
-                                    <td>J21-0002</td>
-                                    <td>TESTJOB (B)</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </form>
+                <span id="import_jobs_count"></span>
             </div>
-
-            <!-- Modal Footer -->
             <div class="modal-footer">
-                <button id="btn_confirm_import" class="btn btn-primary" disabled>
-                    Confirm
-                </button>
-                <button class="btn btn-danger" type="button" data-dismiss="modal">
-                    Cancel
+                <button id="btn_done_import" class="btn btn-primary float-right" type="button">
+                    Done
                 </button>
             </div>
-
         </div>
     </div>
 </div>
@@ -138,15 +98,6 @@
 @section Scripts
 {
     <script type="text/javascript">
-
-        $('#btn_import_job').on('click', function () {
-            $('#ModalImportJobs').modal("show");
-            $('#div_upload').hide();
-            $('#btn_confirm_import').attr('disabled', true);
-            import_table = null;
-            $('#import_file').val(null);
-            $('#import_file_label').text("Select File");
-        });
 
         var duplicate_jobs = [];
         var import_jobs = [];
@@ -185,8 +136,6 @@
                     if (response.length == 0)
                         alert('Some error occured while uploading');
                     else {
-                        console.log("Response");
-                        console.log(response);
                         import_jobs = response[0];
                         duplicate_jobs = response[1];
                         GenImportTable();
@@ -199,7 +148,6 @@
         var import_table;
         function GenImportTable() {
             $('#card_table_import').show();
-            import_jobs.length > 0 ? $('#btn_confirm_import').attr('disabled', false) : $('#btn_confirm_import').attr('disabled', true);
             $('#div_upload').show();
             var datas = [];
             for (var i = 0; i < import_jobs.length; i++) {
@@ -210,15 +158,6 @@
                     import_jobs[i].job_year,
                 ]);
             }
-
-            @*if (import_table != null)
-                $('#UploadedJobs').DataTable().destroy();*@
-
-            @*import_table = $('#UploadedJobs').DataTable({
-                data: datas,
-                pagingType: "full_numbers",
-                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
-            });*@
 
             if (import_table != null)
                 $('#table_import').DataTable().destroy();
@@ -236,8 +175,6 @@
         });
 
         function ConfirmImport() {
-            //$('#btn_confirm_import').attr('disabled', true);
-            //$('#modal_upload').modal("show");
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("ConfirmImport", "ImportJob")',
@@ -246,16 +183,18 @@
 
                 },
                 success: function (response) {
-                    //$('#modal_upload').hide();
-                    window.location.reload();
+                    $('#modal_success_import').show();
+                    $('#import_jobs_count').html(import_jobs.length + " Jobs Successfully Import");
                 }
             })
         }
 
+        $('#btn_done_import').on('click', function () {
+            window.location.reload();
+        });
+
         var duplicate_table;
         function GenDuplicateTable() {
-            console.log("Duplicate Job");
-            console.log(duplicate_jobs);
             $('#card_table_duplicate').show();
             if (duplicate_table != null)
                 $('#table_duplicate').DataTable().destroy();

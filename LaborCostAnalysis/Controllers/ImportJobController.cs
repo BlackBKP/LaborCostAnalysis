@@ -52,6 +52,7 @@ namespace LaborCostAnalysis.Controllers
 
             import_jobs = new List<JobModel>();
             duplicated_jobs = new List<JobModel>();
+            List<JobModel> duplicate_excel = new List<JobModel>();
 
             if (!Directory.Exists(newPath))
             {
@@ -100,8 +101,8 @@ namespace LaborCostAnalysis.Controllers
 
             List<List<JobModel>> list_jobs = new List<List<JobModel>>();
             List<JobModel> jobs = JobInterface.GetJobs();
-            duplicated_jobs = import_jobs.Where(w => !jobs.Any(a => a.job_id == w.job_id)).ToList();
-            import_jobs = import_jobs.Where(w => !duplicated_jobs.Any(a => a.job_id == w.job_id)).ToList();
+            duplicated_jobs = import_jobs.Where(w => jobs.Any(a => a.job_id == w.job_id)).ToList();
+            import_jobs = import_jobs.GroupBy(g => g.job_id).Select(s => s.FirstOrDefault()).Where(w => !duplicated_jobs.Any(a => a.job_id == w.job_id)).ToList();
             list_jobs.Add(import_jobs);
             list_jobs.Add(duplicated_jobs);
             return Json(list_jobs);
