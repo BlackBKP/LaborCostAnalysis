@@ -20,21 +20,15 @@ namespace LaborCostAnalysis.Controllers
     public class ImportJobController : Controller
     {
         private readonly IHostingEnvironment _hostingEnvironment;
-        IConnectDB DB;
         IJob JobInterface;
 
         static List<JobModel> import_jobs;
         static List<JobModel> duplicated_jobs;
 
-        public ImportJobController()
-        {
-            this.DB = new ConnectDB();
-            this.JobInterface = new JobService();
-        }
-
         public ImportJobController(IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
+            this.JobInterface = new JobService();
         }
 
         public IActionResult Index()
@@ -116,29 +110,8 @@ namespace LaborCostAnalysis.Controllers
         [HttpPost]
         public JsonResult ConfirmImport()
         {
-            SqlConnection con = DB.Connect();
-            using (SqlCommand cmd = new SqlCommand("INSERT INTO Job(Job_ID, Job_Number, Job_Name, Job_Year) " +
-                                                   "VALUES(@Job_ID, @Job_Number, @Job_Name, @Job_Year)", con))
-            {
-                con.Open();
-                cmd.CommandType = CommandType.Text;
-                cmd.Connection = con;
-                cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Job_Number", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Job_Name", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Job_Year", SqlDbType.Int);
-
-                for (int i = 0; i < import_jobs.Count; i++)
-                {
-                    cmd.Parameters[0].Value = import_jobs[i].job_id;
-                    cmd.Parameters[1].Value = import_jobs[i].job_number;
-                    cmd.Parameters[2].Value = import_jobs[i].job_name;
-                    cmd.Parameters[3].Value = import_jobs[i].job_year;
-                    cmd.ExecuteNonQuery();
-                }
-                con.Close();
-            }
-            return Json("Done");
+            string result = JobInterface.InsertJobs(import_jobs);
+            return Json(result);
         }
     }
 }

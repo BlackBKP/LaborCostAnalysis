@@ -74,5 +74,32 @@ namespace LaborCostAnalysis.Services
             }
             return "Done";
         }
+
+        public string InsertJobs(List<JobModel> import_jobs)
+        {
+            SqlConnection con = DB.Connect();
+            using (SqlCommand cmd = new SqlCommand("INSERT INTO Job(Job_ID, Job_Number, Job_Name, Job_Year) " +
+                                                   "VALUES(@Job_ID, @Job_Number, @Job_Name, @Job_Year)", con))
+            {
+                con.Open();
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = con;
+                cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
+                cmd.Parameters.Add("@Job_Number", SqlDbType.NVarChar);
+                cmd.Parameters.Add("@Job_Name", SqlDbType.NVarChar);
+                cmd.Parameters.Add("@Job_Year", SqlDbType.Int);
+
+                for (int i = 0; i < import_jobs.Count; i++)
+                {
+                    cmd.Parameters[0].Value = import_jobs[i].job_id;
+                    cmd.Parameters[1].Value = import_jobs[i].job_number;
+                    cmd.Parameters[2].Value = import_jobs[i].job_name;
+                    cmd.Parameters[3].Value = import_jobs[i].job_year;
+                    cmd.ExecuteNonQuery();
+                }
+                con.Close();
+            }
+            return "Done";
+        }
     }
 }
