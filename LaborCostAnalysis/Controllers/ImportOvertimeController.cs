@@ -22,6 +22,7 @@ namespace LaborCostAnalysis.Controllers
         private readonly IHostingEnvironment _hostingEnvironment;
         IConnectDB DB;
         IJob JobInterface;
+        IOvertime OvertimeInterface;
 
         static List<OvertimeModel> ots;
         static string job_id;
@@ -32,6 +33,7 @@ namespace LaborCostAnalysis.Controllers
         {
             _hostingEnvironment = hostingEnvironment;
             this.JobInterface = new JobService();
+            this.OvertimeInterface = new OvertimeService();
         }
 
         public IActionResult Index()
@@ -93,7 +95,7 @@ namespace LaborCostAnalysis.Controllers
                         break;
                     if (row.Cells.All(d => d.CellType == CellType.Blank))
                         break;
-                    if (row.Cells.All(c => c.NumericCellValue == 0))
+                    if (row.GetCell(1).NumericCellValue == 0)
                         break;
 
                     OvertimeModel ot = new OvertimeModel();
@@ -104,8 +106,8 @@ namespace LaborCostAnalysis.Controllers
                     ot.ot_3 = Convert.ToInt32(row.GetCell(4).NumericCellValue);
                     ot.ot_sum = ot.ot_1_5 + ot.ot_3;
                     ot.week = Convert.ToInt32(month.Split(' ')[1]);
-                    string[] months = new string[] { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
-                    ot.month = Array.IndexOf(months, month.Split(' ')[0]) + 1;
+                    string[] months = new string[] { "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
+                    ot.month = Array.IndexOf(months, month.Split(' ')[0]);
                     ot.recording_time = rt;
                     ots.Add(ot);
                 }
@@ -116,53 +118,8 @@ namespace LaborCostAnalysis.Controllers
         [HttpPost]
         public JsonResult ConfirmImport()
         {
-            this.DB = new ConnectDB();
-            SqlConnection con = DB.Connect();
-            using (SqlCommand cmd = new SqlCommand("INSERT INTO OT(" +
-                                                                "Job_ID, " +
-                                                                "Employee_ID, " +
-                                                                "OT_1_5, " +
-                                                                "OT_3, " +
-                                                                "OT_Sum, " +
-                                                                "Week, " +
-                                                                "Month, " +
-                                                                "Recording_time) " +
-                                                     "VALUES(@Job_ID," +
-                                                            "@Employee_ID, " +
-                                                            "@OT_1_5, " +
-                                                            "@OT_3, " +
-                                                            "@OT_Sum, " +
-                                                            "@Week, " +
-                                                            "@Month, " +
-                                                            "@Recording_time)", con))
-            {
-                con.Open();
-                cmd.CommandType = CommandType.Text;
-                cmd.Connection = con;
-                cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Employee_ID", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@OT_1_5", SqlDbType.Int);
-                cmd.Parameters.Add("@OT_3", SqlDbType.Int);
-                cmd.Parameters.Add("@OT_Sum", SqlDbType.Int);
-                cmd.Parameters.Add("@Week", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Month", SqlDbType.Int);
-                cmd.Parameters.Add("@Recording_time", SqlDbType.Date);
-
-                for (int i = 0; i < ots.Count; i++)
-                {
-                    cmd.Parameters[0].Value = ots[i].job_id;
-                    cmd.Parameters[1].Value = ots[i].employee_id;
-                    cmd.Parameters[2].Value = ots[i].ot_1_5;
-                    cmd.Parameters[3].Value = ots[i].ot_3;
-                    cmd.Parameters[4].Value = ots[i].ot_sum;
-                    cmd.Parameters[5].Value = ots[i].week;
-                    cmd.Parameters[6].Value = ots[i].month;
-                    cmd.Parameters[7].Value = ots[i].recording_time;
-                    cmd.ExecuteNonQuery();
-                }
-                con.Close();
-            }
-            return Json("Done");
+            string result = OvertimeInterface.InsertOvertimes(ots);
+            return Json(result);
         }
     }
 }

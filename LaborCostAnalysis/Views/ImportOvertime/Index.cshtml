@@ -73,13 +73,13 @@
             <input id="week_time" class="form-control" type="text" disabled />
             <br />
             <table id="table_overtimes" class="table table-sm table-hover">
-                <thead>
+                <thead class="text-center">
                     <tr>
                         <th>Date</th>
                         <th>Employee ID</th>
-                        <th>OT 1.5</th>
-                        <th>OT 3.0</th>
-                        <th>Total OT</th>
+                        <th>OT 1.5(Hours)</th>
+                        <th>OT 3.0(Hours)</th>
+                        <th>Total OT(Hours)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -246,12 +246,22 @@
 
             var datas = [];
             for (var i = 0; i < jobs.length; i++) {
+                var ot1_5_hours = Math.floor(jobs[i].ot_1_5 / 60);
+                var ot1_5_minutes = jobs[i].ot_1_5 % 60;
+                var ot_15 = ot1_5_hours.toString().padStart(2, '0') + ":" + ot1_5_minutes.toString().padStart(2, '0');
+                var ot3_hours = Math.floor(jobs[i].ot_3 / 60);
+                var ot3_minutes = jobs[i].ot_3 % 60;
+                var ot_3 = ot3_hours.toString().padStart(2, '0') + ":" + ot3_minutes.toString().padStart(2, '0');
+                var ot_sum_hours = Math.floor(jobs[i].ot_sum / 60);
+                var ot_sum_minutes = jobs[i].ot_sum % 60;
+                var ot_sum = ot_sum_hours.toString().padStart(2, '0') + ":" + ot_sum_minutes.toString().padStart(2, '0');
+
                 datas.push([
-                    jobs[i].recording_time,
+                    jobs[i].recording_time.substring(0,10),
                     jobs[i].employee_id,
-                    jobs[i].ot_1_5,
-                    jobs[i].ot_3,
-                    jobs[i].ot_sum
+                    ot_15,
+                    ot_3,
+                    ot_sum
                 ]);
             }
 
