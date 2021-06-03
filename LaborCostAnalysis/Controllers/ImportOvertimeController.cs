@@ -21,8 +21,9 @@ namespace LaborCostAnalysis.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         IConnectDB DB;
-        static List<OvertimeModel> ots;
+        IJob JobInterface;
 
+        static List<OvertimeModel> ots;
         static string job_id;
         static int year;
         static string month;
@@ -30,6 +31,7 @@ namespace LaborCostAnalysis.Controllers
         public ImportOvertimeController(IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
+            this.JobInterface = new JobService();
         }
 
         public IActionResult Index()
@@ -37,32 +39,10 @@ namespace LaborCostAnalysis.Controllers
             return View();
         }
 
-        public List<string> GetJobID()
-        {
-            List<string> job_ids = new List<string>();
-            this.DB = new ConnectDB();
-            SqlConnection con = DB.Connect();
-            con.Open();
-            string str_cmd = "select Job_ID from Job";
-            SqlCommand cmd = new SqlCommand(str_cmd, con);
-            SqlDataReader dr = cmd.ExecuteReader();
-            if (dr.HasRows)
-            {
-                while (dr.Read())
-                {
-                    string id = dr["Job_ID"].ToString().Trim();
-                    job_ids.Add(id);
-                }
-                dr.Close();
-            }
-            con.Close();
-            return job_ids;
-        }
-
         [HttpGet]
         public JsonResult GetJobNumbers()
         {
-            return Json(GetJobID());
+            return Json(JobInterface.GetJobs().OrderByDescending(o => o.job_id).Select(s => s.job_id).ToList());
         }
 
         [HttpPost]
