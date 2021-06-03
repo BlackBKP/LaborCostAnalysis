@@ -2,6 +2,7 @@
 using LaborCostAnalysis.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -80,6 +81,104 @@ namespace LaborCostAnalysis.Services
             }
             con.Close();
             return jobs;
+        }
+
+        public List<ProgressModel> GetProgressViewModels()
+        {
+            List<ProgressModel> pgs = new List<ProgressModel>();
+            SqlConnection con = DB.Connect();
+            con.Open();
+
+            string str_cmd = "select Progress.Job_ID, " +
+                                    "job.Job_Number, " +
+                                    "job.Job_Name, " +
+                                    "job.Estimated_Budget, " +
+                                    "Progress.Job_Progress, " +
+                                    "Progress.Month, " +
+                                    "Progress.Year, " +
+                                    "sum((cast(s1.Labor_Cost as int) + cast(s1.OT_Labor_Cost as int) + cast(s1.Accommodation_Cost as int) + cast(s1.Compensation_Cost as int) + isnull(s1.Social_Security,0))) OVER(PARTITION BY s1.job_ID ORDER BY s1.job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as acc_spent_cost, " +
+                                    "(job.Estimated_Budget - sum((cast(s1.Labor_Cost as int) + cast(s1.OT_Labor_Cost as int) + cast(s1.Accommodation_Cost as int) + cast(s1.Compensation_Cost as int) + isnull(s1.Social_Security,0))) OVER(PARTITION BY s1.job_ID ORDER BY s1.job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)) as remaining_cost " +
+                                    "from Progress " +
+                                    "left join job on job.Job_ID = Progress.Job_ID " +
+                                    "left join ( select Job_ID,Month,Year,sum(cast(Labor_Cost as int)) as Labor_Cost,sum(cast(OT_Labor_Cost as int)) as OT_Labor_Cost,sum(cast(Accommodation_Cost as int)) as Accommodation_Cost,sum(cast(Compensation_Cost as int)) as Compensation_Cost,sum(isnull(Social_Security,0)) as Social_Security " +
+                                    "from Labor_Costs group by Job_ID,Year,Month) as s1 ON s1.Job_ID = Progress.Job_ID and s1.Year = Progress.Year and s1.Month = Progress.Month";
+
+            SqlCommand cmd = new SqlCommand(str_cmd, con);
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            if (dr.HasRows)
+            {
+                while (dr.Read())
+                {
+                    ProgressModel pg = new ProgressModel()
+                    {
+                        job_id = dr["Job_ID"] != DBNull.Value ? dr["Job_ID"].ToString() : "",
+                        job_number = dr["Job_Number"] != DBNull.Value ? dr["Job_Number"].ToString() : "",
+                        job_name = dr["Job_Name"] != DBNull.Value ? dr["Job_Name"].ToString() : "",
+                        estimated_budget = dr["Estimated_Budget"] != DBNull.Value ? Convert.ToInt32(dr["Estimated_Budget"]) : 0,
+                        job_progress = dr["Job_Progress"] != DBNull.Value ? Convert.ToInt32(dr["Job_Progress"]) : 0,
+                        month = dr["Month"] != DBNull.Value ? Convert.ToInt32(dr["Month"]) : 0,
+                        year = dr["Year"] != DBNull.Value ? Convert.ToInt32(dr["Year"]) : 0,
+                        spent_cost = dr["acc_spent_cost"] != DBNull.Value ? Convert.ToInt32(dr["acc_spent_cost"]) : 0,
+                        remainning_cost = dr["remaining_cost"] != DBNull.Value ? Convert.ToInt32(dr["remaining_cost"]) : 0
+                    };
+                    pgs.Add(pg);
+                }
+                dr.Close();
+            }
+            con.Close();
+            return pgs;
+        }
+
+        public string InsertProgress(List<ProgressModel> progress)
+        {
+            SqlConnection con = DB.Connect();
+            using (SqlCommand cmd = new SqlCommand("INSERT INTO Progress(" +
+                                                                "Job_ID, " +
+                                                                "Job_Progress, " +
+                                                                "Month, " +
+                                                                "Year) " +
+                                                     "VALUES(@Job_ID," +
+                                                            "@Job_Progress, " +
+                                                            "@Month, " +
+                                                            "@Year)", con))
+            {
+                con.Open();
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = con;
+                cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
+                cmd.Parameters.Add("@Job_Progress", SqlDbType.NVarChar);
+                cmd.Parameters.Add("@Month", SqlDbType.Int);
+                cmd.Parameters.Add("@Year", SqlDbType.Int);
+
+                for (int i = 0; i < progress.Count; i++)
+                {
+                    cmd.Parameters[0].Value = progress[i].job_id;
+                    cmd.Parameters[1].Value = progress[i].job_progress;
+                    cmd.Parameters[2].Value = progress[i].month;
+                    cmd.Parameters[3].Value = progress[i].year;
+                    cmd.ExecuteNonQuery();
+                }
+                con.Close();
+            }
+
+            using (SqlCommand cmd = new SqlCommand("UPDATE Job SET Estimated_Budget = @Estimated_Budget WHERE Job_ID = @Job_ID", con))
+            {
+                con.Open();
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = con;
+                cmd.Parameters.Add("@Estimated_Budget", SqlDbType.Int);
+                cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
+
+                for (int i = 0; i < progress.Count; i++)
+                {
+                    cmd.Parameters[0].Value = progress[i].estimated_budget;
+                    cmd.Parameters[1].Value = progress[i].job_id;
+                    cmd.ExecuteNonQuery();
+                }
+                con.Close();
+            }
+            return "Done";
         }
     }
 }

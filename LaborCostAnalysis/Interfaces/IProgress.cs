@@ -9,5 +9,9 @@ namespace LaborCostAnalysis.Interfaces
     interface IProgress
     {
         List<JobSummaryModel> GetJobProgress(string job_id);
+
+        List<ProgressModel> GetProgressViewModels();
+
+        string InsertProgress(List<ProgressModel> progress);
     }
 }
