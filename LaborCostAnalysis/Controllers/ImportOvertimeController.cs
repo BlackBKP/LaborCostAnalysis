@@ -20,7 +20,6 @@ namespace LaborCostAnalysis.Controllers
     public class ImportOvertimeController : Controller
     {
         private readonly IHostingEnvironment _hostingEnvironment;
-        IConnectDB DB;
         IJob JobInterface;
         IOvertime OvertimeInterface;
 
@@ -38,7 +37,7 @@ namespace LaborCostAnalysis.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return HttpContext.Session.GetString("LoginStatus") == "LoggedIn" ? View() : (IActionResult)RedirectToAction("Index", "Login");
         }
 
         [HttpGet]

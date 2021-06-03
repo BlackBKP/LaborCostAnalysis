@@ -1,5 +1,6 @@
 ﻿using LaborCostAnalysis.Interfaces;
 using LaborCostAnalysis.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace LaborCostAnalysis.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return HttpContext.Session.GetString("LoginStatus") == "LoggedIn" ? View() : (IActionResult)RedirectToAction("Index", "Login");
         }
 
         [HttpGet]

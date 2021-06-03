@@ -60,7 +60,10 @@ namespace LaborCostAnalysis.Controllers
         public IActionResult Login(string username, string password)
         {
             if(ActiveDirectoryAuthenticate(username, password))
+            {
+                HttpContext.Session.SetString("LoginStatus", "LoggedIn");
                 return RedirectToAction("Index", "Home");
+            }
             else
                 return View("Index");
         }

@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace LaborCostAnalysis.Controllers
 {
@@ -27,6 +28,11 @@ namespace LaborCostAnalysis.Controllers
             this.SpentInterface = new SpentPerWeekService();
             this.ManpowerInterface = new ManpowerService();
             this.NormalOvertimeInterface = new NormalOvertimeService();
+        }
+
+        public IActionResult Index()
+        {
+            return HttpContext.Session.GetString("LoginStatus") == "LoggedIn" ? View() : (IActionResult)RedirectToAction("Index", "Login");
         }
 
         [HttpGet]
@@ -71,11 +77,6 @@ namespace LaborCostAnalysis.Controllers
         {
             List<NormalOvertimeModel> nprs = NormalOvertimeInterface.NormalPerOvertime(job_id);
             return Json(nprs);
-        }
-
-        public IActionResult Index()
-        {
-            return View();
         }
 
         public IActionResult About()

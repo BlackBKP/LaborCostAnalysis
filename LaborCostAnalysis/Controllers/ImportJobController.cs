@@ -33,7 +33,7 @@ namespace LaborCostAnalysis.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return HttpContext.Session.GetString("LoginStatus") == "LoggedIn" ? View() : (IActionResult)RedirectToAction("Index", "Login");
         }
 
         [HttpGet]
