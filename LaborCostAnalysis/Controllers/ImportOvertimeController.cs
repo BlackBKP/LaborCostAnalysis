@@ -24,6 +24,9 @@ namespace LaborCostAnalysis.Controllers
         IOvertime OvertimeInterface;
 
         static List<OvertimeModel> ots;
+        static List<OvertimeModel> excel_duplicate_ots;
+        static List<OvertimeModel> duplicate_ots;
+
         static string job_id;
         static int year;
         static string month;
@@ -108,9 +111,16 @@ namespace LaborCostAnalysis.Controllers
                     string[] months = new string[] { "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
                     ot.month = Array.IndexOf(months, month.Split(' ')[0]);
                     ot.recording_time = rt;
-                    ots.Add(ot);
+                    int count = ots.Where(w => w.job_id == ot.job_id && w.employee_id == ot.employee_id && w.week == ot.week && w.month == ot.month && w.recording_time == ot.recording_time).Select(s => s).Count();
+                    if (count == 0)
+                        ots.Add(ot);
+                    else
+                        excel_duplicate_ots.Add(ot);
                 }
             }
+            List<OvertimeModel> overtimes = OvertimeInterface.GetOvertimes(job_id);
+            duplicate_ots = ots.Where(w => overtimes.Any(a => a.job_id == w.job_id && a.employee_id == w.employee_id && a.month == w.month && a.week == w.week && w.recording_time == a.recording_time)).ToList();
+            ots = ots.Where(w => !overtimes.Any(a => a.job_id == w.job_id && a.employee_id == w.employee_id && a.month == w.month && a.week == w.week && w.recording_time == a.recording_time)).ToList();
             return Json(ots);
         }
 

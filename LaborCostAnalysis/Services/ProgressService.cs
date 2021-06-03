@@ -133,49 +133,56 @@ namespace LaborCostAnalysis.Services
         public string InsertProgress(List<ProgressModel> progress)
         {
             SqlConnection con = DB.Connect();
-            using (SqlCommand cmd = new SqlCommand("INSERT INTO Progress(" +
-                                                                "Job_ID, " +
-                                                                "Job_Progress, " +
-                                                                "Month, " +
-                                                                "Year) " +
-                                                     "VALUES(@Job_ID," +
-                                                            "@Job_Progress, " +
-                                                            "@Month, " +
-                                                            "@Year)", con))
+            try
             {
                 con.Open();
-                cmd.CommandType = CommandType.Text;
-                cmd.Connection = con;
-                cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Job_Progress", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Month", SqlDbType.Int);
-                cmd.Parameters.Add("@Year", SqlDbType.Int);
-
-                for (int i = 0; i < progress.Count; i++)
+                using (SqlCommand cmd = new SqlCommand("INSERT INTO Progress(" +
+                                                                    "Job_ID, " +
+                                                                    "Job_Progress, " +
+                                                                    "Month, " +
+                                                                    "Year) " +
+                                                         "VALUES(@Job_ID," +
+                                                                "@Job_Progress, " +
+                                                                "@Month, " +
+                                                                "@Year)", con))
                 {
-                    cmd.Parameters[0].Value = progress[i].job_id;
-                    cmd.Parameters[1].Value = progress[i].job_progress;
-                    cmd.Parameters[2].Value = progress[i].month;
-                    cmd.Parameters[3].Value = progress[i].year;
-                    cmd.ExecuteNonQuery();
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = con;
+                    cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Job_Progress", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Month", SqlDbType.Int);
+                    cmd.Parameters.Add("@Year", SqlDbType.Int);
+
+                    for (int i = 0; i < progress.Count; i++)
+                    {
+                        cmd.Parameters[0].Value = progress[i].job_id;
+                        cmd.Parameters[1].Value = progress[i].job_progress;
+                        cmd.Parameters[2].Value = progress[i].month;
+                        cmd.Parameters[3].Value = progress[i].year;
+                        cmd.ExecuteNonQuery();
+                    }
                 }
-                con.Close();
+                using (SqlCommand cmd = new SqlCommand("UPDATE Job SET Estimated_Budget = @Estimated_Budget WHERE Job_ID = @Job_ID", con))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = con;
+                    cmd.Parameters.Add("@Estimated_Budget", SqlDbType.Int);
+                    cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
+
+                    for (int i = 0; i < progress.Count; i++)
+                    {
+                        cmd.Parameters[0].Value = progress[i].estimated_budget;
+                        cmd.Parameters[1].Value = progress[i].job_id;
+                        cmd.ExecuteNonQuery();
+                    }
+                }
             }
-
-            using (SqlCommand cmd = new SqlCommand("UPDATE Job SET Estimated_Budget = @Estimated_Budget WHERE Job_ID = @Job_ID", con))
+            catch(Exception ex)
             {
-                con.Open();
-                cmd.CommandType = CommandType.Text;
-                cmd.Connection = con;
-                cmd.Parameters.Add("@Estimated_Budget", SqlDbType.Int);
-                cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
-
-                for (int i = 0; i < progress.Count; i++)
-                {
-                    cmd.Parameters[0].Value = progress[i].estimated_budget;
-                    cmd.Parameters[1].Value = progress[i].job_id;
-                    cmd.ExecuteNonQuery();
-                }
+                return ex.Message;
+            }
+            finally
+            {
                 con.Close();
             }
             return "Done";

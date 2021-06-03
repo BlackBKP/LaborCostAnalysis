@@ -25,6 +25,8 @@ namespace LaborCostAnalysis.Controllers
         static int year;
         static string month;
         static List<ProgressModel> ipgs;
+        static List<ProgressModel> excel_duplicate_pgs;
+        static List<ProgressModel> duplicate_pgs;
 
         public ImportProgressController(IHostingEnvironment hostingEnvironment)
         {
@@ -109,9 +111,16 @@ namespace LaborCostAnalysis.Controllers
                     ipg.year = year;
                     string[] months = new string[] { "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
                     ipg.month = Array.IndexOf(months, month);
-                    ipgs.Add(ipg);
+                    int count = ipgs.Where(w => w.job_id == ipg.job_id && w.year == ipg.year && w.month == ipg.month).Select(s => s).Count();
+                    if (count == 0)
+                        ipgs.Add(ipg);
+                    else
+                        excel_duplicate_pgs.Add(ipg);
                 }
             }
+            List<ProgressModel> progress = ProgressInterface.GetProgressViewModels();
+            duplicate_pgs = ipgs.Where(w => progress.Any(a => a.job_id == w.job_id && a.year == w.year && a.month == w.month)).ToList();
+            ipgs = ipgs.Where(w => !progress.Any(a => a.job_id == w.job_id && a.year == w.year && a.month == w.month)).ToList();
             return Json(ipgs);
         }
 

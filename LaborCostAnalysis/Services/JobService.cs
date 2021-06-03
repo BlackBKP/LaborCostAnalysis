@@ -55,21 +55,31 @@ namespace LaborCostAnalysis.Services
         public string AddJob(string job_number, string job_name, int job_year)
         {
             SqlConnection con = DB.Connect();
-            using (SqlCommand cmd = new SqlCommand("INSERT INTO Job(Job_ID, Job_Number, Job_Name, Job_Year) " +
-                                                   "VALUES(@Job_ID, @Job_Number, @Job_Name, @Job_Year)", con))
+            try
             {
-                con.Open();
-                cmd.CommandType = CommandType.Text;
-                cmd.Connection = con;
-                cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Job_Number", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Job_Name", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Job_Year", SqlDbType.Int);
-                cmd.Parameters[0].Value = job_number.Replace("-", String.Empty).Replace(" ", String.Empty);
-                cmd.Parameters[1].Value = job_number;
-                cmd.Parameters[2].Value = job_name;
-                cmd.Parameters[3].Value = job_year;
-                cmd.ExecuteNonQuery();
+                using (SqlCommand cmd = new SqlCommand("INSERT INTO Job(Job_ID, Job_Number, Job_Name, Job_Year) " +
+                                                   "VALUES(@Job_ID, @Job_Number, @Job_Name, @Job_Year)", con))
+                {
+                    con.Open();
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = con;
+                    cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Job_Number", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Job_Name", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Job_Year", SqlDbType.Int);
+                    cmd.Parameters[0].Value = job_number.Replace("-", String.Empty).Replace(" ", String.Empty);
+                    cmd.Parameters[1].Value = job_number;
+                    cmd.Parameters[2].Value = job_name;
+                    cmd.Parameters[3].Value = job_year;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
                 con.Close();
             }
             return "Done";
@@ -78,25 +88,35 @@ namespace LaborCostAnalysis.Services
         public string InsertJobs(List<JobModel> import_jobs)
         {
             SqlConnection con = DB.Connect();
-            using (SqlCommand cmd = new SqlCommand("INSERT INTO Job(Job_ID, Job_Number, Job_Name, Job_Year) " +
-                                                   "VALUES(@Job_ID, @Job_Number, @Job_Name, @Job_Year)", con))
+            try
             {
-                con.Open();
-                cmd.CommandType = CommandType.Text;
-                cmd.Connection = con;
-                cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Job_Number", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Job_Name", SqlDbType.NVarChar);
-                cmd.Parameters.Add("@Job_Year", SqlDbType.Int);
-
-                for (int i = 0; i < import_jobs.Count; i++)
+                using (SqlCommand cmd = new SqlCommand("INSERT INTO Job(Job_ID, Job_Number, Job_Name, Job_Year) " +
+                                                   "VALUES(@Job_ID, @Job_Number, @Job_Name, @Job_Year)", con))
                 {
-                    cmd.Parameters[0].Value = import_jobs[i].job_id;
-                    cmd.Parameters[1].Value = import_jobs[i].job_number;
-                    cmd.Parameters[2].Value = import_jobs[i].job_name;
-                    cmd.Parameters[3].Value = import_jobs[i].job_year;
-                    cmd.ExecuteNonQuery();
+                    con.Open();
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = con;
+                    cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Job_Number", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Job_Name", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Job_Year", SqlDbType.Int);
+
+                    for (int i = 0; i < import_jobs.Count; i++)
+                    {
+                        cmd.Parameters[0].Value = import_jobs[i].job_id;
+                        cmd.Parameters[1].Value = import_jobs[i].job_number;
+                        cmd.Parameters[2].Value = import_jobs[i].job_name;
+                        cmd.Parameters[3].Value = import_jobs[i].job_year;
+                        cmd.ExecuteNonQuery();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
                 con.Close();
             }
             return "Done";
