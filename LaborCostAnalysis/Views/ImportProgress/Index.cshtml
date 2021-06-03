@@ -260,7 +260,6 @@
         var table_details;
         var table_progress;
         var jobs = [];
-        var import_jobs = [];
         var months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         var week_time = [
             "JAN 1", "JAN 2", "FEB 1", "FEB 2", "MAR 1", "MAR 2", "APR 1", "APR 2", "MAY 1", "MAY 2", "JUN 1", "JUN 2",
@@ -454,6 +453,9 @@
             });
         }
 
+        var import_jobs = [];
+        var excel_duplicate = [];
+        var db_duplicate = [];
         $('#import_file').on('change', async function () {
             var fileExtension = ['xls', 'xlsx'];
             var filename = $('#import_file').val();
@@ -500,7 +502,9 @@
                     else {
                         //console.log("Response");
                         //console.log(response);
-                        import_jobs = response;
+                        import_jobs = response[0];
+                        excel_duplicate = response[1];
+                        db_duplicate = response[2];
                         GenUploadData();
                     }
                 },

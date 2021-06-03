@@ -64,6 +64,8 @@ namespace LaborCostAnalysis.Controllers
             string webRootPath = _hostingEnvironment.WebRootPath;
             string newPath = Path.Combine(webRootPath, folderName);
             ots = new List<OvertimeModel>();
+            excel_duplicate_ots = new List<OvertimeModel>();
+            duplicate_ots = new List<OvertimeModel>();
             if (!Directory.Exists(newPath))
             {
                 Directory.CreateDirectory(newPath);
@@ -121,7 +123,12 @@ namespace LaborCostAnalysis.Controllers
             List<OvertimeModel> overtimes = OvertimeInterface.GetOvertimes(job_id);
             duplicate_ots = ots.Where(w => overtimes.Any(a => a.job_id == w.job_id && a.employee_id == w.employee_id && a.month == w.month && a.week == w.week && w.recording_time == a.recording_time)).ToList();
             ots = ots.Where(w => !overtimes.Any(a => a.job_id == w.job_id && a.employee_id == w.employee_id && a.month == w.month && a.week == w.week && w.recording_time == a.recording_time)).ToList();
-            return Json(ots);
+
+            List<List<OvertimeModel>> list_overtimes = new List<List<OvertimeModel>>();
+            list_overtimes.Add(ots);
+            list_overtimes.Add(excel_duplicate_ots);
+            list_overtimes.Add(duplicate_ots);
+            return Json(list_overtimes);
         }
 
         [HttpPost]

@@ -66,6 +66,8 @@ namespace LaborCostAnalysis.Controllers
             string webRootPath = _hostingEnvironment.WebRootPath;
             string newPath = Path.Combine(webRootPath, folderName);
             ipgs = new List<ProgressModel>();
+            excel_duplicate_pgs = new List<ProgressModel>();
+            duplicate_pgs = new List<ProgressModel>();
             if (!Directory.Exists(newPath))
             {
                 Directory.CreateDirectory(newPath);
@@ -121,7 +123,11 @@ namespace LaborCostAnalysis.Controllers
             List<ProgressModel> progress = ProgressInterface.GetProgressViewModels();
             duplicate_pgs = ipgs.Where(w => progress.Any(a => a.job_id == w.job_id && a.year == w.year && a.month == w.month)).ToList();
             ipgs = ipgs.Where(w => !progress.Any(a => a.job_id == w.job_id && a.year == w.year && a.month == w.month)).ToList();
-            return Json(ipgs);
+            List<List<ProgressModel>> list_progress = new List<List<ProgressModel>>();
+            list_progress.Add(ipgs);
+            list_progress.Add(excel_duplicate_pgs);
+            list_progress.Add(duplicate_pgs);
+            return Json(list_progress);
         }
 
         [HttpPost]

@@ -110,7 +110,6 @@
 @section Scripts
 {
     <script type="text/javascript">
-        var jobs = [];
         var table;
 
         $(document).ready(function () {
@@ -193,6 +192,9 @@
             $('#select_whs_month').append(str);
         }
 
+        var jobs = [];
+        var excel_duplicate = [];
+        var db_duplicate = [];
         $('#import_file').on('change', async function () {
             var fileExtension = ['xls', 'xlsx'];
             var filename = $('#import_file').val();
@@ -241,7 +243,9 @@
                     else {
                         //console.log("Response");
                         //console.log(response);
-                        jobs = response;
+                        jobs = response[0];
+                        excel_duplicate = response[1];
+                        db_duplicate = response[2];
                         GenUploadData();
                     }
                 },
@@ -254,7 +258,6 @@
             $('#job_id').val(jobs[0].job_id);
             $('#year').val(jobs[0].working_day.substring(0,4));
             $('#week_time').val(mm[jobs[0].month] + ' ' + jobs[0].week);
-
 
             var datas = [];
             for (var i = 0; i < jobs.length; i++) {

@@ -117,8 +117,13 @@ namespace LaborCostAnalysis.Controllers
                 }
             }
             List<WorkingHoursModel> whs = WorkingHourInterface.GetWorkingHours(job_id);
+            duplicate_working_hours = working_hours.Where(w => whs.Any(a => a.job_id == w.job_id && a.employee_id == w.employee_id && a.month == w.month && a.week == w.week)).ToList();
             working_hours = working_hours.Where(w => !whs.Any(a => a.job_id == w.job_id && a.employee_id == w.employee_id && a.month == w.month && a.week == w.week)).ToList();
-            return Json(working_hours);
+            List<List<WorkingHoursModel>> list_workinghours = new List<List<WorkingHoursModel>>();
+            list_workinghours.Add(working_hours);
+            list_workinghours.Add(excel_duplicate_working_hours);
+            list_workinghours.Add(duplicate_working_hours);
+            return Json(list_workinghours);
         }
 
         [HttpPost]

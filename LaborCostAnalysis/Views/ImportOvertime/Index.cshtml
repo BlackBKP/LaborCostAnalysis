@@ -100,8 +100,7 @@
 {
     <script type="text/javascript">
         var table;
-        var jobs;
-
+        
         $(document).ready(function () {
             GetJobNumbers();
             GenerateYearOptions();
@@ -182,6 +181,9 @@
             $('#select_ots_month').append(str);
         }
 
+        var jobs = [];
+        var excel_duplicate = [];
+        var db_duplicate = [];
         $('#import_file').on('change', async function () {
             var fileExtension = ['xls', 'xlsx'];
             var filename = $('#import_file').val();
@@ -230,7 +232,9 @@
                     else {
                         //console.log("Response");
                         //console.log(response);
-                        jobs = response;
+                        jobs = response[0];
+                        excel_duplicate = response[1];
+                        db_duplicate = response[2];
                         GenUploadData();
                     }
                 },
