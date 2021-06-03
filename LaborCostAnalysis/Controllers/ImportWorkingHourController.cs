@@ -21,7 +21,9 @@ namespace LaborCostAnalysis.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         static List<WorkingHoursModel> working_hours;
-        IConnectDB DB;
+        static List<WorkingHoursModel> excel_duplicate_working_hours;
+        static List<WorkingHoursModel> duplicate_working_hours;
+
         IJob JobInterface;
         IWorkingHour WorkingHourInterface;
 
@@ -63,6 +65,8 @@ namespace LaborCostAnalysis.Controllers
             string webRootPath = _hostingEnvironment.WebRootPath;
             string newPath = Path.Combine(webRootPath, folderName);
             working_hours = new List<WorkingHoursModel>();
+            excel_duplicate_working_hours = new List<WorkingHoursModel>();
+            duplicate_working_hours = new List<WorkingHoursModel>();
             if (!Directory.Exists(newPath))
             {
                 Directory.CreateDirectory(newPath);
@@ -105,7 +109,11 @@ namespace LaborCostAnalysis.Controllers
                     string[] months = new string[] { "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
                     wh.month = Array.IndexOf(months, month.Split(' ')[0]);
                     wh.hours = Convert.ToInt32(row.GetCell(6).StringCellValue.Split(':')[0]);
-                    working_hours.Add(wh);
+                    int count = working_hours.Where(w => w.job_id == wh.job_id && w.employee_id == wh.employee_id && w.working_day == wh.working_day && w.week == wh.week && w.month == wh.month).Select(s => s).Count();
+                    if (count == 0)
+                        working_hours.Add(wh);
+                    else
+                        excel_duplicate_working_hours.Add(wh);
                 }
             }
             List<WorkingHoursModel> whs = WorkingHourInterface.GetWorkingHours(job_id);

@@ -23,6 +23,7 @@ namespace LaborCostAnalysis.Controllers
         IJob JobInterface;
 
         static List<JobModel> import_jobs;
+        static List<JobModel> excel_duplicated_jobs;
         static List<JobModel> duplicated_jobs;
 
         public ImportJobController(IHostingEnvironment hostingEnvironment)
@@ -51,6 +52,7 @@ namespace LaborCostAnalysis.Controllers
             string newPath = Path.Combine(webRootPath, folderName);
 
             import_jobs = new List<JobModel>();
+            excel_duplicated_jobs = new List<JobModel>();
             duplicated_jobs = new List<JobModel>();
             List<JobModel> duplicate_excel = new List<JobModel>();
 
@@ -95,7 +97,11 @@ namespace LaborCostAnalysis.Controllers
                     job.job_number = row.GetCell(0).StringCellValue.Trim();
                     job.job_name = row.GetCell(1).StringCellValue;
                     job.job_year = Convert.ToInt32(row.GetCell(2).NumericCellValue);
-                    import_jobs.Add(job);
+                    int count = import_jobs.Where(w => w.job_id == job.job_id).Select(s => s).Count();
+                    if (count == 0)
+                        import_jobs.Add(job);
+                    else
+                        excel_duplicated_jobs.Add(job);
                 }
             }
 
@@ -104,6 +110,7 @@ namespace LaborCostAnalysis.Controllers
             duplicated_jobs = import_jobs.Where(w => jobs.Any(a => a.job_id == w.job_id)).ToList();
             import_jobs = import_jobs.GroupBy(g => g.job_id).Select(s => s.FirstOrDefault()).Where(w => !duplicated_jobs.Any(a => a.job_id == w.job_id)).ToList();
             list_jobs.Add(import_jobs);
+            list_jobs.Add(excel_duplicated_jobs);
             list_jobs.Add(duplicated_jobs);
             return Json(list_jobs);
         }

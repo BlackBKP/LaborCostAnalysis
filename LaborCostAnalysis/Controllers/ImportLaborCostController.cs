@@ -24,6 +24,7 @@ namespace LaborCostAnalysis.Controllers
         ILaborCost LaborCostInterface;
 
         static List<LaborCostModel> import_costs;
+        static List<LaborCostModel> excel_duplicate_costs;
         static List<LaborCostModel> duplicate_costs;
 
         public ImportLaborCostController(IHostingEnvironment hostingEnvironment)
@@ -44,6 +45,7 @@ namespace LaborCostAnalysis.Controllers
             string webRootPath = _hostingEnvironment.WebRootPath;
             string newPath = Path.Combine(webRootPath, folderName);
             import_costs = new List<LaborCostModel>();
+            excel_duplicate_costs = new List<LaborCostModel>();
             duplicate_costs = new List<LaborCostModel>();
             if (!Directory.Exists(newPath))
             {
@@ -97,7 +99,11 @@ namespace LaborCostAnalysis.Controllers
                         social_security = Convert.ToInt32(row.GetCell(15).NumericCellValue),
                         number_of_labor = Convert.ToInt32(row.GetCell(16).NumericCellValue)
                     };
-                    import_costs.Add(job);
+                    int count = import_costs.Where(w => w.job_id == job.job_id && w.year == job.year && w.month == job.month && w.week == job.week).Select(s => s).Count();
+                    if (count == 0)
+                        import_costs.Add(job);
+                    else
+                        excel_duplicate_costs.Add(job);
                 }
             }
             List<List<LaborCostModel>> list_labor_costs = new List<List<LaborCostModel>>();
@@ -105,6 +111,7 @@ namespace LaborCostAnalysis.Controllers
             duplicate_costs = import_costs.Where(w => labor_costs.Any(a => a.job_id == w.job_id && a.week == w.week && a.month == w.month && a.year == w.year)).ToList();
             import_costs = import_costs.Where(w => !duplicate_costs.Any(a => a.job_id == w.job_id && a.week == w.week && a.month == w.month && a.year == w.year)).ToList();
             list_labor_costs.Add(import_costs);
+            list_labor_costs.Add(excel_duplicate_costs);
             list_labor_costs.Add(duplicate_costs);
             return Json(list_labor_costs);
         }

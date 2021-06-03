@@ -95,6 +95,7 @@
     <script type="text/javascript">
         
         var import_jobs = [];
+        var excel_duplicate_jobs = [];
         var duplicate_jobs = [];
         $('#import_file').on('change', async function () {
             var fileExtension = ['xls', 'xlsx'];
@@ -131,7 +132,8 @@
                         alert('Some error occured while uploading');
                     else {
                         import_jobs = response[0];
-                        duplicate_jobs = response[1];
+                        excel_duplicate_jobs = response[1];
+                        duplicate_jobs = response[2];
                         GenUploadData();
                     }
                 },
