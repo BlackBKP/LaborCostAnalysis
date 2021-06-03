@@ -8,6 +8,7 @@ namespace LaborCostAnalysis.Models
     public class SpentPerWeekModel
     {
         public string job_id { get; set; }
+        public string job_name { get; set; }
 
         public int week { get; set; }
 

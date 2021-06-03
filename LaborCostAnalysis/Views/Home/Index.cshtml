@@ -42,14 +42,23 @@
         </div>
         <div class="col-10">
             <div class="info-box bg-dark" style="width:100%;">
-                <div class="info-box-content">
+                <div class="info-box-content" style="padding-left:20px">
                     <div class="row">
+                        <div class="col-3">
+                            <h4 id="job_id"><strong>JOB ID: </strong>J21-XXXXX</h4>
+                        </div>
+                        <div class="col-9">
+                            <h4 id="job_name"><strong>JOB NAME: </strong>TEST JOB NAME SPACING</h4>
+                        </div>
+                    </div>
+                    
+                    @*<div class="row">
                         <div class="col-12">
                             <h4 id="job_id" class="info-box-text">
                                 Please Select Job
                             </h4>
                         </div>
-                    </div>
+                    </div>*@
                 </div>
             </div>
 
@@ -222,7 +231,7 @@
             for (var i = 0; i < jobs.length; i++) {
                 str += '<li class="list-group-item" style="padding:1px">';
                 str += '<button type="button" class="btn form-control" style="background-color:rgba(40,121,191,1);color:rgba(255,255,255,1)" onclick=ViewJobData("' + jobs[i].job_id + '")>';
-                str += jobs[i].job_id;
+                str += jobs[i].job_number;
                 str += '</button >';
                 str += '</li>';
             }
@@ -235,7 +244,8 @@
                 if (jobs[i].job_id == job_id)
                     index = i;
             }
-            $('#job_id').html("<strong>JOB NUMBER: </strong>" + jobs[index].job_number  + " " + "<strong>JOB NAME: </strong>" + jobs[index].job_name);
+            $('#job_id').html("<strong>JOB NUMBER: </strong>" + jobs[index].job_number);
+            $('#job_name').html("<strong>JOB NAME: </strong>" + jobs[index].job_name);
             GetJobProgress(job_id);
             $('#div_content').show();
             GetHalfMonthSpent(job_id);

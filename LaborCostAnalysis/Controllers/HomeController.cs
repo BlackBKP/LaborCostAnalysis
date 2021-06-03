@@ -62,6 +62,8 @@ namespace LaborCostAnalysis.Controllers
         public JsonResult GetHalfMonthSpent(string job_id)
         {
             List<SpentPerWeekModel> spws = SpentInterface.GetSpentPerWeeksByJob(job_id);
+            int index = spws.IndexOf(spws.Where(w => w.acc_cost > 0).FirstOrDefault());
+            spws = spws.Skip(index).ToList();
             return Json(spws);
         }
 

@@ -40,7 +40,6 @@
         }
 
         function GenSpentChart(jobs) {
-            //console.log(jobs);
             var i = 0;
             for (i = 0; i < jobs.length; i++) {
                 var job_year = jobs[i][0].job_id.substring(0, 3);
@@ -48,10 +47,10 @@
                 var job_id = job_year + '-' + job_number;
                 var str = '<div class="card card-dark">' +
                             '<div class="card-header">' +
-                                '<span class="card-title">JOB ID: ' + job_id + '</span>' +
+                                '<span class="card-title"><b>JOB NUMBER : </b> ' + job_id + ' <b>JOB NAME : </b>' + jobs[i][0].job_name + '</span>' +
                             '</div>';
                 str += '<div class="card-body">';
-                str += '<canvas id="' + job_id + '" style="height:40vh;width:100%"></canvas>';
+                str += '<canvas id="' + job_id + '" style="height:60vh;width:100%"></canvas>';
                 str += '</div></div>';
                 $('#projects').append(str);
 
@@ -193,7 +192,7 @@
                                         }
                                     }
                                 }
-                            }
+                            },
                         }
                     }
                 });

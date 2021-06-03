@@ -24,6 +24,7 @@ namespace LaborCostAnalysis.Services
             con.Open();
 
             string str_cmd = "select Labor_Costs.job_ID, " +
+                                    "s1.Job_Name, " +
                                     "SUM((cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int)) + isnull(Social_Security,0)) OVER(PARTITION BY Labor_Costs.job_ID ORDER BY Labor_Costs.job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as Acc_Cost, " +
                                     "week, " +
                                     "Labor_Costs.Month, " +
@@ -35,7 +36,7 @@ namespace LaborCostAnalysis.Services
                                     "((cast(s2.Job_Progress as int) +  lag(s2.Job_Progress,1,s2.Job_Progress * -1) over (partition by s2.Job_ID order by s2.Job_ID))/2.0) as Progress, " +
                                     "(cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int) + isnull(Social_Security,0)) as spent_cost " +
                                     "from Labor_Costs " +
-                                    "left join (select job_ID,isnull(Estimated_Budget,0) as Estimated_Budget from job) as s1 ON s1.job_ID = Labor_Costs.job_ID " +
+                                    "left join (select job_ID,Job_Name,isnull(Estimated_Budget,0) as Estimated_Budget from job) as s1 ON s1.job_ID = Labor_Costs.job_ID " +
                                     "left join (select Job_ID,Job_Progress,Month,Year from Progress) as s2 ON s2.Job_ID = Labor_Costs.job_ID and s2.Year = Labor_Costs.Year and s2.Month = Labor_Costs.Month " +
                                     "order by Labor_Costs.job_ID,Labor_Costs.Year,Labor_Costs.Month,Labor_Costs.week";
 
@@ -49,6 +50,7 @@ namespace LaborCostAnalysis.Services
                     SpentPerWeekModel spw = new SpentPerWeekModel()
                     {
                         job_id = dr["Job_ID"] != DBNull.Value ? dr["Job_ID"].ToString() : "",
+                        job_name = dr["Job_Name"] != DBNull.Value ? dr["Job_Name"].ToString() : "",
                         week = dr["week"] != DBNull.Value ? Convert.ToInt32(dr["week"]) : 0,
                         month = dr["Month"] != DBNull.Value ? Convert.ToInt32(dr["Month"]) : 0,
                         year = dr["Year"] != DBNull.Value ? Convert.ToInt32(dr["Year"]) : 0,
@@ -75,6 +77,7 @@ namespace LaborCostAnalysis.Services
             con.Open();
 
             string str_cmd = "select Labor_Costs.job_ID, " +
+                                    "s1.Job_Name, " +
                                     "SUM((cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int)) + isnull(Social_Security,0)) OVER(PARTITION BY Labor_Costs.job_ID ORDER BY Labor_Costs.job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as Acc_Cost, " +
                                     "week, " +
                                     "Labor_Costs.Month, " +
@@ -86,7 +89,7 @@ namespace LaborCostAnalysis.Services
                                     "((cast(s2.Job_Progress as int) +  lag(s2.Job_Progress,1,s2.Job_Progress * -1) over (partition by s2.Job_ID order by s2.Job_ID))/2.0) as Progress, " +
                                     "(cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int) + isnull(Social_Security,0)) as spent_cost " +
                                     "from Labor_Costs " +
-                                    "left join (select job_ID,isnull(Estimated_Budget,0) as Estimated_Budget from job) as s1 ON s1.job_ID = Labor_Costs.job_ID " +
+                                    "left join (select job_ID,Job_Name,isnull(Estimated_Budget,0) as Estimated_Budget from job) as s1 ON s1.job_ID = Labor_Costs.job_ID " +
                                     "left join (select Job_ID,Job_Progress,Month,Year from Progress) as s2 ON s2.Job_ID = Labor_Costs.job_ID and s2.Year = Labor_Costs.Year and s2.Month = Labor_Costs.Month " +
                                     "where Labor_Costs.job_ID = '" + job_id + "' " +
                                     "order by Labor_Costs.job_ID,Labor_Costs.Year,Labor_Costs.Month,Labor_Costs.week";
@@ -101,6 +104,7 @@ namespace LaborCostAnalysis.Services
                     SpentPerWeekModel spw = new SpentPerWeekModel()
                     {
                         job_id = dr["Job_ID"] != DBNull.Value ? dr["Job_ID"].ToString() : "",
+                        job_name = dr["Job_Name"] != DBNull.Value ? dr["Job_Name"].ToString() : "",
                         week = dr["week"] != DBNull.Value ? Convert.ToInt32(dr["week"]) : 0,
                         month = dr["Month"] != DBNull.Value ? Convert.ToInt32(dr["Month"]) : 0,
                         year = dr["Year"] != DBNull.Value ? Convert.ToInt32(dr["Year"]) : 0,
