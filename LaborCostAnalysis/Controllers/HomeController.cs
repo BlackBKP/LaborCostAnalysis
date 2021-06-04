@@ -38,9 +38,16 @@ namespace LaborCostAnalysis.Controllers
         [HttpGet]
         public JsonResult GetJobs()
         {
-            List<JobModel> jobs = JobInterface.GetJobs();
-            jobs = jobs.OrderByDescending(o => o.job_id).ToList();
-            return Json(jobs);
+            try
+            {
+                List<JobModel> jobs = JobInterface.GetJobs();
+                jobs = jobs.OrderByDescending(o => o.job_id).ToList();
+                return Json(jobs);
+            }
+            catch(Exception ex)
+            {
+                return Json(ex);
+            }
         }
 
         [HttpGet]

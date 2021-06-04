@@ -2,9 +2,9 @@
 @{
     ViewData["Title"] = "Job View";
 }
-
 <div id="div_container" class="container-fluid" style="padding-top:10px;height:86vh;overflow-y:hidden">
 
+    <!-- Page Title -->
     <div class="info-box bg-dark">
         <div class="info-box-content">
             <h3 class="info-box-text">JOB VIEW</h3>
@@ -12,6 +12,7 @@
     </div>
 
     <div class="row">
+        <!-- Left Menus -->
         <div class="col-2">
             <div class="info-box bg-dark" style="width:100%">
                 <div class="info-box-content row">
@@ -40,25 +41,18 @@
             </div>
 
         </div>
+        <!-- Job's Data -->
         <div class="col-10">
             <div class="info-box bg-dark" style="width:100%;">
                 <div class="info-box-content" style="padding-left:20px">
                     <div class="row">
                         <div class="col-3">
-                            <h4 id="job_id"><strong>JOB ID: </strong>J21-XXXXX</h4>
+                            <h4 id="job_id">Please Select Job</h4>
                         </div>
                         <div class="col-9">
-                            <h4 id="job_name"><strong>JOB NAME: </strong>TEST JOB NAME SPACING</h4>
+                            <h4 id="job_name"></h4>
                         </div>
                     </div>
-                    
-                    @*<div class="row">
-                        <div class="col-12">
-                            <h4 id="job_id" class="info-box-text">
-                                Please Select Job
-                            </h4>
-                        </div>
-                    </div>*@
                 </div>
             </div>
 
@@ -204,8 +198,13 @@
 
                     },
                     success: function (response) {
-                        jobs = response;
-                        GenProjectOptions();
+                        if (response.Message != null) {
+                            ShowError(response.Message);
+                        }
+                        else {
+                            jobs = response;
+                            GenProjectOptions();
+                        }
                     }
                 });
             }
@@ -218,11 +217,37 @@
                         year
                     },
                     success: function (response) {
-                        jobs = response;
-                        GenProjectOptions();
+                        if (response.Message != null) {
+                            ShowError(response.Message);
+                        }
+                        else {
+                            jobs = response;
+                            GenProjectOptions();
+                        }
                     }
                 });
             }
+        }
+
+        function ShowError(ErrorMessage) {
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": false,
+                "positionClass": "toast-bottom-full-width",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "300",
+                "timeOut": "3000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+            toastr.error(ErrorMessage);
         }
 
         function GenProjectOptions() {
@@ -262,9 +287,6 @@
                     job_id
                 },
                 success: function (response) {
-                    //console.log("Progress");
-                    //console.log(response);
-
                     //Progress
                     var percentage_progress = response[0].work_completion + "%";
                     $('#ib_progress').show();
@@ -278,7 +300,6 @@
                     $('#spent_number').html(budget_str);
                     $('#pb_spent').width(percentage_spent + "%");
                     var remain_str = response[0].remainning_cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " Remain";
-                    //$('#pb_spent_description').html(percentage_spent + "% Budget Spent");
                     $('#pb_spent_description').html(remain_str);
 
                     //Labor
@@ -297,8 +318,6 @@
                     job_id
                 },
                 success: function (response) {
-                    //console.log("Half Month Spent");
-                    //console.log(response);
                     GenSPFChart(response);
                 }
             });
@@ -313,8 +332,6 @@
                     job_id
                 },
                 success: function (response) {
-                    //console.log("Man Power");
-                    //console.log(response);
                     GenMPHChart(response);
                 }
             });
@@ -329,8 +346,6 @@
                     job_id
                 },
                 success: function (response) {
-                    //console.log("Normal Overtime Ratio");
-                    //console.log(response);
                     GenNPOChart(response);
                 }
             });

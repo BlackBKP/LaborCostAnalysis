@@ -1,0 +1,50 @@
+﻿@{
+    Layout = null;
+}
+
+<!-- Add Job Modal -->
+<div class="modal" id="modal_add_job">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5>Add Job</h5>
+                <button class="close" type="button" data-dismiss="modal">
+                    &times;
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form>
+
+                    <label for="input_job_year">Job Year</label>
+                    <input id="input_job_year" class="form-control" type="text" placeholder="YYYY" />
+                    <br />
+
+                    <label for="input_job_number">Job Number</label>
+                    <input id="input_job_number" class="form-control" type="text" placeholder="Job Number: JXX-XXXX" />
+                    <br />
+
+                    <label for="input_job_name">Job Name</label>
+                    <input id="input_job_name" class="form-control" type="text" placeholder="Job Name" />
+                    <br />
+
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button id="btn_confirm_add" class="btn btn-primary" type="button" disabled>
+                    Add
+                </button>
+
+                <button class="btn btn-danger" type="button" data-dismiss="modal">
+                    Cancel
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
