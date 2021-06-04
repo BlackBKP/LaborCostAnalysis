@@ -39,6 +39,13 @@ namespace LaborCostAnalysis.Controllers
         }
 
         [HttpPost]
+        public JsonResult EditJobName(string job_number, string job_name)
+        {
+            JobInterface.UpdateJobName(job_number, job_name);
+            return Json("Done");
+        }
+
+        [HttpPost]
         public JsonResult AddJob(string number, string name, int year)
         {
             JobInterface.AddJob(number, name, year);

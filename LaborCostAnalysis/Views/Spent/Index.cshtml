@@ -34,9 +34,35 @@
 
                 },
                 success: function (response) {
-                    GenSpentChart(response);
+                    if (response.Message != null) {
+                        ShowError(response.Message);
+                    }
+                    else {
+                        GenSpentChart(response);
+                    }
                 }
             });
+        }
+
+        function ShowError(ErrorMessage) {
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": false,
+                "positionClass": "toast-bottom-full-width",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "300",
+                "timeOut": "3000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+            toastr.error(ErrorMessage);
         }
 
         function GenSpentChart(jobs) {

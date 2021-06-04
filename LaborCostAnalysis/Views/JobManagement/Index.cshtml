@@ -63,17 +63,24 @@
                     </div>
                     <div class="form-group row">
                         <label>Name</label>
-                        <input id="EditJobName" class="form-control" type="text"/>
+                        <div class="input-group">
+                            <input id="EditJobName" class="form-control" type="text" disabled/>
+                            <div class="input-group-append">
+                                <button id="EnableEditJobName" class="btn btn-primary" type="button">
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group row">
                         <label>Budget</label>
-                        <input id="EditJobBudget" class="form-control" type="text"/>
+                        <input id="EditJobBudget" class="form-control" type="text" disabled/>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button id="BtnSaveChanges" type="button" class="btn btn-primary" style="display:none">Save changes</button>
             </div>
         </div>
     </div>
@@ -132,8 +139,34 @@
             $('#ModalEditJob').modal("show");
             $('#EditJobNumber').val(table.row(this).data()[0]);
             $('#EditJobName').val(table.row(this).data()[1]);
+            $('#EditJobName').attr('disabled', true);
             $('#EditJobBudget').val(table.row(this).data()[2]);
-        })
+            $('#BtnSaveChanges').hide();
+        });
+
+        $('#EnableEditJobName').on('click', function () {
+            $('#EditJobName').attr('disabled', false);
+        });
+
+        $('#EditJobName').on('keydown', function () {
+            $('#BtnSaveChanges').show();
+        });
+
+        $('#BtnSaveChanges').on('click', function () {
+            var job_number = $('#EditJobNumber').val();
+            var job_name = $('#EditJobName').val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("EditJobName", "JobManagement")',
+	            contentType: 'application/x-www-form-urlencoded',
+                data: {
+                    job_number,job_name
+                },
+                success: function (response) {
+                    window.location.reload();
+                }
+            });
+        });
 
         //Add Job
         $('#btn_add_job').on('click', function () {
