@@ -155,7 +155,7 @@ namespace LaborCostAnalysis.Controllers
                     estimated_budget = Convert.ToInt32(job_budget.Replace(",", String.Empty))
                 };
                 string result = "";
-                return Json("Done");
+                return Json(result);
             }
             catch(Exception ex)
             {

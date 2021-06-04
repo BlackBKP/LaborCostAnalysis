@@ -378,6 +378,10 @@
                 ]);
             }
 
+            console.log("Data 0" + data[0]);
+            console.log("Data 1" + data[1]);
+            con
+
             table_details = $('#table_details').DataTable({
                 data: datas,
                 pagingType: "full_numbers",
@@ -407,7 +411,7 @@
                     $('td', row).eq(4).html(progress_str);
                     var progress_percent_str = '<span class="badge bg-primary">' + Math.round(data[5]) + '%</span>';
                     $('td', row).eq(5).html(progress_percent_str);
-                    $('td', row).eq(6).html('<button class="btn btn-primary form-control" onclick=EditProgress("' + jobs[index][0].job_number + '",' + data[0] + ',"' + data[1] + '","' + $('#job_estimated_budget').val() + '",' + data[5] + ')>Edit</button>');
+                    $('td', row).eq(6).html('<button class="btn btn-primary form-control" onclick=EditProgress("' + jobs[index][0].job_number + '",' + data[0] + ',"' + data[1] + '","' + $('#job_estimated_budget').val() + '","' + data[4] + '")>Edit</button>');
                 }
             });
         }
@@ -516,7 +520,13 @@
             })
         }
 
-        function EditProgress(job_number,year,month,budget,progress) {
+        function EditProgress(job_number, year, month, budget, progress) {
+            console.log("Edit Budget Progress");
+            console.log("Job Number: " + job_number);
+            console.log("Year: " + year);
+            console.log("Month: " + month);
+            console.log("Budget: " + budget);
+            console.log("Progress: " + progress);
             $('#ModalEditJobSpent').modal("show");
             $('#EditJobNumber').val(job_number);
             $('#EditJobYear').val(year);
@@ -526,17 +536,18 @@
         }
 
         $('#btn_update_progress').on('click', function () {
+            console.log("Updating Budget");
             var job_number = $('#EditJobNumber').val();
             var job_year = $('#EditJobYear').val();
             var job_month = $('#EditJobMonth').val();
             var job_budget = $('#EditJobBudget').val();
             var job_progress = $('#EditJobProgress').val();
-            @*console.log("Update Budget Progress");
+            console.log("Update Budget Progress");
             console.log("Job Number: " + $('#EditJobNumber').val());
             console.log("Year: " + $('#EditJobYear').val());
             console.log("Month: " + $('#EditJobMonth').val());
             console.log("Budget: " + $('#EditJobBudget').val());
-            console.log("Progress: " + $('#EditJobProgress').val());*@
+            console.log("Progress: " + $('#EditJobProgress').val());
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("EditProgress", "ImportProgress")',
