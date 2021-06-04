@@ -187,5 +187,10 @@ namespace LaborCostAnalysis.Services
             }
             return "Done";
         }
+
+        public string UpdateProgress(ProgressModel progress)
+        {
+            return "Done";
+        }
     }
 }

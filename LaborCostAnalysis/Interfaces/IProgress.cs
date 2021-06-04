@@ -13,5 +13,7 @@ namespace LaborCostAnalysis.Interfaces
         List<ProgressModel> GetProgressViewModels();
 
         string InsertProgress(List<ProgressModel> progress);
+
+        string UpdateProgress(ProgressModel progress);
     }
 }

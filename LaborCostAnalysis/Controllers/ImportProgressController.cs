@@ -20,6 +20,7 @@ namespace LaborCostAnalysis.Controllers
     public class ImportProgressController : Controller
     {
         private readonly IHostingEnvironment _hostingEnvironment;
+        IJob JobInterface;
         IProgress ProgressInterface;
 
         static int year;
@@ -31,6 +32,7 @@ namespace LaborCostAnalysis.Controllers
         public ImportProgressController(IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
+            this.JobInterface = new JobService();
             this.ProgressInterface = new ProgressService();
         }
 
@@ -135,6 +137,30 @@ namespace LaborCostAnalysis.Controllers
         {
             string result = ProgressInterface.InsertProgress(ipgs);
             return Json(result);
+        }
+
+        [HttpPost]
+        public JsonResult EditProgress(string job_number, int job_year, string job_month, string job_budget, int job_progress)
+        {
+            string[] months = new string[] { "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
+            try
+            {
+                ProgressModel progress = new ProgressModel()
+                {
+                    job_id = job_number.Replace("-", String.Empty).Replace(" ", String.Empty),
+                    job_number = job_number,
+                    month = Array.IndexOf(months, job_month),
+                    year = job_year,
+                    job_progress = job_progress,
+                    estimated_budget = Convert.ToInt32(job_budget.Replace(",", String.Empty))
+                };
+                string result = "";
+                return Json("Done");
+            }
+            catch(Exception ex)
+            {
+                return Json(ex);
+            }
         }
     }
 }

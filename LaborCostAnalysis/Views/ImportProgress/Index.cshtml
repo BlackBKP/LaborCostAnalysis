@@ -141,14 +141,14 @@
                 <label for="job_name">
                     Job Name
                 </label>
-                <input id="job_name" class="form-control" type="text" />
+                <input id="job_name" class="form-control" type="text" disabled/>
             </div>
             <br />
             <div class="form-row">
                 <label for="job_estimated_budget">
                     Estimated Budget
                 </label>
-                <input id="job_estimated_budget" class="form-control" type="text" />
+                <input id="job_estimated_budget" class="form-control" type="text" disabled/>
             </div>
             <br />
             <table id="table_details" class="table table-sm table-hover" style="width:100%">
@@ -185,69 +185,30 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
+                        <label>Job Number</label>
+                        <input id="EditJobNumber" class="form-control" type="text" disabled/>
+                    </div>
+                    <div class="form-group">
                         <label>Year</label>
-                        <input class="form-control" value="2021" type="text" disabled />
+                        <input id="EditJobYear" class="form-control" type="text" disabled />
                     </div>
                     <div class="form-group">
                         <label>Month</label>
-                        <input class="form-control" value="JANUARY" type="text" disabled />
+                        <input id="EditJobMonth" class="form-control" type="text" disabled />
                     </div>
-                    <hr />
-                    <label>Week 1</label>
-                    <div class="form-group row">
-                        <div class="col-4">
-                            <label class="col-form-label" for="labor_cost_w1">Labor Cost</label>
-                            <label class="col-form-label" for="ot_cost_w1">OT Cost</label>
-                            <label class="col-form-label" for="accommodation_cost_w1">Accommodation Cost</label>
-                            <label class="col-form-label" for="compensation_cost_w1">Compensation Cost</label>
-                            <label class="col-form-label" for="social_security_w1">Social Security</label>
-                        </div>
-                        <div class="col-7">
-                            <input id="labor_cost_w1" class="form-control" type="number" />
-                            <input id="ot_cost_w1" class="form-control" type="number" />
-                            <input id="accommodation_cost_w1" class="form-control" type="number" />
-                            <input id="compensation_cost_w1" class="form-control" type="number" />
-                            <input id="social_security_w1" class="form-control" type="number" />
-                        </div>
-                        <div class="col-1">
-                            <label class="col-form-label">BAHT</label>
-                            <label class="col-form-label">BAHT</label>
-                            <label class="col-form-label">BAHT</label>
-                            <label class="col-form-label">BAHT</label>
-                            <label class="col-form-label">BAHT</label>
-                        </div>
+                    <div class="form-group">
+                        <label>Budget</label>
+                        <input id="EditJobBudget" class="form-control" type="text" />
                     </div>
-                    <hr />
-                    <label>Week 2</label>
-                    <div class="form-group row">
-                        <div class="col-4">
-                            <label class="col-form-label" for="labor_cost_w2">Labor Cost</label>
-                            <label class="col-form-label" for="ot_cost_w2">OT Cost</label>
-                            <label class="col-form-label" for="accommodation_cost_w2">Accommodation Cost</label>
-                            <label class="col-form-label" for="compensation_cost_w2">Compensation Cost</label>
-                            <label class="col-form-label" for="social_security_w2">Social Security</label>
-                        </div>
-                        <div class="col-7">
-                            <input id="labor_cost_w2" class="form-control" type="number" />
-                            <input id="ot_cost_w2" class="form-control" type="number" />
-                            <input id="accommodation_cost_w2" class="form-control" type="number" />
-                            <input id="compensation_cost_w2" class="form-control" type="number" />
-                            <input id="social_security_w2" class="form-control" type="number" />
-                        </div>
-                        <div class="col-1">
-                            <label class="col-form-label">BAHT</label>
-                            <label class="col-form-label">BAHT</label>
-                            <label class="col-form-label">BAHT</label>
-                            <label class="col-form-label">BAHT</label>
-                            <label class="col-form-label">BAHT</label>
-                        </div>
+                    <div class="form-group">
+                        <label>Progress (%)</label>
+                        <input id="EditJobProgress" class="form-control" type="number" min="0" max="100"/>
                     </div>
-
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button id="btn_update_progress" type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
@@ -393,7 +354,6 @@
             }
 
             if (index > -1) {
-                //console.log(jobs[index]);
                 var card = document.getElementById("card_job_detail");
                 card.style.display = "block";
                 $('#job_number_detail').text("Job Number: " + jobs[index][0].job_number);
@@ -447,8 +407,7 @@
                     $('td', row).eq(4).html(progress_str);
                     var progress_percent_str = '<span class="badge bg-primary">' + Math.round(data[5]) + '%</span>';
                     $('td', row).eq(5).html(progress_percent_str);
-
-                    $('td', row).eq(6).html('<button class="btn btn-primary form-control">Edit</button>');
+                    $('td', row).eq(6).html('<button class="btn btn-primary form-control" onclick=EditProgress("' + jobs[index][0].job_number + '",' + data[0] + ',"' + data[1] + '","' + $('#job_estimated_budget').val() + '",' + data[5] + ')>Edit</button>');
                 }
             });
         }
@@ -557,11 +516,39 @@
             })
         }
 
-        @*$('#table_details tbody').on('click', 'tr', function () {
+        function EditProgress(job_number,year,month,budget,progress) {
             $('#ModalEditJobSpent').modal("show");
-            var tt = $('#table_details').DataTable();
-            console.log(tt.row(this).data());
-        });*@
+            $('#EditJobNumber').val(job_number);
+            $('#EditJobYear').val(year);
+            $('#EditJobMonth').val(month);
+            $('#EditJobBudget').val(budget);
+            $('#EditJobProgress').val(progress);
+        }
+
+        $('#btn_update_progress').on('click', function () {
+            var job_number = $('#EditJobNumber').val();
+            var job_year = $('#EditJobYear').val();
+            var job_month = $('#EditJobMonth').val();
+            var job_budget = $('#EditJobBudget').val();
+            var job_progress = $('#EditJobProgress').val();
+            @*console.log("Update Budget Progress");
+            console.log("Job Number: " + $('#EditJobNumber').val());
+            console.log("Year: " + $('#EditJobYear').val());
+            console.log("Month: " + $('#EditJobMonth').val());
+            console.log("Budget: " + $('#EditJobBudget').val());
+            console.log("Progress: " + $('#EditJobProgress').val());*@
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("EditProgress", "ImportProgress")',
+	            contentType: 'application/x-www-form-urlencoded',
+                data: {
+                    job_number, job_year, job_month, job_budget, job_progress
+                },
+                success: function (response) {
+                    window.location.reload();
+                }
+            });
+        });
 
     </script>
 }
