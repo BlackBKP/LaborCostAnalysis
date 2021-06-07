@@ -188,8 +188,80 @@ namespace LaborCostAnalysis.Services
             return "Done";
         }
 
+        public string UpdateDuplicateProgress(List<ProgressModel> progress)
+        {
+            SqlConnection con = DB.Connect();
+            try
+            {
+                con.Open();
+                using (SqlCommand cmd = new SqlCommand("UPDATE Progress SET Job_Progress = @Job_Progress " +
+                                                       "WHERE Job_ID = @Job_ID AND Month = @Month AND Year = @Year", con))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = con;
+                    cmd.Parameters.Add("@Job_Progress", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Month", SqlDbType.Int);
+                    cmd.Parameters.Add("@Year", SqlDbType.Int);
+
+                    for (int i = 0; i < progress.Count; i++)
+                    {
+                        cmd.Parameters[0].Value = progress[i].job_progress;
+                        cmd.Parameters[1].Value = progress[i].job_id;
+                        cmd.Parameters[2].Value = progress[i].month;
+                        cmd.Parameters[3].Value = progress[i].year;
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                using (SqlCommand cmd = new SqlCommand("UPDATE Job SET Estimated_Budget = @Estimated_Budget WHERE Job_ID = @Job_ID", con))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = con;
+                    cmd.Parameters.Add("@Estimated_Budget", SqlDbType.Int);
+                    cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
+
+                    for (int i = 0; i < progress.Count; i++)
+                    {
+                        cmd.Parameters[0].Value = progress[i].estimated_budget;
+                        cmd.Parameters[1].Value = progress[i].job_id;
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                con.Close();
+            }
+            return "Done";
+        }
+
         public string UpdateProgress(ProgressModel progress)
         {
+            SqlConnection con = DB.Connect();
+            try
+            {
+                con.Open();
+                string str_update_progress = "UPDATE Progress SET Job_Progress = " + progress.job_progress + " WHERE Job_ID = '" + progress.job_id + 
+                                             "' AND Month = " + progress.month + " AND Year = " + progress.year;
+                SqlCommand cmd_update_progress = new SqlCommand(str_update_progress, con);
+                cmd_update_progress.ExecuteNonQuery();
+
+                string str_update_budget = "UPDATE Job SET Estimated_Budget = " + progress.estimated_budget + " WHERE Job_ID = '" + progress.job_id + "'";
+                SqlCommand cmd_update_budget = new SqlCommand(str_update_budget, con);
+                cmd_update_budget.ExecuteNonQuery();
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                con.Close();
+            }
             return "Done";
         }
     }

@@ -136,6 +136,7 @@ namespace LaborCostAnalysis.Controllers
         public JsonResult ConfirmImport()
         {
             string result = ProgressInterface.InsertProgress(ipgs);
+            result = ProgressInterface.UpdateDuplicateProgress(duplicate_pgs);
             return Json(result);
         }
 
@@ -154,7 +155,7 @@ namespace LaborCostAnalysis.Controllers
                     job_progress = job_progress,
                     estimated_budget = Convert.ToInt32(job_budget.Replace(",", String.Empty))
                 };
-                string result = "";
+                string result = ProgressInterface.UpdateProgress(progress);
                 return Json(result);
             }
             catch(Exception ex)
