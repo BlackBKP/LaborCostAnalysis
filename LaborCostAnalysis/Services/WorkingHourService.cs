@@ -36,6 +36,7 @@ namespace LaborCostAnalysis.Services
                     wh.working_day = dr["Working_Day"] != DBNull.Value ? Convert.ToDateTime(dr["Working_Day"]) : DateTime.MinValue;
                     wh.week = dr["Week"] != DBNull.Value ? Convert.ToInt32(dr["Week"]) : 0;
                     wh.month = dr["Month"] != DBNull.Value ? Convert.ToInt32(dr["Month"]) : 0;
+                    wh.hours = dr["Hours"] != DBNull.Value ? Convert.ToInt32(dr["Hours"]) : 0;
                     whs.Add(wh);
                 }
                 dr.Close();
@@ -62,6 +63,34 @@ namespace LaborCostAnalysis.Services
                     wh.working_day = dr["Working_Day"] != DBNull.Value ? Convert.ToDateTime(dr["Working_Day"]) : DateTime.MinValue;
                     wh.week = dr["Week"] != DBNull.Value ? Convert.ToInt32(dr["Week"]) : 0;
                     wh.month = dr["Month"] != DBNull.Value ? Convert.ToInt32(dr["Month"]) : 0;
+                    wh.hours = dr["Hours"] != DBNull.Value ? Convert.ToInt32(dr["Hours"]) : 0;
+                    whs.Add(wh);
+                }
+                dr.Close();
+            }
+            con.Close();
+            return whs;
+        }
+
+        public List<WorkingHoursModel> GetWorkingHours(string job_id,string year,int month,int week)
+        {
+            List<WorkingHoursModel> whs = new List<WorkingHoursModel>();
+            SqlConnection con = DB.Connect();
+            con.Open();
+            string str_cmd = "SELECT * FROM Hour WHERE Job_ID = '" + job_id + "' AND Working_Day LIKE '" + year + "%' AND Month = " + month +" AND Week = " + week;
+            SqlCommand cmd = new SqlCommand(str_cmd, con);
+            SqlDataReader dr = cmd.ExecuteReader();
+            if (dr.HasRows)
+            {
+                while (dr.Read())
+                {
+                    WorkingHoursModel wh = new WorkingHoursModel();
+                    wh.job_id = dr["Job_ID"] != DBNull.Value ? dr["Job_ID"].ToString() : "";
+                    wh.employee_id = dr["Employee_ID"] != DBNull.Value ? dr["Employee_ID"].ToString() : "";
+                    wh.working_day = dr["Working_Day"] != DBNull.Value ? Convert.ToDateTime(dr["Working_Day"]) : DateTime.MinValue;
+                    wh.week = dr["Week"] != DBNull.Value ? Convert.ToInt32(dr["Week"]) : 0;
+                    wh.month = dr["Month"] != DBNull.Value ? Convert.ToInt32(dr["Month"]) : 0;
+                    wh.hours = dr["Hours"] != DBNull.Value ? Convert.ToInt32(dr["Hours"]) : 0;
                     whs.Add(wh);
                 }
                 dr.Close();
@@ -107,6 +136,27 @@ namespace LaborCostAnalysis.Services
                     cmd.Parameters[5].Value = whs[i].hours;
                     cmd.ExecuteNonQuery();
                 }
+            }
+            return "Done";
+        }
+
+        public string DeleteWorkingHours(string job_id, string year, int month, int week)
+        {
+            SqlConnection con = DB.Connect();
+            try
+            {
+                con.Open();
+                string str_cmd = "DELETE FROM Hour WHERE Job_ID = '" + job_id + "' AND Working_Day LIKE '" + year + "%' AND Month = " + month + " AND Week = " + week;
+                SqlCommand cmd = new SqlCommand(str_cmd, con);
+                cmd.ExecuteNonQuery();
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                con.Close();
             }
             return "Done";
         }

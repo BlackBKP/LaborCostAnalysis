@@ -23,6 +23,7 @@ namespace LaborCostAnalysis.Controllers
         static List<WorkingHoursModel> working_hours;
         static List<WorkingHoursModel> excel_duplicate_working_hours;
         static List<WorkingHoursModel> duplicate_working_hours;
+        static List<WorkingHoursModel> delete_working_hours;
 
         IJob JobInterface;
         IWorkingHour WorkingHourInterface;
@@ -45,6 +46,13 @@ namespace LaborCostAnalysis.Controllers
 
         [HttpGet]
         public JsonResult GetJobNumbers()
+        {
+            var job_ids = JobInterface.GetJobs().OrderByDescending(o => o.job_id).Select(s => s.job_id).ToList();
+            return Json(job_ids);
+        }
+
+        [HttpGet]
+        public JsonResult GetJobNumbersDelete()
         {
             var job_ids = JobInterface.GetJobs().OrderByDescending(o => o.job_id).Select(s => s.job_id).ToList();
             return Json(job_ids);
@@ -130,6 +138,27 @@ namespace LaborCostAnalysis.Controllers
         public JsonResult ConfirmImport()
         {
             string result = WorkingHourInterface.InsertWorkingHours(working_hours);
+            return Json(result);
+        }
+
+        [HttpGet]
+        public JsonResult GetDataToDelete(string delete_year, string delete_id, string delete_month)
+        {
+            delete_working_hours = new List<WorkingHoursModel>();
+            string[] months = new string[] { "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
+            int m = Array.IndexOf(months, delete_month.Split(' ')[0]);
+            int w = Convert.ToInt32(delete_month.Split(' ')[1]);
+            delete_working_hours = WorkingHourInterface.GetWorkingHours(delete_id,delete_year,m,w);
+            return Json(delete_working_hours);
+        }
+
+        [HttpGet]
+        public JsonResult DeleteWorkingHours(string delete_year, string delete_id, string delete_month)
+        {
+            string[] months = new string[] { "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
+            int m = Array.IndexOf(months, delete_month.Split(' ')[0]);
+            int w = Convert.ToInt32(delete_month.Split(' ')[1]);
+            var result = WorkingHourInterface.DeleteWorkingHours(delete_id,delete_year,m,w);
             return Json(result);
         }
     }

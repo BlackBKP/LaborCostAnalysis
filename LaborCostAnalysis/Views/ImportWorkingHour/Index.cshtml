@@ -11,18 +11,29 @@
 
     <div class="card card-dark">
         <div class="card-header">
-            <span class="card-title">Import File</span>
+            <div class="btn-group">
+                <button id="btn_show_import" class="btn btn-dark" type="button" style="width:120px"><i class="fa fa-upload"></i> Import</button>
+                <button id="btn_show_delete" class="btn btn-dark" type="button" style="width:120px"><i class="fa fa-trash"></i> Delete</button>
+            </div>
             <div class="card-tools">
                 <button type="button" class="btn btn-dark" data-card-widget="collapse">
                     <i class="fas fa-minus"></i>
                 </button>
-                <button type="button" class="btn btn-dark btn-sm" data-card-widget="remove">
+                <button type="button" class="btn btn-dark" data-card-widget="remove">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
         </div>
         <div class="card-body">
-            <form>
+            <form id="form_noselect">
+                <div class="form-row">
+                    <h3>Please Select Import or Delete</h3>
+                </div>
+            </form>
+            <form id="form_upload" style="display:none">
+                <div class="form-row">
+                    <h3>Import Working Hours</h3>
+                </div>
                 <div class="form-row">
                     <label>Job Year</label>
                     <select id="select_whs_year" class="form-control">
@@ -47,6 +58,31 @@
                 <div id="div_file_upload" class="form-row" style="display:none">
                     <label id="import_file_label">Select File</label>
                     <input id="import_file" class="form-control-file" type="file" />
+                </div>
+            </form>
+            <form id="form_delete" style="display:none">
+                <div class="form-row">
+                    <h3>Delete Working Hours</h3>
+                </div>
+                <div class="form-row">
+                    <label>Job Year</label>
+                    <select id="select_year_delete" class="form-control">
+                        @* Generate By JavaScript *@
+                    </select>
+                </div>
+                <br />
+                <div class="form-row">
+                    <label>Job Number</label>
+                    <select id="select_job_delete" class="form-control">
+                        @* Generate By JavaScript *@
+                    </select>
+                </div>
+                <br />
+                <div class="form-row">
+                    <label>Month</label>
+                    <select id="select_month_delete" class="form-control">
+                        @* Generate By JavaScript *@
+                    </select>
                 </div>
             </form>
         </div>
@@ -107,19 +143,83 @@
     </div>
 </div>
 
+<div class="modal" id="modal_delete" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">Delete Working Hours</span>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-2">
+                        <label class="col-form-label">Job Number</label>
+                        <label class="col-form-label">Year</label>
+                        <label class="col-form-label">Month</label>
+                    </div>
+                    <div class="col-10">
+                        <input id="del_job_number" class="form-control" type="text" disabled />
+                        <input id="del_year" class="form-control" type="text" disabled />
+                        <input id="del_month" class="form-control" type="text" disabled />
+                    </div>
+                </div>
+                <br />
+                <table id="table_delete_wh" class="table table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Date</th>
+                            <th>Hours</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_close_modal_delete" class="btn btn-secondary float-right" type="button">
+                    Cancel
+                </button>
+                <button id="btn_delete" class="btn btn-danger float-right" type="button">
+                    <i class="fas fa-trash"></i>
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts
 {
     <script type="text/javascript">
         var table;
-
         $(document).ready(function () {
+
+        });
+
+        $('#btn_show_import').on('click', function () {
+            $('#form_upload').show();
+            $('#form_delete').hide();
+            $('#form_noselect').hide();
             GenerateYearOptions();
             GenerateMonthOptions();
             GetJobNumbers();
         });
 
+        $('#btn_show_delete').on('click', function () {
+            $('#form_delete').show();
+            $('#form_upload').hide();
+            $('#form_noselect').hide();
+            GenerateYearOptionsDelete();
+            GenerateMonthOptionsDelete();
+            GetJobNumbersDelete();
+        });
+
         $('#select_whs_year').on('change', function () {
-            if ($('#select_whs_year').val() != null && $('#select_whs_job_number').val() != null && $('#select_whs_month').val() != null) {
+            var sel_year = $('#select_whs_year').val();
+            var sel_job = $('#select_whs_job_number').val();
+            var sel_month = $('#select_whs_month').val();
+            if (sel_year != null && sel_job != null && sel_month != null) {
                 $('#div_file_upload').css('display', 'block');
             }
             else {
@@ -128,7 +228,10 @@
         });
 
         $('#select_whs_job_number').on('change', function () {
-            if ($('#select_whs_year').val() != null && $('#select_whs_job_number').val() != null && $('#select_whs_month').val() != null) {
+            var sel_year = $('#select_whs_year').val();
+            var sel_job = $('#select_whs_job_number').val();
+            var sel_month = $('#select_whs_month').val();
+            if (sel_year != null && sel_job != null && sel_month != null) {
                 $('#div_file_upload').css('display', 'block');
             }
             else {
@@ -137,11 +240,106 @@
         });
 
         $('#select_whs_month').on('change', function () {
-            if ($('#select_whs_year').val() != null && $('#select_whs_job_number').val() != null && $('#select_whs_month').val() != null) {
+            var sel_year = $('#select_whs_year').val();
+            var sel_job = $('#select_whs_job_number').val();
+            var sel_month = $('#select_whs_month').val();
+            if (sel_year != null && sel_job != null && sel_month != null) {
                 $('#div_file_upload').css('display', 'block');
             }
             else {
                 $('#div_file_upload').css('display', 'none');
+            }
+        });
+
+        $('#select_year_delete').on('change', function () {
+            var sel_year = $('#select_year_delete').val();
+            var sel_job = $('#select_job_delete').val();
+            var sel_month = $('#select_month_delete').val();
+            if (sel_year != null && sel_job != null && sel_month != null) {
+                GetDataToDelete(sel_year, sel_job, sel_month);
+            }
+        });
+
+        function GetDataToDelete(delete_year, delete_id, delete_month) {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetDataToDelete", "ImportWorkingHour")',
+	            contentType: 'application/x-www-form-urlencoded',
+                data: {
+                    delete_year, delete_id, delete_month
+                },
+                success: function (response) {
+                    PreviewDeleteData(response);
+                }
+            })
+        }
+
+        var delete_table;
+        function PreviewDeleteData(working_hours) {
+            $('#modal_delete').modal("show");
+            $('#del_job_number').val($('#select_job_delete').val());
+            $('#del_year').val($('#select_year_delete').val());
+            $('#del_month').val($('#select_month_delete').val());
+            var datas = [];
+            for (var i = 0; i < working_hours.length; i++) {
+                datas.push([
+                    working_hours[i].employee_id,
+                    working_hours[i].working_day.substring(0, 10),
+                    working_hours[i].hours
+                ]);
+            }
+
+            if (delete_table != null)
+                $('#table_delete_wh').DataTable().destroy();
+
+            delete_table = $('#table_delete_wh').DataTable({
+                data: datas,
+                pagingType: "full_numbers",
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
+            });
+        }
+
+        $('#btn_close_modal_delete').on('click', function () {
+            $('#modal_delete').modal("hide");
+        })
+
+        $('#btn_delete').on('click', function () {
+            var delete_id = $('#del_job_number').val();
+            var delete_year = $('#del_year').val();
+            var delete_month = $('#del_month').val();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DeleteWorkingHours", "ImportWorkingHour")',
+	            contentType: 'application/x-www-form-urlencoded',
+                data: {
+                    delete_year, delete_id, delete_month
+                },
+                success: function (response) {
+                    if (response == "Done") {
+                        window.location.reload();
+                    }
+                    else {
+                        alert(response);
+                    }
+                }
+            })
+        });
+
+        $('#select_job_delete').on('change', function () {
+            var sel_year = $('#select_year_delete').val();
+            var sel_job = $('#select_job_delete').val();
+            var sel_month = $('#select_month_delete').val();
+            if (sel_year != null && sel_job != null && sel_month != null) {
+                GetDataToDelete(sel_year, sel_job, sel_month);
+            }
+        });
+
+        $('#select_month_delete').on('change', function () {
+            var sel_year = $('#select_year_delete').val();
+            var sel_job = $('#select_job_delete').val();
+            var sel_month = $('#select_month_delete').val();
+            if (sel_year != null && sel_job != null && sel_month != null) {
+                GetDataToDelete(sel_year, sel_job, sel_month);
             }
         });
 
@@ -159,6 +357,20 @@
             })
         }
 
+        function GetJobNumbersDelete() {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetJobNumbersDelete", "ImportWorkingHour")',
+	            contentType: 'application/x-www-form-urlencoded',
+                data: {
+
+                },
+                success: function (response) {
+                    GenerateJobNumberOptionsDelete(response);
+                }
+            })
+        }
+
         function GenerateYearOptions() {
             $('#select_whs_year').find('option').remove();
             var str = '<option disabled selected>Please Select Year</option>';
@@ -170,6 +382,17 @@
             $('#select_whs_year').append(str);
         }
 
+        function GenerateYearOptionsDelete() {
+            $('#select_year_delete').find('option').remove();
+            var str = '<option disabled selected>Please Select Year</option>';
+            var current_year = new Date();
+            for (var i = 0; i < 10; i++) {
+                var year = parseInt(current_year.getFullYear()) - i;
+                str += '<option value="' + year + '">' + year + '</option>';
+            }
+            $('#select_year_delete').append(str);
+        }
+
         function GenerateJobNumberOptions(job_id) {
             $('#select_whs_job_number').find('option').remove();
             var str = '<option disabled selected>Please Select Job Number</option>';
@@ -177,6 +400,15 @@
                 str += '<option value="' + job_id[i] + '">' + job_id[i].substring(0, 3) + '-' + job_id[i].substring(3, job_id[i].length) + '</option>';
             }
             $('#select_whs_job_number').append(str);
+        }
+
+        function GenerateJobNumberOptionsDelete(job_id) {
+            $('#select_job_delete').find('option').remove();
+            var str = '<option disabled selected>Please Select Job Number</option>';
+            for (var i = 0; i < job_id.length; i++) {
+                str += '<option value="' + job_id[i] + '">' + job_id[i].substring(0, 3) + '-' + job_id[i].substring(3, job_id[i].length) + '</option>';
+            }
+            $('#select_job_delete').append(str);
         }
 
         function GenerateMonthOptions() {
@@ -190,6 +422,19 @@
                 str += '<option value="' + months[i] + '">' + months[i] + '</option>';
             }
             $('#select_whs_month').append(str);
+        }
+
+        function GenerateMonthOptionsDelete() {
+            var months = [
+                "JAN 1", "JAN 2", "FEB 1", "FEB 2", "MAR 1", "MAR 2", "APR 1", "APR 2", "MAY 1", "MAY 2", "JUN 1", "JUN 2",
+                "JUL 1", "JUL 2", "AUG 1", "AUG 2", "SEP 1", "SEP 2", "OCT 1", "OCT 2", "NOV 1", "NOV 2", "DEC 1", "DEC 2"
+            ];
+            $('#select_month_delete').find('option').remove();
+            var str = '<option disabled selected>Please Select Month</option>';
+            for (var i = 0; i < months.length; i++) {
+                str += '<option value="' + months[i] + '">' + months[i] + '</option>';
+            }
+            $('#select_month_delete').append(str);
         }
 
         var jobs = [];
@@ -241,8 +486,6 @@
                     if (response.length == 0)
                         alert('Some error occured while uploading');
                     else {
-                        //console.log("Response");
-                        //console.log(response);
                         jobs = response[0];
                         excel_duplicate = response[1];
                         db_duplicate = response[2];
