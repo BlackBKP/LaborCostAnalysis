@@ -403,7 +403,13 @@
                     $('td', row).eq(4).html(progress_str);
                     var progress_percent_str = '<span class="badge bg-primary">' + Math.round(data[5]) + '%</span>';
                     $('td', row).eq(5).html(progress_percent_str);
-                    $('td', row).eq(6).html('<button class="btn btn-primary form-control" onclick=EditProgress("' + jobs[index][0].job_number + '",' + data[0] + ',"' + data[1] + '","' + $('#job_estimated_budget').val() + '","' + data[4] + '")>Edit</button>');
+
+                    var job = jobs[index][0].job_id
+                    var data0 = data[0]
+                    var data1 = data[1]
+                    var budget = $('#job_estimated_budget').val()
+                    var data4 = data[4]
+                    $('td', row).eq(6).html('<button class="btn btn-primary form-control" onclick=EditProgress("' + job + '","' + data0 + '","' + data1 + '","' + budget + '","' + data4 +'")>Edit</button>');
                 }
             });
         }
@@ -510,6 +516,7 @@
         }
 
         function EditProgress(job_number, year, month, budget, progress) {
+ 
             $('#ModalEditJobSpent').modal("show");
             $('#EditJobNumber').val(job_number);
             $('#EditJobYear').val(year);
