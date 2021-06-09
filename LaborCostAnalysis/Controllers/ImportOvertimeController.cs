@@ -26,6 +26,7 @@ namespace LaborCostAnalysis.Controllers
         static List<OvertimeModel> ots;
         static List<OvertimeModel> excel_duplicate_ots;
         static List<OvertimeModel> duplicate_ots;
+        static List<OvertimeModel> delete_overtimes;
 
         static string job_id;
         static int year;
@@ -47,6 +48,13 @@ namespace LaborCostAnalysis.Controllers
         public JsonResult GetJobNumbers()
         {
             return Json(JobInterface.GetJobs().OrderByDescending(o => o.job_id).Select(s => s.job_id).ToList());
+        }
+
+        [HttpGet]
+        public JsonResult GetJobNumbersDelete()
+        {
+            var job_ids = JobInterface.GetJobs().OrderByDescending(o => o.job_id).Select(s => s.job_id).ToList();
+            return Json(job_ids);
         }
 
         [HttpPost]
@@ -135,6 +143,27 @@ namespace LaborCostAnalysis.Controllers
         public JsonResult ConfirmImport()
         {
             string result = OvertimeInterface.InsertOvertimes(ots);
+            return Json(result);
+        }
+
+        [HttpGet]
+        public JsonResult GetDataToDelete(string delete_year, string delete_id, string delete_month)
+        {
+            delete_overtimes = new List<OvertimeModel>();
+            string[] months = new string[] { "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
+            int m = Array.IndexOf(months, delete_month.Split(' ')[0]);
+            int w = Convert.ToInt32(delete_month.Split(' ')[1]);
+            delete_overtimes = OvertimeInterface.GetOvertimes(delete_id, delete_year, m, w);
+            return Json(delete_overtimes);
+        }
+
+        [HttpGet]
+        public JsonResult DeleteOvertimes(string delete_year, string delete_id, string delete_month)
+        {
+            string[] months = new string[] { "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
+            int m = Array.IndexOf(months, delete_month.Split(' ')[0]);
+            int w = Convert.ToInt32(delete_month.Split(' ')[1]);
+            var result = OvertimeInterface.DeleteOvertimes(delete_id, delete_year, m, w);
             return Json(result);
         }
     }

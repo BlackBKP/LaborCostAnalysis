@@ -82,6 +82,35 @@ namespace LaborCostAnalysis.Services
             return ots;
         }
 
+        public List<OvertimeModel> GetOvertimes(string job_id, string year, int month, int week)
+        {
+            List<OvertimeModel> ots = new List<OvertimeModel>();
+            SqlConnection con = DB.Connect();
+            con.Open();
+            string str_cmd = "SELECT * FROM OT WHERE Job_ID = '" + job_id + "' AND Recording_time LIKE '" + year + "%' AND Month = " + month + " AND Week = " + week;
+            SqlCommand cmd = new SqlCommand(str_cmd, con);
+            SqlDataReader dr = cmd.ExecuteReader();
+            if (dr.HasRows)
+            {
+                while (dr.Read())
+                {
+                    OvertimeModel ot = new OvertimeModel();
+                    ot.job_id = dr["Job_ID"] != DBNull.Value ? dr["Job_ID"].ToString() : "";
+                    ot.employee_id = dr["Employee_ID"] != DBNull.Value ? dr["Employee_ID"].ToString() : "";
+                    ot.recording_time = dr["Recording_time"] != DBNull.Value ? Convert.ToDateTime(dr["Recording_time"]) : DateTime.MinValue;
+                    ot.week = dr["Week"] != DBNull.Value ? Convert.ToInt32(dr["Week"]) : 0;
+                    ot.month = dr["Month"] != DBNull.Value ? Convert.ToInt32(dr["Month"]) : 0;
+                    ot.ot_1_5 = dr["OT_1_5"] != DBNull.Value ? Convert.ToInt32(dr["OT_1_5"]) : 0;
+                    ot.ot_3 = dr["OT_3"] != DBNull.Value ? Convert.ToInt32(dr["OT_3"]) : 0;
+                    ot.ot_sum = dr["OT_SUM"] != DBNull.Value ? Convert.ToInt32(dr["OT_SUM"]) : 0;
+                    ots.Add(ot);
+                }
+                dr.Close();
+            }
+            con.Close();
+            return ots;
+        }
+
         public string InsertOvertimes(List<OvertimeModel> ots)
         {
             SqlConnection con = DB.Connect();
@@ -127,6 +156,27 @@ namespace LaborCostAnalysis.Services
                     cmd.Parameters[7].Value = ots[i].recording_time;
                     cmd.ExecuteNonQuery();
                 }
+                con.Close();
+            }
+            return "Done";
+        }
+
+        public string DeleteOvertimes(string job_id, string year, int month, int week)
+        {
+            SqlConnection con = DB.Connect();
+            try
+            {
+                con.Open();
+                string str_cmd = "DELETE FROM OT WHERE Job_ID = '" + job_id + "' AND Recording_time LIKE '" + year + "%' AND Month = " + month + " AND Week = " + week;
+                SqlCommand cmd = new SqlCommand(str_cmd, con);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
                 con.Close();
             }
             return "Done";

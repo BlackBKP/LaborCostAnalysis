@@ -54,8 +54,8 @@
                         @* Generate Options By JavaScript *@
                     </select>
                 </div>
-                <br />
                 <div id="div_file_upload" class="form-row" style="display:none">
+                    <br />
                     <label id="import_file_label">Select File</label>
                     <input id="import_file" class="form-control-file" type="file" />
                 </div>
@@ -201,6 +201,7 @@
             $('#form_upload').show();
             $('#form_delete').hide();
             $('#form_noselect').hide();
+            $('#card_upload').hide();
             GenerateYearOptions();
             GenerateMonthOptions();
             GetJobNumbers();
@@ -210,6 +211,7 @@
             $('#form_delete').show();
             $('#form_upload').hide();
             $('#form_noselect').hide();
+            $('#card_upload').hide();
             GenerateYearOptionsDelete();
             GenerateMonthOptionsDelete();
             GetJobNumbersDelete();
@@ -252,6 +254,24 @@
         });
 
         $('#select_year_delete').on('change', function () {
+            var sel_year = $('#select_year_delete').val();
+            var sel_job = $('#select_job_delete').val();
+            var sel_month = $('#select_month_delete').val();
+            if (sel_year != null && sel_job != null && sel_month != null) {
+                GetDataToDelete(sel_year, sel_job, sel_month);
+            }
+        });
+
+        $('#select_job_delete').on('change', function () {
+            var sel_year = $('#select_year_delete').val();
+            var sel_job = $('#select_job_delete').val();
+            var sel_month = $('#select_month_delete').val();
+            if (sel_year != null && sel_job != null && sel_month != null) {
+                GetDataToDelete(sel_year, sel_job, sel_month);
+            }
+        });
+
+        $('#select_month_delete').on('change', function () {
             var sel_year = $('#select_year_delete').val();
             var sel_job = $('#select_job_delete').val();
             var sel_month = $('#select_month_delete').val();
@@ -323,24 +343,6 @@
                     }
                 }
             })
-        });
-
-        $('#select_job_delete').on('change', function () {
-            var sel_year = $('#select_year_delete').val();
-            var sel_job = $('#select_job_delete').val();
-            var sel_month = $('#select_month_delete').val();
-            if (sel_year != null && sel_job != null && sel_month != null) {
-                GetDataToDelete(sel_year, sel_job, sel_month);
-            }
-        });
-
-        $('#select_month_delete').on('change', function () {
-            var sel_year = $('#select_year_delete').val();
-            var sel_job = $('#select_job_delete').val();
-            var sel_month = $('#select_month_delete').val();
-            if (sel_year != null && sel_job != null && sel_month != null) {
-                GetDataToDelete(sel_year, sel_job, sel_month);
-            }
         });
 
         function GetJobNumbers() {
