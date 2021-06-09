@@ -36,4 +36,8 @@
     <PackageReference Include="System.DirectoryServices" Version="5.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\files\" />
+  </ItemGroup>
+
 </Project>
