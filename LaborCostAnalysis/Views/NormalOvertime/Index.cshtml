@@ -31,23 +31,39 @@
 @section Scripts
 {
     <script type="text/javascript">
-
         $(document).ready(function () {
-            @*Chart.plugins.register(ChartDataLabels);*@
-            GetData();
+            GenerateYearOptions();
+            var current_year = new Date();
+            GetData(current_year.getFullYear());
         });
 
-        async function GetData() {
+        function GenerateYearOptions() {
+            $('#select_year').find('option').remove();
+            var str = '<option value="ALL">ALL</option>';
+            var current_year = new Date();
+            for (var i = 0; i < 10; i++) {
+                var year = parseInt(current_year.getFullYear()) - i;
+                if (i == 0)
+                    str += '<option value="' + year + '" selected>' + year + '</option>';
+                else
+                    str += '<option value="' + year + '">' + year + '</option>';
+            }
+            $('#select_year').append(str);
+        }
+
+        $('#select_year').on('change', function () {
+            GetData($('#select_year').val());
+        });
+
+        async function GetData(year) {
             await $.ajax({
                 type: "GET",
                 url: '@Url.Action("GetData", "NormalOvertime")',
 	            contentType: 'application/x-www-form-urlencoded',
                 data: {
-
+                    year
                 },
                 success: function (response) {
-                    //console.log("Data");
-                    //console.log(response);
                     GenChart(response);
                 }
             });

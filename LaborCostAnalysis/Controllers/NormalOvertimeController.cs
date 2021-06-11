@@ -1,4 +1,5 @@
 ﻿using LaborCostAnalysis.Interfaces;
+using LaborCostAnalysis.Models;
 using LaborCostAnalysis.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +25,10 @@ namespace LaborCostAnalysis.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetData()
+        public JsonResult GetData(string year)
         {
-            return Json(NormalOvertime.NormalPerOvertime());
+            List<NormalOvertimeModel> npero = (year == "ALL") ? NormalOvertime.NormalPerOvertime() : NormalOvertime.NormalPerOvertimeByYear(year);
+            return Json(npero);
         }
     }
 }
