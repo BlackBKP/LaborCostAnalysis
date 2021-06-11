@@ -7,7 +7,19 @@
 
     <div class="info-box bg-dark">
         <div class="info-box-content">
-            <h3 class="info-box-text">SPENT</h3>
+            <div class="row">
+                <div class="col-4">
+                    <h3 class="info-box-text">SPENT</h3>
+                </div>
+                <div class="col-1 text-right">
+                    <h3>Year</h3>
+                </div>
+                <div class="col-7">
+                    <select id="select_year" class="form-control">
+                        @* Generate Option By JavaScript *@
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -22,16 +34,36 @@
     <script type="text/javascript">
         var months = [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ];
         $(document).ready(function () {
-            GetSpentCostPerWeeks();
+            GenerateYearOptions();
+            var current_year = new Date();
+            GetSpentCostPerWeeks(current_year.getFullYear());
         });
 
-        async function GetSpentCostPerWeeks() {
+        function GenerateYearOptions() {
+            $('#select_year').find('option').remove();
+            var str = '<option value="ALL">ALL</option>';
+            var current_year = new Date();
+            for (var i = 0; i < 10; i++) {
+                var year = parseInt(current_year.getFullYear()) - i;
+                if(i == 0)
+                    str += '<option value="' + year + '" selected>' + year + '</option>';
+                else
+                    str += '<option value="' + year + '">' + year + '</option>';
+            }
+            $('#select_year').append(str);
+        }
+
+        $('#select_year').on('change', function () {
+            GetSpentCostPerWeeks($('#select_year').val());
+        });
+
+        async function GetSpentCostPerWeeks(year) {
             await $.ajax({
                 type: "GET",
                 url: '@Url.Action("GetSpentCostPerWeeks", "Spent")',
 	            contentType: 'application/x-www-form-urlencoded',
                 data: {
-
+                    year
                 },
                 success: function (response) {
                     if (response.Message != null) {
@@ -66,6 +98,7 @@
         }
 
         function GenSpentChart(jobs) {
+            $('#projects').empty();
             var i = 0;
             for (i = 0; i < jobs.length; i++) {
                 var job_year = jobs[i][0].job_id.substring(0, 3);

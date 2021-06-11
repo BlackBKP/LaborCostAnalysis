@@ -9,6 +9,7 @@ namespace LaborCostAnalysis.Interfaces
     interface ISpentPerWeek
     {
         List<SpentPerWeekModel> GetSpentCostPerWeeks();
+        List<SpentPerWeekModel> GetSpentCostPerWeeks(string year);
         List<SpentPerWeekModel> GetSpentPerWeeksByJob(string job_id);
     }
 }

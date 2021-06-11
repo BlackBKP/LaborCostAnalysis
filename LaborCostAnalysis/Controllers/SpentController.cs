@@ -25,12 +25,12 @@ namespace LaborCostAnalysis.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetSpentCostPerWeeks()
+        public JsonResult GetSpentCostPerWeeks(string year)
         {
             List<List<SpentPerWeekModel>> projects = new List<List<SpentPerWeekModel>>();
             try
             {
-                List<SpentPerWeekModel> spws = SPW.GetSpentCostPerWeeks();
+                List<SpentPerWeekModel> spws = (year == "ALL") ? SPW.GetSpentCostPerWeeks() : SPW.GetSpentCostPerWeeks(year);
                 string[] job_id = spws.OrderByDescending(o => o.job_id).Select(s => s.job_id).Distinct().ToArray();
                 for (int i = 0; i < job_id.Count(); i++)
                 {
