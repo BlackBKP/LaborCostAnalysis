@@ -74,6 +74,28 @@ namespace LaborCostAnalysis.Services
             return "Done";
         }
 
+        public string UpdateJobBudget(string job_number, int job_budget)
+        {
+            SqlConnection con = DB.Connect();
+            try
+            {
+                con.Open();
+                string job_id = job_number.Replace("-", String.Empty).Replace(" ", String.Empty);
+                string str_cmd = "Update Job Set Estimated_Budget = '" + job_budget + "' where Job_ID = '" + job_id + "'";
+                SqlCommand cmd = new SqlCommand(str_cmd, con);
+                SqlDataReader dr = cmd.ExecuteReader();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                con.Close();
+            }
+            return "Done";
+        }
+
         public string AddJob(string job_number, string job_name, int job_year)
         {
             SqlConnection con = DB.Connect();

@@ -39,9 +39,10 @@ namespace LaborCostAnalysis.Controllers
         }
 
         [HttpPost]
-        public JsonResult EditJobName(string job_number, string job_name)
+        public JsonResult EditJobName(string job_number, string job_name, string job_budget)
         {
             JobInterface.UpdateJobName(job_number, job_name);
+            JobInterface.UpdateJobBudget(job_number, Convert.ToInt32(job_budget.Replace(",", String.Empty)));
             return Json("Done");
         }
 

@@ -12,6 +12,8 @@ namespace LaborCostAnalysis.Interfaces
 
         string UpdateJobName(string job_number, string job_name);
 
+        string UpdateJobBudget(string job_number, int job_budget);
+
         string AddJob(string job_number, string job_name, int job_year);
 
         string InsertJobs(List<JobModel> import_jobs);

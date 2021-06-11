@@ -33,6 +33,7 @@
                         <th>Job Number</th>
                         <th>Name</th>
                         <th>Budget</th>
+                        <th>Job Year</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,7 +75,14 @@
                     </div>
                     <div class="form-group row">
                         <label>Budget</label>
-                        <input id="EditJobBudget" class="form-control" type="text" disabled/>
+                        <div class="input-group">
+                            <input id="EditJobBudget" class="form-control" type="text" disabled />
+                            <div class="input-group-append">
+                                <button id="EnableEditBudget" class="btn btn-primary" type="button">
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -119,6 +127,7 @@
                     jnum,
                     jobs[i].job_name,
                     jobs[i].estimated_budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+                    jobs[i].job_year
                 ]);
             }
 
@@ -141,6 +150,7 @@
             $('#EditJobName').val(table.row(this).data()[1]);
             $('#EditJobName').attr('disabled', true);
             $('#EditJobBudget').val(table.row(this).data()[2]);
+            $('#EditJobBudget').attr('disabled', true);
             $('#BtnSaveChanges').hide();
         });
 
@@ -148,19 +158,28 @@
             $('#EditJobName').attr('disabled', false);
         });
 
+        $('#EnableEditBudget').on('click', function () {
+            $('#EditJobBudget').attr('disabled', false);
+        });
+
         $('#EditJobName').on('keydown', function () {
+            $('#BtnSaveChanges').show();
+        });
+
+        $('#EditJobBudget').on('keydown', function () {
             $('#BtnSaveChanges').show();
         });
 
         $('#BtnSaveChanges').on('click', function () {
             var job_number = $('#EditJobNumber').val();
             var job_name = $('#EditJobName').val();
+            var job_budget = $('#EditJobBudget').val();
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("EditJobName", "JobManagement")',
 	            contentType: 'application/x-www-form-urlencoded',
                 data: {
-                    job_number,job_name
+                    job_number,job_name,job_budget
                 },
                 success: function (response) {
                     window.location.reload();
