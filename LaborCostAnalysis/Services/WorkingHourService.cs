@@ -50,7 +50,7 @@ namespace LaborCostAnalysis.Services
             List<WorkingHoursModel> whs = new List<WorkingHoursModel>();
             SqlConnection con = DB.Connect();
             con.Open();
-            string str_cmd = "select * from Hour where Hour.Job_ID = '" + job_id + "'";
+            string str_cmd = "select * from Hour where Hour.Job_ID = '" + job_id.Replace("-",String.Empty).Replace(" ",String.Empty) + "'";
             SqlCommand cmd = new SqlCommand(str_cmd, con);
             SqlDataReader dr = cmd.ExecuteReader();
             if (dr.HasRows)
@@ -77,7 +77,7 @@ namespace LaborCostAnalysis.Services
             List<WorkingHoursModel> whs = new List<WorkingHoursModel>();
             SqlConnection con = DB.Connect();
             con.Open();
-            string str_cmd = "SELECT * FROM Hour WHERE Job_ID = '" + job_id + "' AND Working_Day LIKE '" + year + "%' AND Month = " + month +" AND Week = " + week;
+            string str_cmd = "SELECT * FROM Hour WHERE Job_ID = '" + job_id.Replace("-",String.Empty).Replace(" ",String.Empty) + "' AND Working_Day LIKE '" + year + "%' AND Month = " + month +" AND Week = " + week;
             SqlCommand cmd = new SqlCommand(str_cmd, con);
             SqlDataReader dr = cmd.ExecuteReader();
             if (dr.HasRows)
@@ -146,7 +146,7 @@ namespace LaborCostAnalysis.Services
             try
             {
                 con.Open();
-                string str_cmd = "DELETE FROM Hour WHERE Job_ID = '" + job_id + "' AND Working_Day LIKE '" + year + "%' AND Month = " + month + " AND Week = " + week;
+                string str_cmd = "DELETE FROM Hour WHERE Job_ID = '" + job_id.Replace("-",String.Empty).Replace(" ",String.Empty) + "' AND Working_Day LIKE '" + year + "%' AND Month = " + month + " AND Week = " + week;
                 SqlCommand cmd = new SqlCommand(str_cmd, con);
                 cmd.ExecuteNonQuery();
             }

@@ -28,8 +28,6 @@
 
                 },
                 success: function (response) {
-                    //console.log("Response");
-                    //console.log(response);
                     GenManPowerChart(response);
                 }
             });
@@ -60,19 +58,9 @@
                     acc_hour.push(data[i][j].acc_hour);
                 }
 
-                @*weeks = ["APR 1", "APR 2", "MAY 1", "MAY 2"];
-                normal = [1100, 1300, 1500, 1200];
-                ot_1_5 = [500, 450, 350, 200];
-                ot_3 = [125, 170, 120, 52];
-                var acc0 = normal[0] + ot_1_5[0] + ot_3[0];
-                var acc1 = normal[1] + ot_1_5[1] + ot_3[1];
-                var acc2 = normal[2] + ot_1_5[2] + ot_3[2];
-                var acc3 = normal[3] + ot_1_5[3] + ot_3[3];
-                acc_hour = [acc0, acc0 + acc1, acc0 + acc1 + acc2, acc0 + acc1 + acc2 + acc3];*@
-
                 var col_normal = 'rgba(2,62,138,';
                 var col_ot15 = 'rgba(0,150,199,';
-                var col_ot03 = 'rgba(72,202,228,';
+                var col_ot03 = 'rgba(255,0,0,';
                 var col_acc = 'rgba(3,4,94,';
 
                 var ctx = document.getElementById(job_id).getContext('2d');

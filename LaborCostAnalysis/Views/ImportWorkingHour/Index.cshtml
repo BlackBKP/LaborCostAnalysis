@@ -43,7 +43,7 @@
                 <br />
                 <div class="form-row">
                     <label for="select_whs_job_number">Job Number</label>
-                    <input id="select_whs_job_number" type="text" list="list_jobs" class="form-control" placeholder="Please Select Job"/>
+                    <input id="select_whs_job_number" type="text" list="list_jobs" class="form-control" placeholder="Please Select Job" />
                     <datalist id="list_jobs">
                         @* Generate Options By JavaScript *@
                     </datalist>
@@ -51,13 +51,13 @@
                 <br />
                 <div class="form-row">
                     <label>Month</label>
-                    <input id="select_whs_month" type="text" list="list_months" class="form-control" placeholder="Please Select Month"/>
+                    <input id="select_whs_month" type="text" list="list_months" class="form-control" placeholder="Please Select Month" />
                     <datalist id="list_months">
                         @* Generate Options By JavaScript *@
                     </datalist>
                 </div>
-                <div id="div_file_upload" class="form-row" style="display:none">
-                    <br />
+                <br />
+                <div class="form-row">
                     <label id="import_file_label">Select File</label>
                     <input id="import_file" class="form-control-file" type="file" />
                 </div>
@@ -221,47 +221,11 @@
             GetJobNumbersDelete();
         });
 
-        $('#select_whs_year').on('change', function () {
-            var sel_year = $('#select_whs_year').val();
-            var sel_job = $('#select_whs_job_number').val();
-            var sel_month = $('#select_whs_month').val();
-            if (sel_year != null && sel_job != null && sel_month != null) {
-                $('#div_file_upload').css('display', 'block');
-            }
-            else {
-                $('#div_file_upload').css('display', 'none');
-            }
-        });
-
-        $('#select_whs_job_number').on('change', function () {
-            var sel_year = $('#select_whs_year').val();
-            var sel_job = $('#select_whs_job_number').val();
-            var sel_month = $('#select_whs_month').val();
-            if (sel_year != null && sel_job != null && sel_month != null) {
-                $('#div_file_upload').css('display', 'block');
-            }
-            else {
-                $('#div_file_upload').css('display', 'none');
-            }
-        });
-
-        $('#select_whs_month').on('change', function () {
-            var sel_year = $('#select_whs_year').val();
-            var sel_job = $('#select_whs_job_number').val();
-            var sel_month = $('#select_whs_month').val();
-            if (sel_year != null && sel_job != null && sel_month != null) {
-                $('#div_file_upload').css('display', 'block');
-            }
-            else {
-                $('#div_file_upload').css('display', 'none');
-            }
-        });
-
         $('#select_year_delete').on('change', function () {
             var sel_year = $('#select_year_delete').val();
             var sel_job = $('#select_job_delete').val();
             var sel_month = $('#select_month_delete').val();
-            if (sel_year != null && sel_job != null && sel_month != null) {
+            if (sel_year != null && sel_job != "" && sel_month != "") {
                 GetDataToDelete(sel_year, sel_job, sel_month);
             }
         });
@@ -270,7 +234,7 @@
             var sel_year = $('#select_year_delete').val();
             var sel_job = $('#select_job_delete').val();
             var sel_month = $('#select_month_delete').val();
-            if (sel_year != null && sel_job != null && sel_month != null) {
+            if (sel_year != null && sel_job != "" && sel_month != "") {
                 GetDataToDelete(sel_year, sel_job, sel_month);
             }
         });
@@ -279,7 +243,7 @@
             var sel_year = $('#select_year_delete').val();
             var sel_job = $('#select_job_delete').val();
             var sel_month = $('#select_month_delete').val();
-            if (sel_year != null && sel_job != null && sel_month != null) {
+            if (sel_year != null && sel_job != "" && sel_month != "") {
                 GetDataToDelete(sel_year, sel_job, sel_month);
             }
         });
@@ -401,18 +365,18 @@
 
         function GenerateJobNumberOptions(job_id) {
             $('#list_jobs').find('option').remove();
-            var str = '<option disabled selected>Please Select Job Number</option>';
+            var str = '';
             for (var i = 0; i < job_id.length; i++) {
-                str += '<option value="' + job_id[i] + '">' + job_id[i].substring(0, 3) + '-' + job_id[i].substring(3, job_id[i].length) + '</option>';
+                str += '<option value="' + job_id[i].job_number + '">' + job_id[i].job_number + '</option>';
             }
             $('#list_jobs').append(str);
         }
 
         function GenerateJobNumberOptionsDelete(job_id) {
             $('#list_delete_job').find('option').remove();
-            var str = '<option disabled selected>Please Select Job Number</option>';
+            var str = '';
             for (var i = 0; i < job_id.length; i++) {
-                str += '<option value="' + job_id[i] + '">' + job_id[i].substring(0, 3) + '-' + job_id[i].substring(3, job_id[i].length) + '</option>';
+                str += '<option value="' + job_id[i].job_number + '">' + job_id[i].job_number + '</option>';
             }
             $('#list_delete_job').append(str);
         }
@@ -423,7 +387,7 @@
                 "JUL 1", "JUL 2", "AUG 1", "AUG 2", "SEP 1", "SEP 2", "OCT 1", "OCT 2", "NOV 1", "NOV 2", "DEC 1", "DEC 2"
             ];
             $('#list_months').find('option').remove();
-            var str = '<option disabled selected>Please Select Month</option>';
+            var str = '';
             for (var i = 0; i < months.length; i++) {
                 str += '<option value="' + months[i] + '">' + months[i] + '</option>';
             }
@@ -436,7 +400,7 @@
                 "JUL 1", "JUL 2", "AUG 1", "AUG 2", "SEP 1", "SEP 2", "OCT 1", "OCT 2", "NOV 1", "NOV 2", "DEC 1", "DEC 2"
             ];
             $('#list_delete_month').find('option').remove();
-            var str = '<option disabled selected>Please Select Month</option>';
+            var str = '';
             for (var i = 0; i < months.length; i++) {
                 str += '<option value="' + months[i] + '">' + months[i] + '</option>';
             }

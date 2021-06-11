@@ -47,13 +47,13 @@ namespace LaborCostAnalysis.Controllers
         [HttpGet]
         public JsonResult GetJobNumbers()
         {
-            return Json(JobInterface.GetJobs().OrderByDescending(o => o.job_id).Select(s => s.job_id).ToList());
+            return Json(JobInterface.GetJobs().OrderByDescending(o => o.job_id).ToList());
         }
 
         [HttpGet]
         public JsonResult GetJobNumbersDelete()
         {
-            var job_ids = JobInterface.GetJobs().OrderByDescending(o => o.job_id).Select(s => s.job_id).ToList();
+            var job_ids = JobInterface.GetJobs().OrderByDescending(o => o.job_id).ToList();
             return Json(job_ids);
         }
 

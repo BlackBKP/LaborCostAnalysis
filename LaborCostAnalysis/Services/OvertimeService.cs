@@ -56,7 +56,7 @@ namespace LaborCostAnalysis.Services
             SqlConnection con = DB.Connect();
             con.Open();
 
-            string str_cmd = "select * from OT where OT.Job_ID = '" + job_id + "'";
+            string str_cmd = "select * from OT where OT.Job_ID = '" + job_id.Replace("-",String.Empty).Replace(" ",String.Empty) + "'";
 
             SqlCommand cmd = new SqlCommand(str_cmd, con);
             SqlDataReader dr = cmd.ExecuteReader();
@@ -87,7 +87,7 @@ namespace LaborCostAnalysis.Services
             List<OvertimeModel> ots = new List<OvertimeModel>();
             SqlConnection con = DB.Connect();
             con.Open();
-            string str_cmd = "SELECT * FROM OT WHERE Job_ID = '" + job_id + "' AND Recording_time LIKE '" + year + "%' AND Month = " + month + " AND Week = " + week;
+            string str_cmd = "SELECT * FROM OT WHERE Job_ID = '" + job_id.Replace("-",String.Empty).Replace(" ",String.Empty) + "' AND Recording_time LIKE '" + year + "%' AND Month = " + month + " AND Week = " + week;
             SqlCommand cmd = new SqlCommand(str_cmd, con);
             SqlDataReader dr = cmd.ExecuteReader();
             if (dr.HasRows)
@@ -167,7 +167,7 @@ namespace LaborCostAnalysis.Services
             try
             {
                 con.Open();
-                string str_cmd = "DELETE FROM OT WHERE Job_ID = '" + job_id + "' AND Recording_time LIKE '" + year + "%' AND Month = " + month + " AND Week = " + week;
+                string str_cmd = "DELETE FROM OT WHERE Job_ID = '" + job_id.Replace("-",String.Empty).Replace(" ",String.Empty) + "' AND Recording_time LIKE '" + year + "%' AND Month = " + month + " AND Week = " + week;
                 SqlCommand cmd = new SqlCommand(str_cmd, con);
                 cmd.ExecuteNonQuery();
             }
