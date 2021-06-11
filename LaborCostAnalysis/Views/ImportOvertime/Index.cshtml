@@ -41,16 +41,14 @@
                 <br />
                 <div class="form-row">
                     <label for="select_ots_job_number">Job Number</label>
-                    <select id="select_ots_job_number" class="form-control">
-                        @* Generate By JavaScript *@
-                    </select>
+                    <input id="select_ots_job_number" type="text" class="form-control" list="list_jobs" placeholder="Please Select Job"/>
+                    <datalist id="list_jobs"></datalist>
                 </div>
                 <br />
                 <div class="form-row">
                     <label>Select Month</label>
-                    <select id="select_ots_month" class="form-control">
-                        @* Generate By JavaScript *@
-                    </select>
+                    <input id="select_ots_month" type="text" class="form-control" list="list_months" placeholder="Please Select Month"/>
+                    <datalist id="list_months"></datalist>
                 </div>
                 <div id="div_file" class="form-row" style="display:none">
                     <br />
@@ -71,16 +69,18 @@
                 <br />
                 <div class="form-row">
                     <label>Job Number</label>
-                    <select id="select_job_delete" class="form-control">
-                        @* Generate By JavaScript *@
-                    </select>
+                    <input id="select_job_delete" type="text" class="form-control" list="list_jobs_delete" placeholder="Please Select Job"/>
+                    <datalist id="list_jobs_delete">
+                        @* Generate Options By JavaScript *@
+                    </datalist>
                 </div>
                 <br />
                 <div class="form-row">
                     <label>Month</label>
-                    <select id="select_month_delete" class="form-control">
-                        @* Generate By JavaScript *@
-                    </select>
+                    <input id="select_month_delete" type="text" class="form-control" list="list_months_delete" placeholder="Please Select Month"/>
+                    <datalist id="list_months_delete">
+                        @* Generate Options By JavaScript *@
+                    </datalist>
                 </div>
             </form>
         </div>
@@ -396,21 +396,21 @@
         });
 
         function GenerateJobNumberOptions(job_id) {
-            $('#select_ots_job_number').find('option').remove();
+            $('#list_jobs').find('option').remove();
             var str = '<option disabled selected>Please Select Job Number</option>';
             for (var i = 0; i < job_id.length; i++) {
                 str += '<option value="' + job_id[i] + '">' + job_id[i].substring(0, 3) + '-' + job_id[i].substring(3, job_id[i].length) + '</option>';
             }
-            $('#select_ots_job_number').append(str);
+            $('#list_jobs').append(str);
         }
 
         function GenerateJobNumberOptionsDelete(job_id) {
-            $('#select_job_delete').find('option').remove();
+            $('#list_jobs_delete').find('option').remove();
             var str = '<option disabled selected>Please Select Job Number</option>';
             for (var i = 0; i < job_id.length; i++) {
                 str += '<option value="' + job_id[i] + '">' + job_id[i].substring(0, 3) + '-' + job_id[i].substring(3, job_id[i].length) + '</option>';
             }
-            $('#select_job_delete').append(str);
+            $('#list_jobs_delete').append(str);
         }
 
         function GenerateMonthOptions() {
@@ -418,12 +418,12 @@
                 "JAN 1", "JAN 2", "FEB 1", "FEB 2", "MAR 1", "MAR 2", "APR 1", "APR 2", "MAY 1", "MAY 2", "JUN 1", "JUN 2",
                 "JUL 1", "JUL 2", "AUG 1", "AUG 2", "SEP 1", "SEP 2", "OCT 1", "OCT 2", "NOV 1", "NOV 2", "DEC 1", "DEC 2"
             ];
-            $('#select_ots_month').find('option').remove();
+            $('#list_months').find('option').remove();
             var str = '<option disabled selected>Please Select Month</option>';
             for (var i = 0; i < months.length; i++) {
                 str += '<option value="' + months[i] + '">' + months[i] + '</option>';
             }
-            $('#select_ots_month').append(str);
+            $('#list_months').append(str);
         }
 
         function GenerateMonthOptionsDelete() {
@@ -431,12 +431,12 @@
                 "JAN 1", "JAN 2", "FEB 1", "FEB 2", "MAR 1", "MAR 2", "APR 1", "APR 2", "MAY 1", "MAY 2", "JUN 1", "JUN 2",
                 "JUL 1", "JUL 2", "AUG 1", "AUG 2", "SEP 1", "SEP 2", "OCT 1", "OCT 2", "NOV 1", "NOV 2", "DEC 1", "DEC 2"
             ];
-            $('#select_month_delete').find('option').remove();
+            $('#list_months_delete').find('option').remove();
             var str = '<option disabled selected>Please Select Month</option>';
             for (var i = 0; i < months.length; i++) {
                 str += '<option value="' + months[i] + '">' + months[i] + '</option>';
             }
-            $('#select_month_delete').append(str);
+            $('#list_months_delete').append(str);
         }
 
         var jobs = [];
