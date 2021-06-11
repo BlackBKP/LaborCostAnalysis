@@ -23,6 +23,8 @@ namespace LaborCostAnalysis.Models
 
         public int spent_cost { get; set; }
 
+        public int spent_cost_acc { get; set; }
+
         public int remainning_cost { get; set; }
     }
 }

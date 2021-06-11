@@ -96,6 +96,7 @@ namespace LaborCostAnalysis.Services
                                     "Progress.Job_Progress, " +
                                     "Progress.Month, " +
                                     "Progress.Year, " +
+                                    "((cast(s1.Labor_Cost as int) +cast(s1.OT_Labor_Cost as int) + cast(s1.Accommodation_Cost as int) + cast(s1.Compensation_Cost as int) + isnull(s1.Social_Security,0))) as spent_cost, " +
                                     "sum((cast(s1.Labor_Cost as int) + cast(s1.OT_Labor_Cost as int) + cast(s1.Accommodation_Cost as int) + cast(s1.Compensation_Cost as int) + isnull(s1.Social_Security,0))) OVER(PARTITION BY s1.job_ID ORDER BY s1.job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as acc_spent_cost, " +
                                     "(job.Estimated_Budget - sum((cast(s1.Labor_Cost as int) + cast(s1.OT_Labor_Cost as int) + cast(s1.Accommodation_Cost as int) + cast(s1.Compensation_Cost as int) + isnull(s1.Social_Security,0))) OVER(PARTITION BY s1.job_ID ORDER BY s1.job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)) as remaining_cost " +
                                     "from Progress " +
@@ -119,7 +120,7 @@ namespace LaborCostAnalysis.Services
                         job_progress = dr["Job_Progress"] != DBNull.Value ? Convert.ToInt32(dr["Job_Progress"]) : 0,
                         month = dr["Month"] != DBNull.Value ? Convert.ToInt32(dr["Month"]) : 0,
                         year = dr["Year"] != DBNull.Value ? Convert.ToInt32(dr["Year"]) : 0,
-                        spent_cost = dr["acc_spent_cost"] != DBNull.Value ? Convert.ToInt32(dr["acc_spent_cost"]) : 0,
+                        spent_cost = dr["spent_cost"] != DBNull.Value ? Convert.ToInt32(dr["spent_cost"]) : 0,
                         remainning_cost = dr["remaining_cost"] != DBNull.Value ? Convert.ToInt32(dr["remaining_cost"]) : 0
                     };
                     pgs.Add(pg);

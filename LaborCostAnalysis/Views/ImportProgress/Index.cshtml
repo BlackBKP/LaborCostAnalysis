@@ -197,7 +197,7 @@
                         <input id="EditJobMonth" class="form-control" type="text" disabled />
                     </div>
                     <div class="form-group">
-                        <label>Budget</label>
+                        <label>Estimated Budget</label>
                         <input id="EditJobBudget" class="form-control" type="text" />
                     </div>
                     <div class="form-group">
@@ -327,7 +327,7 @@
                     var remain_str = '<div class="progress progress-xs progress-striped active">';
                     remain_str += '<div class="progress-bar bg-primary" style="width: ' + Math.round(data[4]) + '%"></div></div>';
                     $('td', row).eq(3).html(remain_str);
-                    var remain_percent_str = '<span class="badge bg-primary">' + Math.round(data[4]) + '%</span>';
+                    var remain_percent_str = '<span class="badge bg-primary">' + data[4].toFixed(1) + '%</span>';
                     $('td', row).eq(4).html(remain_percent_str);
                     var progress_str = '<div class="progress progress-xs progress-striped active">';
                     progress_str += '<div class="progress-bar bg-primary" style="width: ' + Math.round(data[5]) + '%"></div></div>';
@@ -396,7 +396,7 @@
                     var budget_spent_str = '<div class="progress progress-xs progress-striped active">';
                     budget_spent_str += '<div class="progress-bar bg-primary" style="width: ' + Math.round(data[3]) + '%"></div></div>';
                     $('td', row).eq(2).html(budget_spent_str);
-                    var spent_percent_str = '<span class="badge bg-primary">' + Math.round(data[3]) + '%</span>';
+                    var spent_percent_str = '<span class="badge bg-primary">' + data[3].toFixed(1) + '%</span>';
                     $('td', row).eq(3).html(spent_percent_str);
                     var progress_str = '<div class="progress progress-xs progress-striped active">';
                     progress_str += '<div class="progress-bar bg-primary" style="width: ' + Math.round(data[5]) + '%"></div></div>';
