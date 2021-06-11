@@ -25,9 +25,9 @@ namespace LaborCostAnalysis.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetData()
+        public JsonResult GetData(string year)
         {
-            List<List<ManpowerModel>> lmphs = Manpower.GetMPHModels();
+            List<List<ManpowerModel>> lmphs = (year == "ALL") ? Manpower.GetMPHModels() : Manpower.GetMPHModelsByYear(year);
             return Json(lmphs);
         }
     }

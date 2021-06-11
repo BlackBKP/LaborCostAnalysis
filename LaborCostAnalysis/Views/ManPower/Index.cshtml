@@ -31,16 +31,36 @@
     <script type="text/javascript">
         var months = ["", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         $(document).ready(function () {
-            GetData();
+            GenerateYearOptions();
+            var current_year = new Date();
+            GetData(current_year.getFullYear());
         });
 
-        async function GetData() {
+        function GenerateYearOptions() {
+            $('#select_year').find('option').remove();
+            var str = '<option value="ALL">ALL</option>';
+            var current_year = new Date();
+            for (var i = 0; i < 10; i++) {
+                var year = parseInt(current_year.getFullYear()) - i;
+                if (i == 0)
+                    str += '<option value="' + year + '" selected>' + year + '</option>';
+                else
+                    str += '<option value="' + year + '">' + year + '</option>';
+            }
+            $('#select_year').append(str);
+        }
+
+        $('#select_year').on('change', function () {
+            GetData($('#select_year').val());
+        });
+
+        async function GetData(year) {
             await $.ajax({
                 type: "GET",
                 url: '@Url.Action("GetData", "ManPower")',
 	            contentType: 'application/x-www-form-urlencoded',
                 data: {
-
+                    year
                 },
                 success: function (response) {
                     GenManPowerChart(response);
