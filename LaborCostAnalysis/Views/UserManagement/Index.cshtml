@@ -1,0 +1,295 @@
+﻿<!-- User Management Index -->
+@{
+    ViewData["Title"] = "User Management";
+}
+<div class="container-fluid" style="padding-top:10px">
+
+    <div class="info-box bg-dark">
+        <div class="info-box-content">
+            <h3>USER MANAGEMENT</h3>
+        </div>
+    </div>
+
+    <div class="card card-dark">
+        <div class="card-header">
+            <span class="card-title">Users</span>
+            <div class="card-tools">
+                <button id="btn_add_user" type="button" class="btn btn-dark">
+                    <i class="fas fa-plus"></i> Add User
+                </button>
+                <button type="button" class="btn btn-dark" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-dark btn-sm" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <table id="table_user" class="table table-sm table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Name</th>
+                        <th>Permission</th>
+                        <th>Job(s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @* Generate By JavaScript *@
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal Add User -->
+<div class="modal fade" id="ModalAddUser" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-row pb-3">
+                        <div class="col-4">
+                            <label class="col-form-label">User ID</label>
+                        </div>
+                        <div class="col-8">
+                            <input id="user_id_add" class="form-control" type="text" placeholder="User ID" />
+                        </div>
+                    </div>
+                    <div class="form-row pb-3">
+                        <div class="col-4">
+                            <label class="col-form-label">User Name</label>
+                        </div>
+                        <div class="col-8">
+                            <input id="user_name_add" class="form-control" type="text" placeholder="User Name" />
+                        </div>
+                    </div>
+                    <div class="form-row pb-3">
+                        <div class="col-4">
+                            <label class="col-form-label">Permission</label>
+                        </div>
+                        <div class="col-8">
+                            <select id="user_role_add" class="form-control">
+                                <option selected disabled>
+                                    Please Select Role
+                                </option>
+                                <option value="Admin">
+                                    Admin
+                                </option>
+                                <option value="User">
+                                    User
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button id="btn_confirm_add" type="button" class="btn btn-primary" disabled>Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit User -->
+<div class="modal fade" id="ModalEditUser" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-row pb-3">
+                        <div class="col-4">
+                            <label class="col-form-label">User ID</label>
+                        </div>
+                        <div class="col-8">
+                            <input id="user_id_edit" class="form-control" type="text" placeholder="User ID" />
+                        </div>
+                    </div>
+                    <div class="form-row pb-3">
+                        <div class="col-4">
+                            <label class="col-form-label">User Name</label>
+                        </div>
+                        <div class="col-8">
+                            <input id="user_name_edit" class="form-control" type="text" placeholder="User Name" />
+                        </div>
+                    </div>
+                    <div class="form-row pb-3">
+                        <div class="col-4">
+                            <label class="col-form-label">Permission</label>
+                        </div>
+                        <div class="col-8">
+                            <select id="user_role_edit" class="form-control">
+                                <option value="Admin">
+                                    Admin
+                                </option>
+                                <option value="User">
+                                    User
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="btn_confirm_edit" type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            GetUsers();
+        });
+
+        users = [];
+        async function GetUsers() {
+            await $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetUsers", "UserManagement")',
+	            contentType: 'application/x-www-form-urlencoded',
+                data: {
+
+                },
+                success: function (response) {
+                    users = response;
+                    GenerateUserTable();
+                }
+            });
+        }
+
+        var table;
+        function GenerateUserTable() {
+            var datas = [];
+
+            for (var i = 0; i < users.length; i++) {
+                datas.push([
+                    users[i].user_id,
+                    users[i].user_name,
+                    users[i].permission,
+                    0
+                ]);
+            }
+
+            if (table != null)
+                $('#table_user').DataTable().destroy();
+
+            table = $('#table_user').DataTable({
+                data: datas,
+                pagingType: "full_numbers",
+                order: [
+                    [0, "desc"]
+                ],
+            });
+
+            $('#table_user tbody').on('click', 'tr', function () {
+                EditUser(table.row(this).data());
+            });
+
+        }
+
+        function EditUser(data) {
+            $('#ModalEditUser').modal("show");
+            $('#user_id_edit').val(data[0]);
+            $('#user_name_edit').val(data[1]);
+            $('#user_role_edit').val(data[2]);
+        }
+
+        $('#btn_confirm_edit').on('click', function () {
+            var id = $('#user_id_edit').val();
+            var name = $('#user_name_edit').val();
+            var role = $('#user_role_edit').val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("EditUser", "UserManagement")',
+                contentType: 'application/x-www-form-urlencoded',
+                data: {
+                    id, name, role
+                },
+                success: function (response) {
+                    if (response == "Done")
+                        window.location.reload();
+                    else
+                        alert(response);
+                }
+            });
+        });
+
+        $('#btn_add_user').on('click', function () {
+            $('#ModalAddUser').modal("show");
+            $('#user_id_add').val(null);
+            $('#user_name_add').val(null);
+            $('#user_role_add select').val(null);
+        });
+
+        $('#user_id_add').on('keydown', function () {
+            var id = $('#user_id_add').val();
+            var name = $('#user_name_add').val();
+            var role = $('#user_role_add').val();
+            if (id != "" && name != "" && role != null)
+                $('#btn_confirm_add').attr('disabled', false);
+            else
+                $('#btn_confirm_add').attr('disabled', true);
+        });
+
+        $('#user_name_add').on('keydown', function () {
+            var id = $('#user_id_add').val();
+            var name = $('#user_name_add').val();
+            var role = $('#user_role_add').val();
+            if (id != "" && name != "" && role != null)
+                $('#btn_confirm_add').attr('disabled', false);
+            else
+                $('#btn_confirm_add').attr('disabled', true);
+        });
+
+        $('#user_role_add').on('change', function () {
+            var id = $('#user_id_add').val();
+            var name = $('#user_name_add').val();
+            var role = $('#user_role_add').val();
+            if (id != "" && name != "" && role != null)
+                $('#btn_confirm_add').attr('disabled', false);
+            else
+                $('#btn_confirm_add').attr('disabled', true);
+        });
+
+        $('#btn_confirm_add').on('click', function () {
+            var id = $('#user_id_add').val();
+            var name = $('#user_name_add').val();
+            var role = $('#user_role_add').val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddUser", "UserManagement")',
+                contentType: 'application/x-www-form-urlencoded',
+                data: {
+                    id, name, role
+                },
+                success: function (response) {
+                    if (response == "Done")
+                        window.location.reload();
+                    else
+                        alert(response);
+                }
+            });
+        });
+
+    </script>
+}

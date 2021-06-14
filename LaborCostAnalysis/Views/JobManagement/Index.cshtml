@@ -120,7 +120,6 @@
         var table;
         function GenerateJobsList() {
             var datas = [];
-            $('#total_jobs').val(jobs.length)
             for (var i = 0; i < jobs.length; i++) {
                 var jnum = jobs[i].job_number != "" ? jobs[i].job_number : jobs[i].job_id.substring(0,3) + '-' + jobs[i].job_id.substring(3);
                 datas.push([
