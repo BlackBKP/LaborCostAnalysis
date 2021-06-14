@@ -102,7 +102,7 @@
 
 <!-- Modal Edit User -->
 <div class="modal fade" id="ModalEditUser" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit User</h5>
@@ -112,23 +112,23 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <div class="form-row pb-3">
+                    <div class="form-row pb-1">
                         <div class="col-4">
                             <label class="col-form-label">User ID</label>
                         </div>
                         <div class="col-8">
-                            <input id="user_id_edit" class="form-control" type="text" placeholder="User ID" />
+                            <input id="user_id_edit" class="form-control" type="text" placeholder="User ID" disabled/>
                         </div>
                     </div>
-                    <div class="form-row pb-3">
+                    <div class="form-row pb-1">
                         <div class="col-4">
                             <label class="col-form-label">User Name</label>
                         </div>
                         <div class="col-8">
-                            <input id="user_name_edit" class="form-control" type="text" placeholder="User Name" />
+                            <input id="user_name_edit" class="form-control" type="text" placeholder="User Name" disabled/>
                         </div>
                     </div>
-                    <div class="form-row pb-3">
+                    <div class="form-row pb-1">
                         <div class="col-4">
                             <label class="col-form-label">Permission</label>
                         </div>
@@ -141,6 +141,23 @@
                                     User
                                 </option>
                             </select>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="form-row pb-3">
+                        <div class="container-fluid">
+                            <table id="table_job_accessibility" class="table table-hover table-sm" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width:15%">Accessibility</th>
+                                        <th style="width:15%">Job Number</th>
+                                        <th style="width:70%">Job Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </form>
@@ -186,7 +203,7 @@
                     users[i].user_id,
                     users[i].user_name,
                     users[i].permission,
-                    0
+                    users[i].jobs
                 ]);
             }
 
@@ -212,8 +229,61 @@
             $('#user_id_edit').val(data[0]);
             $('#user_name_edit').val(data[1]);
             $('#user_role_edit').val(data[2]);
+            GetJobAccessibility(data[0]);
         }
 
+        async function GetJobAccessibility(user_id) {
+            await $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetJobAccessibility", "UserManagement")',
+	            contentType: 'application/x-www-form-urlencoded',
+                data: {
+                    user_id
+                },
+                success: function (response) {
+                    //console.log(response);
+                    GenerateJobAvailable(response);
+                }
+            });
+        }
+
+        var accessibility_table;
+        function GenerateJobAvailable(jobs) {
+            var datas = [];
+            for (var i = 0; i < jobs.length; i++) {
+                datas.push([
+                    jobs[i].job_available,
+                    jobs[i].job_number,
+                    jobs[i].job_name
+                ]);
+            }
+            if (accessibility_table != null)
+                $('#table_job_accessibility').DataTable().destroy();
+
+            accessibility_table = $('#table_job_accessibility').DataTable({
+                data: datas,
+                pagingType: "full_numbers",
+                order: [
+                    [0, "desc"]
+                ],
+                rowCallback: function (row, data) {
+                    if (data[0] == "1")
+                        $('td:eq(0)', row).html('<input id="' + data[1] + '" class="custom-checkbox" type="checkbox" checked>');
+                    else
+                        $('td:eq(0)', row).html('<input id="' + data[1] + '" class="custom-checkbox" type="checkbox">');
+                }
+            });
+
+            $('#table_job_accessibility tbody').on('click', 'tr', function () {
+                if ($('#' + accessibility_table.row(this).data()[1]).prop('checked') == true) {
+                    $('#' + accessibility_table.row(this).data()[1]).prop('checked', false);
+                }
+                else if ($('#' + accessibility_table.row(this).data()[1]).prop('checked') == false) {
+                    $('#' + accessibility_table.row(this).data()[1]).prop('checked', true);
+                }
+            })
+        }
+     
         $('#btn_confirm_edit').on('click', function () {
             var id = $('#user_id_edit').val();
             var name = $('#user_name_edit').val();

@@ -12,5 +12,7 @@ namespace LaborCostAnalysis.Models
         public string user_name { get; set; }
 
         public string permission { get; set; }
+
+        public int jobs { get; set; }
     }
 }
