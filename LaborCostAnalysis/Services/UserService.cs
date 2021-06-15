@@ -140,7 +140,48 @@ namespace LaborCostAnalysis.Services
             return jobs_accessibility;
         }
 
-        public string AddJobAccessibility(string user_id,string job_id)
+        public string UpdateAccessibility(string user_id, string[] job_acc)
+        {
+            SqlConnection con = DB.Connect();
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand("DELETE FROM User_Accessibility WHERE User_ID = '" + user_id + "'", con))
+                {
+                    con.Open();
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = con;
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+                }
+
+                using (SqlCommand cmd = new SqlCommand("INSERT INTO User_Accessibility (User_ID, Job_ID) VALUES(@User_ID, @Job_ID)", con))
+                {
+                    con.Open();
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = con;
+                    cmd.Parameters.Add("@User_ID", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
+
+                    for (int i = 0; i < job_acc.Count(); i++)
+                    {
+                        cmd.Parameters[0].Value = user_id;
+                        cmd.Parameters[1].Value = job_acc[i].Replace("-",String.Empty).Replace(" ",String.Empty);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                con.Close();
+            }
+            return "Done";
+        }
+
+        public string AddJobAccessibility(string user_id, string job_id)
         {
             SqlConnection con = DB.Connect();
             try

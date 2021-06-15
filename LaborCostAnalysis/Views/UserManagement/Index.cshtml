@@ -252,13 +252,13 @@
             });
         }
 
-        var vv = [];
+        var ids = [];
         var accessibility_table;
         function GenerateJobAvailable(jobs) {
             if (accessibility_table != null)
                 $('#table_job_accessibility').DataTable().destroy();
 
-            vv = jobs;
+            ids = jobs;
             var datas = [];
             for (var i = 0; i < jobs.length; i++) {
                 datas.push([
@@ -294,7 +294,7 @@
             })*@
         }
 
-        async function AddJobAccessibility(user_id,job_id) {
+        @*async function AddJobAccessibility(user_id,job_id) {
             await $.ajax({
                 type: "POST",
                 url: '@Url.Action("AddJobAccessibility", "UserManagement")',
@@ -307,9 +307,9 @@
                         alert(response);
                 }
             });
-        }
+        }*@
 
-        async function RemoveJobAccessibility(user_id,job_id) {
+        @*async function RemoveJobAccessibility(user_id,job_id) {
             await $.ajax({
                 type: "POST",
                 url: '@Url.Action("RemoveJobAccessibility", "UserManagement")',
@@ -322,26 +322,23 @@
                         alert(response);
                 }
             });
-        }
+        }*@
 
         $('#btn_confirm_edit').on('click', function () {
             var id = $('#user_id_edit').val();
             var name = $('#user_name_edit').val();
             var role = $('#user_role_edit').val();
-            var aa = [];
-            for (var i = 0; i < vv.length; i++) {
-                if ($('#' + vv[i].job_number).prop('checked') == true)
-                    aa.push(vv[i].job_number);
+            var job_acc = [];
+            for (var i = 0; i < ids.length; i++) {
+                if ($('#' + ids[i].job_number).prop('checked') == true)
+                    job_acc.push(ids[i].job_number);
             }
-
-            console.log(aa);
-
-            @*$.ajax({
+            $.ajax({
                 type: "POST",
                 url: '@Url.Action("EditUser", "UserManagement")',
                 contentType: 'application/x-www-form-urlencoded',
                 data: {
-                    id, name, role
+                    id, name, role, job_acc
                 },
                 success: function (response) {
                     if (response == "Done")
@@ -349,7 +346,7 @@
                     else
                         alert(response);
                 }
-            });*@
+            });
         });
 
         $('#btn_add_user').on('click', function () {

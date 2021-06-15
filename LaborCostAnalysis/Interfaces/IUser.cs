@@ -16,6 +16,8 @@ namespace LaborCostAnalysis.Interfaces
 
         List<JobAccessibilityModel> GetJobAccessibility(string user_id);
 
+        string UpdateAccessibility(string user_id, string[] job_acc);
+
         string AddJobAccessibility(string user_id, string job_id);
 
         string RemoveJobAccessibility(string user_id, string job_id);
