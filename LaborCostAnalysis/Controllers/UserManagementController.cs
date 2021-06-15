@@ -52,5 +52,19 @@ namespace LaborCostAnalysis.Controllers
             var result = UserInterface.EditUser(id, name, role);
             return Json(result);
         }
+
+        [HttpPost]
+        public JsonResult AddJobAccessibility(string user_id, string job_id)
+        {
+            var result = UserInterface.AddJobAccessibility(user_id,job_id);
+            return Json(result);
+        }
+
+        [HttpPost]
+        public JsonResult RemoveJobAccessibility(string user_id, string job_id)
+        {
+            var result = UserInterface.RemoveJobAccessibility(user_id,job_id);
+            return Json(result);
+        }
     }
 }
