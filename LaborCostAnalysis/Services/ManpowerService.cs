@@ -274,7 +274,7 @@ namespace LaborCostAnalysis.Services
                                          "left join User_Authentication ON User_Authentication.User_ID = User_Accessibility.User_ID " +
                                          "where User_Authentication.User_Name='" + user_name + "') as s1 ON s1.Job_ID = normal.Job_ID " +
                              "left join Job ON Job.Job_ID = normal.Job_ID " +
-                             "where s1.Job_ID is not null and Job.Job_Year ='" + year + "'" +
+                             "where s1.Job_ID is not null and Job.Job_Year = '" + year + "'" +
                              "group by Job.Job_Year, s1.Job_ID, normal.Year, normal.Month, normal.Week";
 
             SqlCommand cmd = new SqlCommand(str_cmd, con);

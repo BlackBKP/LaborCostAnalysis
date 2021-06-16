@@ -13,5 +13,9 @@ namespace LaborCostAnalysis.Interfaces
         List<NormalOvertimeModel> NormalPerOvertime(string job_id);
 
         List<NormalOvertimeModel> NormalPerOvertimeByYear(string year);
+
+        List<NormalOvertimeModel> NormalPerOvertimeByUser(string user_name);
+
+        List<NormalOvertimeModel> NormalPerOvertimeByUser(string user_name, string year);
     }
 }

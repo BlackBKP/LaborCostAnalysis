@@ -13,10 +13,12 @@ namespace LaborCostAnalysis.Controllers
     public class NormalOvertimeController : Controller
     {
         INormalOvertime NormalOvertime;
+        IUser UserInterface;
 
         public NormalOvertimeController()
         {
             this.NormalOvertime = new NormalOvertimeService();
+            this.UserInterface = new UserService();
         }
 
         public IActionResult Index()
@@ -27,7 +29,17 @@ namespace LaborCostAnalysis.Controllers
         [HttpGet]
         public JsonResult GetData(string year)
         {
-            List<NormalOvertimeModel> npero = (year == "ALL") ? NormalOvertime.NormalPerOvertime() : NormalOvertime.NormalPerOvertimeByYear(year);
+            List<NormalOvertimeModel> npero = new List<NormalOvertimeModel>();
+            string user_name = HttpContext.Session.GetString("UserID");
+            UserAuthenticationModel ua = UserInterface.GetUserAuthentication(user_name);
+            if(ua.permission == "Admin")
+            {
+                npero = (year == "ALL") ? NormalOvertime.NormalPerOvertime() : NormalOvertime.NormalPerOvertimeByYear(year);
+            }
+            else
+            {
+                npero = (year == "ALL") ? NormalOvertime.NormalPerOvertimeByUser(user_name) : NormalOvertime.NormalPerOvertimeByUser(user_name,year);
+            }
             return Json(npero);
         }
     }
