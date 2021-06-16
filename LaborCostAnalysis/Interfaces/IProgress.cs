@@ -12,6 +12,8 @@ namespace LaborCostAnalysis.Interfaces
 
         List<ProgressModel> GetProgressViewModels();
 
+        List<ProgressModel> GetProgressViewModelsByUser(string user_name);
+
         string InsertProgress(List<ProgressModel> progress);
 
         string UpdateDuplicateProgress(List<ProgressModel> progress);

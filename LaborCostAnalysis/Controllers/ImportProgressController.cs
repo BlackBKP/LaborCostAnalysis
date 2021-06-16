@@ -22,6 +22,7 @@ namespace LaborCostAnalysis.Controllers
         private readonly IHostingEnvironment _hostingEnvironment;
         IJob JobInterface;
         IProgress ProgressInterface;
+        IUser UserInterface;
 
         static int year;
         static string month;
@@ -34,6 +35,7 @@ namespace LaborCostAnalysis.Controllers
             _hostingEnvironment = hostingEnvironment;
             this.JobInterface = new JobService();
             this.ProgressInterface = new ProgressService();
+            this.UserInterface = new UserService();
         }
 
         public IActionResult Index()
@@ -44,8 +46,18 @@ namespace LaborCostAnalysis.Controllers
         [HttpGet]
         public JsonResult GetData()
         {
-            List<ProgressModel> pgs = ProgressInterface.GetProgressViewModels();
             List<List<ProgressModel>> lpgs = new List<List<ProgressModel>>();
+            List<ProgressModel> pgs = new List<ProgressModel>();
+            string user_name = HttpContext.Session.GetString("UserID");
+            UserAuthenticationModel ua = UserInterface.GetUserAuthentication(user_name);
+            if (ua.permission == "Admin")
+            {
+                pgs = ProgressInterface.GetProgressViewModels();
+            }
+            else
+            {
+                pgs = ProgressInterface.GetProgressViewModelsByUser(user_name);
+            }
             string[] job_id = pgs.Select(s => s.job_id).Distinct().ToArray();
             for (int i = 0; i < job_id.Count(); i++)
             {
