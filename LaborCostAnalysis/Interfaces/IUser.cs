@@ -21,5 +21,7 @@ namespace LaborCostAnalysis.Interfaces
         string AddJobAccessibility(string user_id, string job_id);
 
         string RemoveJobAccessibility(string user_id, string job_id);
+
+        UserAuthenticationModel GetUserAuthentication(string user_name);
     }
 }

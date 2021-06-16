@@ -10,6 +10,8 @@ namespace LaborCostAnalysis.Interfaces
     {
         List<JobModel> GetJobs();
 
+        List<JobModel> GetJobsWithAuthentication(string user_id);
+
         string UpdateJobName(string job_number, string job_name);
 
         string UpdateJobBudget(string job_number, int job_budget);

@@ -20,6 +20,7 @@ namespace LaborCostAnalysis.Controllers
         ISpentPerWeek SpentInterface;
         IManpower ManpowerInterface;
         INormalOvertime NormalOvertimeInterface;
+        IUser UserInterface;
 
         public HomeController()
         {
@@ -28,6 +29,7 @@ namespace LaborCostAnalysis.Controllers
             this.SpentInterface = new SpentPerWeekService();
             this.ManpowerInterface = new ManpowerService();
             this.NormalOvertimeInterface = new NormalOvertimeService();
+            this.UserInterface = new UserService();
         }
 
         public IActionResult Index()
@@ -38,9 +40,19 @@ namespace LaborCostAnalysis.Controllers
         [HttpGet]
         public JsonResult GetJobs()
         {
+            string user_name = HttpContext.Session.GetString("UserID");
+            UserAuthenticationModel ua = UserInterface.GetUserAuthentication(user_name);
             try
             {
-                List<JobModel> jobs = JobInterface.GetJobs();
+                List<JobModel> jobs = new List<JobModel>();
+                if(ua.permission == "Admin")
+                {
+                    jobs = JobInterface.GetJobs();
+                }
+                else
+                {
+                    jobs = JobInterface.GetJobsWithAuthentication(user_name);
+                }
                 jobs = jobs.OrderByDescending(o => o.job_id).ToList();
                 return Json(jobs);
             }

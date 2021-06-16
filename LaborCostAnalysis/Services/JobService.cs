@@ -52,6 +52,46 @@ namespace LaborCostAnalysis.Services
             return jobs;
         }
 
+        public List<JobModel> GetJobsWithAuthentication(string user_id)
+        {
+            List<JobModel> jobs = new List<JobModel>();
+            SqlConnection con = DB.Connect();
+            con.Open();
+
+            string str_cmd = "select Job.Job_ID, " +
+                                    "Job.Job_Number, " +
+                                    "Job.Job_Name, " +
+                                    "Job.Estimated_Budget, " +
+                                    "Job.Job_Year, " +
+                                    "User_Accessibility.User_ID, " +
+                                    "User_Authentication.User_Name, " +
+                                    "User_Authentication.Permission " +
+                             "from Job " +
+                             "left join User_Accessibility on Job.Job_ID = User_Accessibility.Job_ID " +
+                             "left join User_Authentication on User_Accessibility.User_ID = User_Authentication.User_ID " +
+                             "where User_Authentication.User_Name = '" + user_id + "'";
+
+            SqlCommand cmd = new SqlCommand(str_cmd, con);
+            SqlDataReader dr = cmd.ExecuteReader();
+            if (dr.HasRows)
+            {
+                while (dr.Read())
+                {
+                    JobModel job = new JobModel()
+                    {
+                        job_id = dr["Job_ID"] != DBNull.Value ? dr["Job_ID"].ToString() : "",
+                        job_number = dr["Job_Number"] != DBNull.Value ? dr["Job_Number"].ToString() : "",
+                        job_name = dr["Job_Name"] != DBNull.Value ? dr["Job_Name"].ToString() : "",
+                        estimated_budget = dr["Estimated_Budget"] != DBNull.Value ? Convert.ToInt32(dr["Estimated_Budget"]) : 0,
+                        job_year = dr["Job_Year"] != DBNull.Value ? Convert.ToInt32(dr["Job_Year"]) : 0,
+                    };
+                    jobs.Add(job);
+                }
+                dr.Close();
+            }
+            return jobs;
+        }
+
         public string UpdateJobName(string job_number, string job_name)
         {
             SqlConnection con = DB.Connect();

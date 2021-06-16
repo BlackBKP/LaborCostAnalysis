@@ -50,8 +50,36 @@ namespace LaborCostAnalysis.Services
                 }
                 dr.Close();
             }
-
             return users;
+        }
+
+        public UserAuthenticationModel GetUserAuthentication(string user_name)
+        {
+            UserAuthenticationModel user_authen = new UserAuthenticationModel();
+
+            SqlConnection con = DB.Connect();
+            con.Open();
+            string str_cmd = "select TOP 1 User_Accessibility.User_ID, " +
+                                    "User_Authentication.User_Name, " +
+                                    "User_Authentication.Permission " +
+                             "from User_Accessibility " +
+                             "left join User_Authentication ON User_Authentication.User_ID = User_Accessibility.User_ID " +
+                             "where User_Authentication .User_Name ='" + user_name + "'";
+
+            SqlCommand cmd = new SqlCommand(str_cmd, con);
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            if (dr.HasRows)
+            {
+                while (dr.Read())
+                {
+                    user_authen.user_id = dr["User_ID"] != DBNull.Value ? dr["User_ID"].ToString() : "";
+                    user_authen.user_name = dr["User_Name"] != DBNull.Value ? dr["User_Name"].ToString() : "";
+                    user_authen.permission = dr["Permission"] != DBNull.Value ? dr["Permission"].ToString() : "";
+                }
+                dr.Close();
+            }
+            return user_authen;
         }
 
         public string AddUser(string user_id,string user_name, string role)
