@@ -11,6 +11,8 @@ namespace LaborCostAnalysis.Interfaces
         List<List<ManpowerModel>> GetMPHModels();
         List<List<ManpowerModel>> GetMPHModels(string job_id);
         List<List<ManpowerModel>> GetMPHModelsByYear(string year);
+        List<List<ManpowerModel>> GetManpowerByUser(string user_name);
+        List<List<ManpowerModel>> GetManpowerByUser(string user_name, string year);
         List<ManpowerModel> GetManpower(string job_id);
     }
 }

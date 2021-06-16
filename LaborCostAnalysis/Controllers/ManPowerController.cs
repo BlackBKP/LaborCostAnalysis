@@ -13,10 +13,12 @@ namespace LaborCostAnalysis.Controllers
     public class ManPowerController : Controller
     {
         IManpower Manpower;
+        IUser UserInterface;
 
         public ManPowerController()
         {
             this.Manpower = new ManpowerService();
+            this.UserInterface = new UserService();
         }
 
         public IActionResult Index()
@@ -27,7 +29,17 @@ namespace LaborCostAnalysis.Controllers
         [HttpGet]
         public JsonResult GetData(string year)
         {
-            List<List<ManpowerModel>> lmphs = (year == "ALL") ? Manpower.GetMPHModels() : Manpower.GetMPHModelsByYear(year);
+            string user_name = HttpContext.Session.GetString("UserID");
+            UserAuthenticationModel ua = UserInterface.GetUserAuthentication(user_name);
+            List<List<ManpowerModel>> lmphs = new List<List<ManpowerModel>>();
+            if(ua.permission == "Admin")
+            {
+                lmphs = (year == "ALL") ? Manpower.GetMPHModels() : Manpower.GetMPHModelsByYear(year);
+            }
+            else
+            {
+                lmphs = (year == "ALL") ? Manpower.GetManpowerByUser(user_name) : Manpower.GetManpowerByUser(user_name,year);
+            }
             return Json(lmphs);
         }
     }
