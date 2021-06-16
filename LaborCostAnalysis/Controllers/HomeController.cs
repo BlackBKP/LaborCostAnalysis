@@ -40,10 +40,10 @@ namespace LaborCostAnalysis.Controllers
         [HttpGet]
         public JsonResult GetJobs()
         {
-            string user_name = HttpContext.Session.GetString("UserID");
-            UserAuthenticationModel ua = UserInterface.GetUserAuthentication(user_name);
             try
             {
+                string user_name = HttpContext.Session.GetString("UserID");
+                UserAuthenticationModel ua = UserInterface.GetUserAuthentication(user_name);
                 List<JobModel> jobs = new List<JobModel>();
                 if(ua.permission == "Admin")
                 {
