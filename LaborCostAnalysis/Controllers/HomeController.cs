@@ -65,9 +65,26 @@ namespace LaborCostAnalysis.Controllers
         [HttpGet]
         public JsonResult GetJobsByYear(string year)
         {
-            List<JobModel> jobs = JobInterface.GetJobs();
-            jobs = jobs.Where(w => w.job_id.Substring(1, 2) == year.Substring(2, 2)).Select(s => s).ToList();
-            return Json(jobs);
+            try
+            {
+                string user_name = HttpContext.Session.GetString("UserID");
+                UserAuthenticationModel ua = UserInterface.GetUserAuthentication(user_name);
+                List<JobModel> jobs = new List<JobModel>();
+                if(ua.permission == "Admin")
+                {
+                    jobs = JobInterface.GetJobs();
+                }
+                else
+                {
+                    jobs = JobInterface.GetJobsWithAuthentication(user_name);
+                }
+                jobs = jobs.Where(w => w.job_id.Substring(1, 2) == year.Substring(2, 2)).Select(s => s).ToList();
+                return Json(jobs);
+            }
+            catch(Exception ex)
+            {
+                return Json(ex);
+            }
         }
 
         [HttpGet]
