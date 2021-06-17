@@ -9,5 +9,6 @@ namespace LaborCostAnalysis.Interfaces
     interface IJobSummary
     {
         List<JobSummaryModel> GetJobsSummary();
+        List<JobSummaryModel> GetJobsSummary(string user_name);
     }
 }

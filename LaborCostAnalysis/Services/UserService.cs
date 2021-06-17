@@ -59,11 +59,11 @@ namespace LaborCostAnalysis.Services
 
             SqlConnection con = DB.Connect();
             con.Open();
-            string str_cmd = "select TOP 1 User_Accessibility.User_ID, " +
+            string str_cmd = "select TOP 1 User_Authentication.User_ID, " +
                                     "User_Authentication.User_Name, " +
                                     "User_Authentication.Permission " +
-                             "from User_Accessibility " +
-                             "left join User_Authentication ON User_Authentication.User_ID = User_Accessibility.User_ID " +
+                             "from User_Authentication " +
+                             "left join User_Accessibility ON User_Authentication.User_ID = User_Accessibility.User_ID " +
                              "where User_Authentication .User_Name ='" + user_name + "'";
 
             SqlCommand cmd = new SqlCommand(str_cmd, con);

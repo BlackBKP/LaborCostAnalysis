@@ -13,10 +13,12 @@ namespace LaborCostAnalysis.Controllers
     public class JobSummaryController : Controller
     {
         IJobSummary JobSummary;
+        IUser UserInterface;
 
         public JobSummaryController()
         {
             this.JobSummary = new JobSummaryService();
+            this.UserInterface = new UserService();
         }
 
         public IActionResult Index()
@@ -27,7 +29,17 @@ namespace LaborCostAnalysis.Controllers
         [HttpGet]
         public JsonResult GetJobsSummary()
         {
-            List<JobSummaryModel> jobs = JobSummary.GetJobsSummary();
+            string user_name = HttpContext.Session.GetString("UserID");
+            UserAuthenticationModel ua = UserInterface.GetUserAuthentication(user_name);
+            List<JobSummaryModel> jobs = new List<JobSummaryModel>();
+            if (ua.permission == "Admin")
+            {
+                jobs = JobSummary.GetJobsSummary();
+            }
+            else
+            {
+                jobs = JobSummary.GetJobsSummary(user_name);
+            }
             return Json(jobs);
         }
     }
