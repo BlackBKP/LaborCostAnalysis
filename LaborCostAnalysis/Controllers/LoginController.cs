@@ -7,13 +7,21 @@ using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
 using System.Threading.Tasks;
+using LaborCostAnalysis.Interfaces;
+using LaborCostAnalysis.Services;
 
 namespace LaborCostAnalysis.Controllers
 {
     public class LoginController : Controller
     {
+        IUser UserInterface;
         string User = "";
         byte[] image = null;
+
+        public LoginController()
+        {
+            this.UserInterface = new UserService();
+        }
 
         public IActionResult Index()
         {
@@ -62,6 +70,11 @@ namespace LaborCostAnalysis.Controllers
             if(ActiveDirectoryAuthenticate(username, password))
             {
                 HttpContext.Session.SetString("LoginStatus", "LoggedIn");
+                UserAuthenticationModel ua = UserInterface.GetUserAuthentication(User);
+                if (ua.permission == "Admin")
+                    HttpContext.Session.SetString("Admin", "True");
+                else
+                    HttpContext.Session.SetString("Admin", "False");
                 return RedirectToAction("Index", "Home");
             }
             else

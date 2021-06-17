@@ -1,4 +1,8 @@
-﻿<aside class="main-sidebar sidebar-dark-primary elevation-2">
+﻿@using Microsoft.AspNetCore.Http
+@{
+    var Admin = Context.Session.GetString("Admin");
+}
+<aside class="main-sidebar sidebar-dark-primary elevation-2">
     <!-- Brand Logo -->
     <a class="brand-link" asp-controller="Home" asp-action="Index">
         <img src="~/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
@@ -47,54 +51,75 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="JobManagement" asp-action="Index">
-                        <i class="nav-icon fas fa-chart-area"></i>
-                        <p>Job Management</p>
-                    </a>
-                </li>
+                @if (Admin == "True")
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="JobManagement" asp-action="Index">
+                            <i class="nav-icon fas fa-chart-area"></i>
+                            <p>Job Management</p>
+                        </a>
+                    </li>
+                }
 
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="UserManagement" asp-action="Index">
-                        <i class="nav-icon fas fa-user"></i>
-                        <p>User Management</p>
-                    </a>
-                </li>
+                @if (Admin == "True")
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="UserManagement" asp-action="Index">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>User Management</p>
+                        </a>
+                    </li>
+                }
 
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="ImportJob" asp-action="Index">
-                        <i class="nav-icon fas fa-money-bill-wave"></i>
-                        <p>Import Job</p>
-                    </a>
-                </li>
+                @if (Admin == "True")
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="ImportJob" asp-action="Index">
+                            <i class="nav-icon fas fa-money-bill-wave"></i>
+                            <p>Import Job</p>
+                        </a>
+                    </li>
+                }
 
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="ImportLaborCost" asp-action="Index">
-                        <i class="nav-icon fas fa-money-bill-wave"></i>
-                        <p>Import Labor Cost</p>
-                    </a>
-                </li>
+                @if (Admin == "True")
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="ImportLaborCost" asp-action="Index">
+                            <i class="nav-icon fas fa-money-bill-wave"></i>
+                            <p>Import Labor Cost</p>
+                        </a>
+                    </li>
+                }
 
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="ImportWorkingHour" asp-action="Index">
-                        <i class="nav-icon fas fa-upload"></i>
-                        <p>Import Working Hours</p>
-                    </a>
-                </li>
+                @if (Admin == "True")
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="ImportWorkingHour" asp-action="Index">
+                            <i class="nav-icon fas fa-upload"></i>
+                            <p>Import Working Hours</p>
+                        </a>
+                    </li>
+                }
 
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="ImportOvertime" asp-action="Index">
-                        <i class="nav-icon fas fa-upload"></i>
-                        <p>Import Overtimes</p>
-                    </a>
-                </li>
+                @if (Admin == "True")
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="ImportOvertime" asp-action="Index">
+                            <i class="nav-icon fas fa-upload"></i>
+                            <p>Import Overtimes</p>
+                        </a>
+                    </li>
+                }
 
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="ImportProgress" asp-action="Index">
-                        <i class="nav-icon fas fa-upload"></i>
-                        <p>Import Progress</p>
-                    </a>
-                </li>
+                @if (Admin == "True")
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="ImportProgress" asp-action="Index">
+                            <i class="nav-icon fas fa-upload"></i>
+                            <p>Import Progress</p>
+                        </a>
+                    </li>
+                }
 
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="LogOut" asp-action="LogOut">
