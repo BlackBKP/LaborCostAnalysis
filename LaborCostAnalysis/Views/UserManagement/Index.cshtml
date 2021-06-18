@@ -230,14 +230,6 @@
             GetJobAccessibility(data[0]);
         }
 
-        $('#btn_times_modal_edit').on('click', function () {
-            GetUsers();
-        });
-
-        $('#btn_close_modal_edit').on('click', function () {
-            GetUsers();
-        });
-
         async function GetJobAccessibility(user_id) {
             await $.ajax({
                 type: "GET",
@@ -252,19 +244,18 @@
             });
         }
 
-        var ids = [];
+        var user_jobs = [];
         var accessibility_table;
         function GenerateJobAvailable(jobs) {
             if (accessibility_table != null)
                 $('#table_job_accessibility').DataTable().destroy();
-
-            ids = jobs;
+            user_jobs = jobs;
             var datas = [];
-            for (var i = 0; i < jobs.length; i++) {
+            for (var i = 0; i < user_jobs.length; i++) {
                 datas.push([
-                    jobs[i].job_available,
-                    jobs[i].job_number,
-                    jobs[i].job_name
+                    String(user_jobs[i].job_available),
+                    user_jobs[i].job_number,
+                    user_jobs[i].job_name
                 ]);
             }
 
@@ -281,64 +272,52 @@
                         $('td:eq(0)', row).html('<input id="' + data[1] + '" class="custom-checkbox" type="checkbox">');
                 }
             });
-
-            @*$('#table_job_accessibility tbody').on('click', 'tr', function () {
-                var user_id = $('#user_id_edit').val();
-                var job_id = accessibility_table.row(this).data()[1];
-                if ($('#' + job_id).prop('checked') == true) {
-                    AddJobAccessibility(user_id, job_id);
-                }
-                else if ($('#' + job_id).prop('checked') == false) {
-                    RemoveJobAccessibility(user_id, job_id);
-                }
-            })*@
         }
 
-        @*async function AddJobAccessibility(user_id,job_id) {
-            await $.ajax({
-                type: "POST",
-                url: '@Url.Action("AddJobAccessibility", "UserManagement")',
-                contentType: 'application/x-www-form-urlencoded',
-                data: {
-                    user_id, job_id
-                },
-                success: function (response) {
-                    if (response != "Done")
-                        alert(response);
+        $('#table_job_accessibility tbody').on('click', 'tr', function () {
+            var user_id = $('#user_id_edit').val();
+            var job_id = accessibility_table.row(this).data()[1];
+            if (accessibility_table.row(this).data()[0] == "0") {
+                accessibility_table.row(this).data()[0] = "1";
+                for (var i = 0; i < user_jobs.length; i++) {
+                    if (user_jobs[i].job_number == job_id) {
+                        user_jobs[i].job_available = "1";
+                    }
                 }
-            });
-        }*@
-
-        @*async function RemoveJobAccessibility(user_id,job_id) {
-            await $.ajax({
-                type: "POST",
-                url: '@Url.Action("RemoveJobAccessibility", "UserManagement")',
-                contentType: 'application/x-www-form-urlencoded',
-                data: {
-                    user_id, job_id
-                },
-                success: function (response) {
-                    if (response != "Done")
-                        alert(response);
+            }
+            else {
+                accessibility_table.row(this).data()[0] = "0";
+                for (var i = 0; i < user_jobs.length; i++) {
+                    if (user_jobs[i].job_number == job_id) {
+                        user_jobs[i].job_available = "0";
+                    }
                 }
-            });
-        }*@
+            }
+            $('#table_job_accessibility').DataTable().draw();
+        })
 
+        var print_ids = [];
         $('#btn_confirm_edit').on('click', function () {
             var id = $('#user_id_edit').val();
             var name = $('#user_name_edit').val();
             var role = $('#user_role_edit').val();
             var job_acc = [];
-            for (var i = 0; i < ids.length; i++) {
-                if ($('#' + ids[i].job_number).prop('checked') == true)
-                    job_acc.push(ids[i].job_number);
+            for (var i = 0; i < user_jobs.length; i++) {
+                if (user_jobs[i].job_available == "1") {
+                    job_acc.push(user_jobs[i].job_id);
+                }
+            }
+            
+            for (var i = 0; i < user_jobs.length; i++) {
+                if (user_jobs[i].job_available == "1")
+                    print_ids.push(user_jobs[i].job_id);
             }
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("EditUser", "UserManagement")',
                 contentType: 'application/x-www-form-urlencoded',
                 data: {
-                    id, name, role, job_acc
+                    id, name, role, print_ids
                 },
                 success: function (response) {
                     if (response == "Done")

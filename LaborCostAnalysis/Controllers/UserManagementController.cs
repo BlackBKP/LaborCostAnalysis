@@ -47,10 +47,10 @@ namespace LaborCostAnalysis.Controllers
         }
 
         [HttpPost]
-        public JsonResult EditUser(string id, string name, string role, string[] job_acc)
+        public JsonResult EditUser(string id, string name, string role, string[] print_ids)
         {
             var result = UserInterface.EditUser(id, name, role);
-            result = UserInterface.UpdateAccessibility(id, job_acc);
+            result = UserInterface.UpdateAccessibility(id, print_ids);
             return Json(result);
         }
 
