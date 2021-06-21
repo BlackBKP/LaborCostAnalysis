@@ -35,7 +35,7 @@ namespace LaborCostAnalysis.Controllers
                 string user_name = HttpContext.Session.GetString("UserID");
                 UserAuthenticationModel ua = UserInterface.GetUserAuthentication(user_name);
                 List<SpentPerWeekModel> spws = new List<SpentPerWeekModel>();
-                if(ua.permission == "Admin")
+                if (ua.permission == "Admin" || ua.permission == "Human Resource" || ua.permission == "Accounting")
                 {
                     spws = (year == "ALL") ? SPW.GetSpentCostPerWeeks() : SPW.GetSpentCostPerWeeks(year);
                     string[] job_id = spws.OrderByDescending(o => o.job_id).Select(s => s.job_id).Distinct().ToArray();

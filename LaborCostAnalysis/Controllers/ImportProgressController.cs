@@ -50,7 +50,7 @@ namespace LaborCostAnalysis.Controllers
             List<ProgressModel> pgs = new List<ProgressModel>();
             string user_name = HttpContext.Session.GetString("UserID");
             UserAuthenticationModel ua = UserInterface.GetUserAuthentication(user_name);
-            if (ua.permission == "Admin")
+            if (ua.permission == "Admin" || ua.permission == "Human Resource" || ua.permission == "Accounting")
             {
                 pgs = ProgressInterface.GetProgressViewModels();
             }

@@ -32,7 +32,7 @@ namespace LaborCostAnalysis.Controllers
             List<NormalOvertimeModel> npero = new List<NormalOvertimeModel>();
             string user_name = HttpContext.Session.GetString("UserID");
             UserAuthenticationModel ua = UserInterface.GetUserAuthentication(user_name);
-            if(ua.permission == "Admin")
+            if (ua.permission == "Admin" || ua.permission == "Human Resource" || ua.permission == "Accounting")
             {
                 npero = (year == "ALL") ? NormalOvertime.NormalPerOvertime() : NormalOvertime.NormalPerOvertimeByYear(year);
             }

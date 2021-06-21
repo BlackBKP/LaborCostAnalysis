@@ -32,7 +32,7 @@ namespace LaborCostAnalysis.Controllers
             string user_name = HttpContext.Session.GetString("UserID");
             UserAuthenticationModel ua = UserInterface.GetUserAuthentication(user_name);
             List<JobSummaryModel> jobs = new List<JobSummaryModel>();
-            if (ua.permission == "Admin")
+            if (ua.permission == "Admin" || ua.permission == "Human Resource" || ua.permission == "Accounting")
             {
                 jobs = JobSummary.GetJobsSummary();
             }

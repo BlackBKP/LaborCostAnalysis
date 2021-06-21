@@ -32,7 +32,7 @@ namespace LaborCostAnalysis.Controllers
             string user_name = HttpContext.Session.GetString("UserID");
             UserAuthenticationModel ua = UserInterface.GetUserAuthentication(user_name);
             List<List<ManpowerModel>> lmphs = new List<List<ManpowerModel>>();
-            if(ua.permission == "Admin")
+            if (ua.permission == "Admin" || ua.permission == "Human Resource" || ua.permission == "Accounting")
             {
                 lmphs = (year == "ALL") ? Manpower.GetMPHModels() : Manpower.GetMPHModelsByYear(year);
             }
