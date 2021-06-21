@@ -4,7 +4,7 @@
     byte[] image = Context.Session.Get("Image");
     var base64 = Convert.ToBase64String(image);
     var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
-    var role = Context.Session.GetString("Admin") == "True" ? "Admin" : "User";
+    var role = Context.Session.GetString("Admin");
 }
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <!-- Left navbar links -->

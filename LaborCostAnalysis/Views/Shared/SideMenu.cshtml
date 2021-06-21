@@ -51,7 +51,7 @@
                     </a>
                 </li>
 
-                @if (Admin == "True")
+                @if (Admin == "Admin")
                 {
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="JobManagement" asp-action="Index">
@@ -61,7 +61,7 @@
                     </li>
                 }
 
-                @if (Admin == "True")
+                @if (Admin == "Admin")
                 {
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="UserManagement" asp-action="Index">
@@ -71,7 +71,7 @@
                     </li>
                 }
 
-                @if (Admin == "True")
+                @if (Admin == "Admin")
                 {
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="ImportJob" asp-action="Index">
@@ -81,7 +81,7 @@
                     </li>
                 }
 
-                @if (Admin == "True")
+                @if (Admin == "Admin")
                 {
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="ImportLaborCost" asp-action="Index">
@@ -91,7 +91,7 @@
                     </li>
                 }
 
-                @if (Admin == "True")
+                @if (Admin == "Admin")
                 {
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="ImportWorkingHour" asp-action="Index">
@@ -101,7 +101,7 @@
                     </li>
                 }
 
-                @if (Admin == "True")
+                @if (Admin == "Admin")
                 {
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="ImportOvertime" asp-action="Index">
@@ -111,7 +111,7 @@
                     </li>
                 }
 
-                @if (Admin == "True")
+                @if (Admin == "Admin" || Admin == "Project Manager")
                 {
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="ImportProgress" asp-action="Index">

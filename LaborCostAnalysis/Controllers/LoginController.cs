@@ -72,9 +72,9 @@ namespace LaborCostAnalysis.Controllers
                 HttpContext.Session.SetString("LoginStatus", "LoggedIn");
                 UserAuthenticationModel ua = UserInterface.GetUserAuthentication(User);
                 if (ua.permission == "Admin")
-                    HttpContext.Session.SetString("Admin", "True");
+                    HttpContext.Session.SetString("Admin", "Admin");
                 else
-                    HttpContext.Session.SetString("Admin", "False");
+                    HttpContext.Session.SetString("Admin", ua.permission);
                 return RedirectToAction("Index", "Home");
             }
             else
