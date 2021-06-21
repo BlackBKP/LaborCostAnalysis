@@ -506,7 +506,10 @@
 
                 },
                 success: function (response) {
-                    window.location.reload();
+                    if (response == "Done")
+                        window.location.reload();
+                    else
+                        console.log(response);
                 }
             })
         }

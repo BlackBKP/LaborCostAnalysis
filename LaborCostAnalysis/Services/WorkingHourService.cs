@@ -128,7 +128,7 @@ namespace LaborCostAnalysis.Services
 
                 for (int i = 0; i < whs.Count; i++)
                 {
-                    cmd.Parameters[0].Value = whs[i].job_id;
+                    cmd.Parameters[0].Value = whs[i].job_id.Replace("-",String.Empty).Replace(" ",String.Empty);
                     cmd.Parameters[1].Value = whs[i].employee_id;
                     cmd.Parameters[2].Value = whs[i].working_day;
                     cmd.Parameters[3].Value = whs[i].week;

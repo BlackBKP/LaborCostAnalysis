@@ -137,8 +137,15 @@ namespace LaborCostAnalysis.Controllers
         [HttpPost]
         public JsonResult ConfirmImport()
         {
-            string result = WorkingHourInterface.InsertWorkingHours(working_hours);
-            return Json(result);
+            try
+            {
+                string result = WorkingHourInterface.InsertWorkingHours(working_hours);
+                return Json(result);
+            }
+            catch(Exception ex)
+            {
+                return Json(ex);
+            }
         }
 
         [HttpGet]
