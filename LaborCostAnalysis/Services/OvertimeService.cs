@@ -146,7 +146,7 @@ namespace LaborCostAnalysis.Services
 
                 for (int i = 0; i < ots.Count; i++)
                 {
-                    cmd.Parameters[0].Value = ots[i].job_id;
+                    cmd.Parameters[0].Value = ots[i].job_id.Replace("-",String.Empty).Replace(" ",String.Empty);
                     cmd.Parameters[1].Value = ots[i].employee_id;
                     cmd.Parameters[2].Value = ots[i].ot_1_5;
                     cmd.Parameters[3].Value = ots[i].ot_3;

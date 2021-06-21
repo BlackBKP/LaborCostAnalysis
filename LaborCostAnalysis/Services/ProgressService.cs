@@ -222,7 +222,7 @@ namespace LaborCostAnalysis.Services
 
                     for (int i = 0; i < progress.Count; i++)
                     {
-                        cmd.Parameters[0].Value = progress[i].job_id;
+                        cmd.Parameters[0].Value = progress[i].job_id.Replace("-",String.Empty).Replace(" ",String.Empty);
                         cmd.Parameters[1].Value = progress[i].job_progress;
                         cmd.Parameters[2].Value = progress[i].month;
                         cmd.Parameters[3].Value = progress[i].year;

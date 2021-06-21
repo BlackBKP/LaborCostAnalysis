@@ -118,8 +118,15 @@ namespace LaborCostAnalysis.Controllers
         [HttpPost]
         public JsonResult ConfirmImport()
         {
-            string result = JobInterface.InsertJobs(import_jobs);
-            return Json(result);
+            try
+            {
+                string result = JobInterface.InsertJobs(import_jobs);
+                return Json(result);
+            }
+            catch(Exception ex)
+            {
+                return Json(ex);
+            }
         }
     }
 }

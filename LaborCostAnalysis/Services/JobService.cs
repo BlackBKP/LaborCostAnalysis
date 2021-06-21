@@ -187,7 +187,7 @@ namespace LaborCostAnalysis.Services
 
                     for (int i = 0; i < import_jobs.Count; i++)
                     {
-                        cmd.Parameters[0].Value = import_jobs[i].job_id;
+                        cmd.Parameters[0].Value = import_jobs[i].job_id.Replace("-",String.Empty).Replace(" ",String.Empty);
                         cmd.Parameters[1].Value = import_jobs[i].job_number;
                         cmd.Parameters[2].Value = import_jobs[i].job_name;
                         cmd.Parameters[3].Value = import_jobs[i].job_year;

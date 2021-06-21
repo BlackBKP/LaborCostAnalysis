@@ -98,7 +98,7 @@ namespace LaborCostAnalysis.Services
 
                 for (int i = 0; i < labor_costs.Count; i++)
                 {
-                    cmd.Parameters[0].Value = labor_costs[i].job_id;
+                    cmd.Parameters[0].Value = labor_costs[i].job_id.Replace("-",String.Empty).Replace(" ",String.Empty);
                     cmd.Parameters[1].Value = labor_costs[i].week;
                     cmd.Parameters[2].Value = labor_costs[i].month;
                     cmd.Parameters[3].Value = labor_costs[i].year;
