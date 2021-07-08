@@ -26,7 +26,7 @@ namespace LaborCostAnalysis.Services
             string str_cmd = "select Labor_Costs.job_ID, " +
                                     "s1.Job_Name, " +
                                     "s1.Job_Year, " +
-                                    "SUM((cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int)) + isnull(Social_Security,0)) OVER(PARTITION BY Labor_Costs.job_ID ORDER BY Labor_Costs.job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as Acc_Cost, " +
+                                    "SUM((cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int)) + isnull(Social_Security,0)) OVER(partition by Labor_Costs.job_ID order by Labor_Costs.Year,Labor_Costs.Month,Labor_Costs.Week) as Acc_Cost, " +
                                     "week, " +
                                     "Labor_Costs.Month, " +
                                     "Labor_Costs.Year, " +
@@ -80,7 +80,7 @@ namespace LaborCostAnalysis.Services
             string str_cmd = "select Labor_Costs.job_ID, " +
                                     "s1.Job_Name, " +
                                     "s1.Job_Year, " +
-                                    "SUM((cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int)) + isnull(Social_Security,0)) OVER(PARTITION BY Labor_Costs.job_ID ORDER BY Labor_Costs.job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as Acc_Cost, " +
+                                    "SUM((cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int)) + isnull(Social_Security,0)) OVER(partition by Labor_Costs.job_ID order by Labor_Costs.Year,Labor_Costs.Month,Labor_Costs.Week) as Acc_Cost, " +
                                     "week, " +
                                     "Labor_Costs.Month, " +
                                     "Labor_Costs.Year, " +
@@ -110,7 +110,7 @@ namespace LaborCostAnalysis.Services
                         week = dr["week"] != DBNull.Value ? Convert.ToInt32(dr["week"]) : 0,
                         month = dr["Month"] != DBNull.Value ? Convert.ToInt32(dr["Month"]) : 0,
                         year = dr["Year"] != DBNull.Value ? Convert.ToInt32(dr["Year"]) : 0,
-                        budget100 = dr["Budget100"] != DBNull.Value ? Convert.ToInt32(dr["budget100"]) : 0,
+                        budget100 = dr["Budget100"] != DBNull.Value ? Convert.ToInt32(dr["Budget100"]) : 0,
                         budget80 = dr["Budget80"] != DBNull.Value ? Convert.ToInt32(dr["Budget80"]) : 0,
                         budget70 = dr["Budget70"] != DBNull.Value ? Convert.ToInt32(dr["Budget70"]) : 0,
                         budget50 = dr["Budget50"] != DBNull.Value ? Convert.ToInt32(dr["Budget50"]) : 0,
@@ -118,6 +118,7 @@ namespace LaborCostAnalysis.Services
                         spent_cost = dr["spent_cost"] != DBNull.Value ? Convert.ToInt32(dr["spent_cost"]) : 0,
                         acc_cost = dr["Acc_Cost"] != DBNull.Value ? Convert.ToInt32(dr["Acc_Cost"]) : 0,
                     };
+                    
                     spws.Add(spw);
                 }
                 dr.Close();
@@ -135,7 +136,7 @@ namespace LaborCostAnalysis.Services
             string str_cmd = "select s3.job_ID, " +
                                     "s1.Job_Year, " +
                                     "s1.Job_Name, " +
-                                    "SUM((cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int)) + isnull(Social_Security,0)) OVER(PARTITION BY Labor_Costs.job_ID ORDER BY Labor_Costs.job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as Acc_Cost, " +
+                                    "SUM((cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int)) + isnull(Social_Security,0)) OVER(partition by Labor_Costs.job_ID order by Labor_Costs.Year,Labor_Costs.Month,Labor_Costs.Week) as Acc_Cost, " +
                                     "week, " +
                                     "Labor_Costs.Month, " +
                                     "Labor_Costs.Year, " +
@@ -192,7 +193,7 @@ namespace LaborCostAnalysis.Services
             string str_cmd = "select s3.job_ID, " +
                                     "s1.Job_Year, " +
                                     "s1.Job_Name, " +
-                                    "SUM((cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int)) + isnull(Social_Security,0)) OVER(PARTITION BY Labor_Costs.job_ID ORDER BY Labor_Costs.job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as Acc_Cost, " +
+                                    "SUM((cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int)) + isnull(Social_Security,0)) OVER(partition by Labor_Costs.job_ID order by Labor_Costs.Year,Labor_Costs.Month,Labor_Costs.Week) as Acc_Cost, " +
                                     "week, " +
                                     "Labor_Costs.Month, " +
                                     "Labor_Costs.Year, " +
@@ -249,7 +250,7 @@ namespace LaborCostAnalysis.Services
             string str_cmd = "select Labor_Costs.job_ID, " +
                                     "s1.Job_Name, " +
                                     "s1.Job_Year, " +
-                                    "SUM((cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int)) + isnull(Social_Security,0)) OVER(PARTITION BY Labor_Costs.job_ID ORDER BY Labor_Costs.job_ID ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as Acc_Cost, " +
+                                    "SUM((cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int)) + isnull(Social_Security,0)) OVER(partition by Labor_Costs.job_ID order by Labor_Costs.Year,Labor_Costs.Month,Labor_Costs.Week) as Acc_Cost, " +
                                     "week, " +
                                     "Labor_Costs.Month, " +
                                     "Labor_Costs.Year, " +
