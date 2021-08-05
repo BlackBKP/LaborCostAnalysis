@@ -35,10 +35,11 @@ namespace LaborCostAnalysis.Services
                                     "(s1.Estimated_Budget * 0.7) as Budget70, " +
                                     "(s1.Estimated_Budget * 0.5) as Budget50, " +
                                     "((cast(s2.Job_Progress as int) + lag(s2.Job_Progress,1,s2.Job_Progress * -1) over (partition by s2.Job_ID order by s2.Job_ID))/2.0) as Progress, " +
+                                    "((s2.Invoice + lag(s2.Invoice,1,s2.Invoice * -1) over (partition by s2.Job_ID order by s2.Job_ID))/2.0) as Invoice, " +
                                     "(cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int) + isnull(Social_Security,0)) as spent_cost " +
                              "from Labor_Costs " +
                                     "left join (select job_ID,Job_Name,Job_Year, isnull(Estimated_Budget,0) as Estimated_Budget from job) as s1 ON s1.job_ID = Labor_Costs.job_ID " +
-                                    "left join (select Job_ID,Job_Progress,Month,Year from Progress) as s2 ON s2.Job_ID = Labor_Costs.job_ID and s2.Year = Labor_Costs.Year and s2.Month = Labor_Costs.Month " +
+                                    "left join (select Job_ID,Job_Progress,Month,Year,Invoice from Progress) as s2 ON s2.Job_ID = Labor_Costs.job_ID and s2.Year = Labor_Costs.Year and s2.Month = Labor_Costs.Month " +
                                     "order by Labor_Costs.job_ID,Labor_Costs.Year,Labor_Costs.Month,Labor_Costs.week";
 
             SqlCommand cmd = new SqlCommand(str_cmd, con);
@@ -60,6 +61,7 @@ namespace LaborCostAnalysis.Services
                         budget70 = dr["Budget70"] != DBNull.Value ? Convert.ToInt32(dr["Budget70"]) : 0,
                         budget50 = dr["Budget50"] != DBNull.Value ? Convert.ToInt32(dr["Budget50"]) : 0,
                         progress = dr["Progress"] != DBNull.Value ? Convert.ToInt32(dr["Progress"]) : 0,
+                        invoice = dr["Invoice"] != DBNull.Value ? Convert.ToInt32(dr["Invoice"]) : 0,
                         spent_cost = dr["spent_cost"] != DBNull.Value ? Convert.ToInt32(dr["spent_cost"]) : 0,
                         acc_cost = dr["Acc_Cost"] != DBNull.Value ? Convert.ToInt32(dr["Acc_Cost"]) : 0,
                     };
@@ -89,10 +91,11 @@ namespace LaborCostAnalysis.Services
                                     "(s1.Estimated_Budget * 0.7) as Budget70, " +
                                     "(s1.Estimated_Budget * 0.5) as Budget50, " +
                                     "((cast(s2.Job_Progress as int) + lag(s2.Job_Progress,1,s2.Job_Progress * -1) over (partition by s2.Job_ID order by s2.Job_ID))/2.0) as Progress, " +
+                                    "((s2.Invoice + lag(s2.Invoice,1,s2.Invoice * -1) over (partition by s2.Job_ID order by s2.Job_ID))/2.0) as Invoice, " +
                                     "(cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int) + isnull(Social_Security,0)) as spent_cost " +
                              "from Labor_Costs " +
                                     "left join (select job_ID,Job_Name,Job_Year, isnull(Estimated_Budget,0) as Estimated_Budget from job) as s1 ON s1.job_ID = Labor_Costs.job_ID " +
-                                    "left join (select Job_ID,Job_Progress,Month,Year from Progress) as s2 ON s2.Job_ID = Labor_Costs.job_ID and s2.Year = Labor_Costs.Year and s2.Month = Labor_Costs.Month " +
+                                    "left join (select Job_ID,Job_Progress,Month,Year,Invoice from Progress) as s2 ON s2.Job_ID = Labor_Costs.job_ID and s2.Year = Labor_Costs.Year and s2.Month = Labor_Costs.Month " +
                                     "where s1.Job_Year = '" + year + "' " +
                                     "order by Labor_Costs.job_ID,Labor_Costs.Year,Labor_Costs.Month,Labor_Costs.week";
 
@@ -115,6 +118,7 @@ namespace LaborCostAnalysis.Services
                         budget70 = dr["Budget70"] != DBNull.Value ? Convert.ToInt32(dr["Budget70"]) : 0,
                         budget50 = dr["Budget50"] != DBNull.Value ? Convert.ToInt32(dr["Budget50"]) : 0,
                         progress = dr["Progress"] != DBNull.Value ? Convert.ToInt32(dr["Progress"]) : 0,
+                        invoice = dr["Invoice"] != DBNull.Value ? Convert.ToInt32(dr["Invoice"]) : 0,
                         spent_cost = dr["spent_cost"] != DBNull.Value ? Convert.ToInt32(dr["spent_cost"]) : 0,
                         acc_cost = dr["Acc_Cost"] != DBNull.Value ? Convert.ToInt32(dr["Acc_Cost"]) : 0,
                     };
@@ -145,10 +149,11 @@ namespace LaborCostAnalysis.Services
                                     "(s1.Estimated_Budget * 0.7) as Budget70, " +
                                     "(s1.Estimated_Budget * 0.5) as Budget50, " +
                                     "((cast(s2.Job_Progress as int) + lag(s2.Job_Progress,1,s2.Job_Progress * -1) over (partition by s2.Job_ID order by s2.Job_ID))/2.0) as Progress, " +
+                                    "((s2.Invoice + lag(s2.Invoice,1,s2.Invoice * -1) over (partition by s2.Job_ID order by s2.Job_ID))/2.0) as Invoice, " +
                                     "(cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int) + isnull(Social_Security,0)) as spent_cost " +
                              "from Labor_Costs " +
                              "left join (select job_ID, Job_Name, Job_Year, isnull(Estimated_Budget,0) as Estimated_Budget from job) as s1 ON s1.job_ID = Labor_Costs.job_ID " +
-                             "left join (select Job_ID, Job_Progress, Month, Year from Progress) as s2 ON s2.Job_ID = Labor_Costs.job_ID and s2.Year = Labor_Costs.Year and s2.Month = Labor_Costs.Month " +
+                             "left join (select Job_ID, Job_Progress, Month, Year, Invoice from Progress) as s2 ON s2.Job_ID = Labor_Costs.job_ID and s2.Year = Labor_Costs.Year and s2.Month = Labor_Costs.Month " +
                              "left join (select User_Accessibility.User_ID, User_Authentication.User_Name, User_Authentication.Permission, User_Accessibility.Job_ID from User_Accessibility left join User_Authentication ON User_Authentication.User_ID = User_Accessibility.User_ID where User_Authentication.User_Name='" + user_name + "') as s3 ON s3.Job_ID = Labor_Costs.Job_ID " +
                              "where s3.Job_ID is not null " +
                              "order by Labor_Costs.job_ID, Labor_Costs.Year, Labor_Costs.Month, Labor_Costs.week";
@@ -172,6 +177,7 @@ namespace LaborCostAnalysis.Services
                         budget70 = dr["Budget70"] != DBNull.Value ? Convert.ToInt32(dr["Budget70"]) : 0,
                         budget50 = dr["Budget50"] != DBNull.Value ? Convert.ToInt32(dr["Budget50"]) : 0,
                         progress = dr["Progress"] != DBNull.Value ? Convert.ToInt32(dr["Progress"]) : 0,
+                        invoice = dr["Invoice"] != DBNull.Value ? Convert.ToInt32(dr["Invoice"]) : 0,
                         spent_cost = dr["spent_cost"] != DBNull.Value ? Convert.ToInt32(dr["spent_cost"]) : 0,
                         acc_cost = dr["Acc_Cost"] != DBNull.Value ? Convert.ToInt32(dr["Acc_Cost"]) : 0,
                     };
@@ -202,6 +208,7 @@ namespace LaborCostAnalysis.Services
                                     "(s1.Estimated_Budget * 0.7) as Budget70, " +
                                     "(s1.Estimated_Budget * 0.5) as Budget50, " +
                                     "((cast(s2.Job_Progress as int) + lag(s2.Job_Progress,1,s2.Job_Progress * -1) over (partition by s2.Job_ID order by s2.Job_ID))/2.0) as Progress, " +
+                                    "((s2.Invoice + lag(s2.Invoice,1,s2.Invoice * -1) over (partition by s2.Job_ID order by s2.Job_ID))/2.0) as Invoice, " +
                                     "(cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int) + isnull(Social_Security,0)) as spent_cost " +
                              "from Labor_Costs " +
                              "left join (select job_ID, Job_Name, Job_Year, isnull(Estimated_Budget,0) as Estimated_Budget from job) as s1 ON s1.job_ID = Labor_Costs.job_ID " +
@@ -229,6 +236,7 @@ namespace LaborCostAnalysis.Services
                         budget70 = dr["Budget70"] != DBNull.Value ? Convert.ToInt32(dr["Budget70"]) : 0,
                         budget50 = dr["Budget50"] != DBNull.Value ? Convert.ToInt32(dr["Budget50"]) : 0,
                         progress = dr["Progress"] != DBNull.Value ? Convert.ToInt32(dr["Progress"]) : 0,
+                        invoice = dr["Invoice"] != DBNull.Value ? Convert.ToInt32(dr["Invoice"]) : 0,
                         spent_cost = dr["spent_cost"] != DBNull.Value ? Convert.ToInt32(dr["spent_cost"]) : 0,
                         acc_cost = dr["Acc_Cost"] != DBNull.Value ? Convert.ToInt32(dr["Acc_Cost"]) : 0,
                     };
@@ -259,10 +267,11 @@ namespace LaborCostAnalysis.Services
                                     "(s1.Estimated_Budget * 0.7) as Budget70, " +
                                     "(s1.Estimated_Budget * 0.5) as Budget50, " +
                                     "((cast(s2.Job_Progress as int) + lag(s2.Job_Progress,1,s2.Job_Progress * -1) over (partition by s2.Job_ID order by s2.Job_ID))/2.0) as Progress, " +
+                                    "((s2.Invoice + lag(s2.Invoice,1,s2.Invoice * -1) over (partition by s2.Job_ID order by s2.Job_ID))/2.0) as Invoice, " +
                                     "(cast(Labor_Cost as int) + cast(OT_Labor_Cost as int) + cast(Accommodation_Cost as int) + cast(Compensation_Cost as int) + isnull(Social_Security,0)) as spent_cost " +
                              "from Labor_Costs " +
                                     "left join (select job_ID,Job_Name,Job_Year, isnull(Estimated_Budget,0) as Estimated_Budget from job) as s1 ON s1.job_ID = Labor_Costs.job_ID " +
-                                    "left join (select Job_ID,Job_Progress,Month,Year from Progress) as s2 ON s2.Job_ID = Labor_Costs.job_ID and s2.Year = Labor_Costs.Year and s2.Month = Labor_Costs.Month " +
+                                    "left join (select Job_ID,Job_Progress,Month,Year,Invoice from Progress) as s2 ON s2.Job_ID = Labor_Costs.job_ID and s2.Year = Labor_Costs.Year and s2.Month = Labor_Costs.Month " +
                                     "where Labor_Costs.job_ID = '" + job_id + "' " +
                                     "order by Labor_Costs.job_ID,Labor_Costs.Year,Labor_Costs.Month,Labor_Costs.week";
 
@@ -285,6 +294,7 @@ namespace LaborCostAnalysis.Services
                         budget70 = dr["Budget70"] != DBNull.Value ? Convert.ToInt32(dr["Budget70"]) : 0,
                         budget50 = dr["Budget50"] != DBNull.Value ? Convert.ToInt32(dr["Budget50"]) : 0,
                         progress = dr["Progress"] != DBNull.Value ? Convert.ToInt32(dr["Progress"]) : 0,
+                        invoice = dr["Invoice"] != DBNull.Value ? Convert.ToInt32(dr["Invoice"]) : 0,
                         spent_cost = dr["spent_cost"] != DBNull.Value ? Convert.ToInt32(dr["spent_cost"]) : 0,
                         acc_cost = dr["Acc_Cost"] != DBNull.Value ? Convert.ToInt32(dr["Acc_Cost"]) : 0,
                     };

@@ -28,7 +28,8 @@ namespace LaborCostAnalysis.Services
                                     "Job_Number, " +
                                     "Job_Name, " +
                                     "Estimated_Budget, " +
-                                    "Job_Year " +
+                                    "Job_Year, " +
+                                    "Job_Type " +
                                     "from Job";
 
             SqlCommand cmd = new SqlCommand(str_cmd, con);
@@ -44,6 +45,7 @@ namespace LaborCostAnalysis.Services
                         job_name = dr["Job_Name"] != DBNull.Value ? dr["Job_Name"].ToString() : "",
                         estimated_budget = dr["Estimated_Budget"] != DBNull.Value ? Convert.ToInt32(dr["Estimated_Budget"]) : 0,
                         job_year = dr["Job_Year"] != DBNull.Value ? Convert.ToInt32(dr["Job_Year"]) : 0,
+                        job_type = dr["Job_Type"] != DBNull.Value ? dr["Job_Type"].ToString() : ""
                     };
                     jobs.Add(job);
                 }
@@ -63,6 +65,7 @@ namespace LaborCostAnalysis.Services
                                     "Job.Job_Name, " +
                                     "Job.Estimated_Budget, " +
                                     "Job.Job_Year, " +
+                                    "Job.Job_Type, " +
                                     "User_Accessibility.User_ID, " +
                                     "User_Authentication.User_Name, " +
                                     "User_Authentication.Permission " +
@@ -84,6 +87,7 @@ namespace LaborCostAnalysis.Services
                         job_name = dr["Job_Name"] != DBNull.Value ? dr["Job_Name"].ToString() : "",
                         estimated_budget = dr["Estimated_Budget"] != DBNull.Value ? Convert.ToInt32(dr["Estimated_Budget"]) : 0,
                         job_year = dr["Job_Year"] != DBNull.Value ? Convert.ToInt32(dr["Job_Year"]) : 0,
+                        job_type = dr["Job_Type"] != DBNull.Value ? dr["Job_Type"].ToString() : ""
                     };
                     jobs.Add(job);
                 }
@@ -100,6 +104,28 @@ namespace LaborCostAnalysis.Services
                 con.Open();
                 string job_id = job_number.Replace("-", String.Empty).Replace(" ", String.Empty);
                 string str_cmd = "Update Job Set Job_Name = '" + job_name + "' where Job_ID = '" + job_id + "'";
+                SqlCommand cmd = new SqlCommand(str_cmd, con);
+                SqlDataReader dr = cmd.ExecuteReader();
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                con.Close();
+            }
+            return "Done";
+        }
+
+        public string UpdateJobType(string job_number, string job_type)
+        {
+            SqlConnection con = DB.Connect();
+            try
+            {
+                con.Open();
+                string job_id = job_number.Replace("-", String.Empty).Replace(" ", String.Empty);
+                string str_cmd = "Update Job Set Job_Type = '" + job_type + "' where Job_ID = '" + job_id +"'";
                 SqlCommand cmd = new SqlCommand(str_cmd, con);
                 SqlDataReader dr = cmd.ExecuteReader();
             }

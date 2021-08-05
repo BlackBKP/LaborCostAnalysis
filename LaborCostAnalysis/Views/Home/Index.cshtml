@@ -365,9 +365,8 @@
                 var budget100 = [];
                 var acc_cost = [];
                 var progress = [];
-                var spent_cost = [];
-
                 var invoice = [];
+                var spent_cost = [];
 
                 for (var i = 0; i < job.length; i++) {
                     var week = months[job[i].month] + ' ' + job[i].week + ' ' + job[i].year;
@@ -379,7 +378,7 @@
                     acc_cost.push(job[i].acc_cost);
                     progress.push(job[i].progress);
                     spent_cost.push(job[i].spent_cost);
-                    i > 0 ? invoice.push(invoice[i-1] + 10) : invoice.push(10);
+                    invoice.push(job[i].invoice);
                 }
                 var ctx = document.getElementById('canvas_1').getContext('2d');
                 chart_spent = new Chart(ctx, {

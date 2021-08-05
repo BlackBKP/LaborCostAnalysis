@@ -77,7 +77,7 @@
                     <div class="form-group row">
                         <label>Type</label>
                         <div class="input-group">
-                            <select id="EditJobType" class="form-control" disabled>
+                            <select id="EditJobType" class="custom-select" disabled>
                                 <option disabled>Select Job Type</option>
                                 <option value="Project">Project</option>
                                 <option value="Service">Service</option>
@@ -141,7 +141,7 @@
                 datas.push([
                     jnum,
                     jobs[i].job_name,
-                    "Project",
+                    "",
                     jobs[i].estimated_budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
                     jobs[i].job_year
                 ]);

@@ -133,7 +133,7 @@
                     acc_cost.push(jobs[i][j].acc_cost);
                     progress.push(jobs[i][j].progress);
                     spent_cost.push(jobs[i][j].spent_cost);
-                    j > 0 ? invoice.push(invoice[j - 1] + 10) : invoice.push(10);
+                    invoice.push(jobs[i][j].invoice);
                 }
 
                 var ctx = document.getElementById(job_id).getContext('2d');
