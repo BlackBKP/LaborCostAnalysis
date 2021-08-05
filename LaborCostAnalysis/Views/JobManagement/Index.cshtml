@@ -32,6 +32,7 @@
                     <tr>
                         <th>Job Number</th>
                         <th>Name</th>
+                        <th>Job Type</th>
                         <th>Budget</th>
                         <th>Job Year</th>
                     </tr>
@@ -125,6 +126,7 @@
                 datas.push([
                     jnum,
                     jobs[i].job_name,
+                    "Project",
                     jobs[i].estimated_budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
                     jobs[i].job_year
                 ]);
