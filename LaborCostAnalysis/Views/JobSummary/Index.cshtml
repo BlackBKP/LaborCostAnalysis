@@ -42,19 +42,19 @@
                         <th style="text-align:center">Social Security</th>
 
                         <th style="text-align:center">Cost to Date</th>
-                        <th style="text-align:center">Remainning Cost</th>
+                        @*<th style="text-align:center">Remainning Cost</th>*@
                         <th style="text-align:center">Cost Usage(%)</th>
                         <th style="text-align:center">Work Completion(%)</th>
-
+                        <th style="text-align:center">Invoice (%)</th>
                         <th style="text-align:center">Normal Man Hour</th>
                         <th style="text-align:center">1.5 Man Hour</th>
                         <th style="text-align:center">3.0 Man Hour</th>
                         <th style="text-align:center">Total Man Hour</th>
                         <th style="text-align:center">Number of Labor</th>
-                        <th style="text-align:center">Average Labor Cost Per Hour</th>
+                        <th style="text-align:center" data-toggle="tooltip" title="Average Labor Cost Per Hour">Avg LC/Hr</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="text-align:center">
                 </tbody>
             </table>
         </div>
@@ -100,9 +100,10 @@
                     summaries[i].compensation_cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
                     summaries[i].social_security.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
                     summaries[i].cost_to_date.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-                    summaries[i].remainning_cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+                    //summaries[i].remainning_cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
                     summaries[i].cost_usage + " %",
                     summaries[i].work_completion + " %",
+                    0,
                     summaries[i].hours.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
                     summaries[i].ot_1_5.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
                     summaries[i].ot_3.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
