@@ -141,7 +141,7 @@
                 datas.push([
                     jnum,
                     jobs[i].job_name,
-                    "",
+                    jobs[i].job_type,
                     jobs[i].estimated_budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
                     jobs[i].job_year
                 ]);
@@ -188,6 +188,10 @@
             $('#BtnSaveChanges').show();
         });
 
+        $('#EditJobType').on('change', function () {
+            $('#BtnSaveChanges').show();
+        });
+
         $('#EditJobBudget').on('keydown', function () {
             $('#BtnSaveChanges').show();
         });
@@ -195,13 +199,14 @@
         $('#BtnSaveChanges').on('click', function () {
             var job_number = $('#EditJobNumber').val();
             var job_name = $('#EditJobName').val();
+            var job_type = $('#EditJobType').val();
             var job_budget = $('#EditJobBudget').val();
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("EditJobName", "JobManagement")',
 	            contentType: 'application/x-www-form-urlencoded',
                 data: {
-                    job_number,job_name,job_budget
+                    job_number,job_name,job_type,job_budget
                 },
                 success: function (response) {
                     window.location.reload();
@@ -215,6 +220,7 @@
             $('#input_job_year').val(null);
             $('#input_job_number').val(null);
             $('#input_job_name').val(null);
+            $('#input_job_type').val(null);
         });
 
         $('#input_job_year').on('keyup', function () {
@@ -242,12 +248,13 @@
             var number = $('#input_job_number').val();
             var name = $('#input_job_name').val();
             var year = $('#input_job_year').val();
+            var type = $('#input_job_type').val();
             await $.ajax({
                 type: "POST",
                 url: '@Url.Action("AddJob", "JobManagement")',
 	            contentType: 'application/x-www-form-urlencoded',
                 data: {
-                    number, name, year
+                    number, name, year, type
                 },
                 success: function (response) {
                     window.location.reload();

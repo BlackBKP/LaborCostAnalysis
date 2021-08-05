@@ -162,13 +162,13 @@ namespace LaborCostAnalysis.Services
             return "Done";
         }
 
-        public string AddJob(string job_number, string job_name, int job_year)
+        public string AddJob(string job_number, string job_name, int job_year, string job_type)
         {
             SqlConnection con = DB.Connect();
             try
             {
-                using (SqlCommand cmd = new SqlCommand("INSERT INTO Job(Job_ID, Job_Number, Job_Name, Job_Year) " +
-                                                   "VALUES(@Job_ID, @Job_Number, @Job_Name, @Job_Year)", con))
+                using (SqlCommand cmd = new SqlCommand("INSERT INTO Job(Job_ID, Job_Number, Job_Name, Job_Year, Job_Type) " +
+                                                   "VALUES(@Job_ID, @Job_Number, @Job_Name, @Job_Year, @Job_Type)", con))
                 {
                     con.Open();
                     cmd.CommandType = CommandType.Text;
@@ -177,10 +177,12 @@ namespace LaborCostAnalysis.Services
                     cmd.Parameters.Add("@Job_Number", SqlDbType.NVarChar);
                     cmd.Parameters.Add("@Job_Name", SqlDbType.NVarChar);
                     cmd.Parameters.Add("@Job_Year", SqlDbType.Int);
+                    cmd.Parameters.Add("@Job_Type", SqlDbType.NVarChar);
                     cmd.Parameters[0].Value = job_number.Replace("-", String.Empty).Replace(" ", String.Empty);
                     cmd.Parameters[1].Value = job_number;
                     cmd.Parameters[2].Value = job_name;
                     cmd.Parameters[3].Value = job_year;
+                    cmd.Parameters[4].Value = job_type;
                     cmd.ExecuteNonQuery();
                 }
             }
