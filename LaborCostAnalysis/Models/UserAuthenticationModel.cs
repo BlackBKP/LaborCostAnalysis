@@ -8,11 +8,8 @@ namespace LaborCostAnalysis.Models
     public class UserAuthenticationModel
     {
         public string user_id { get; set; }
-
         public string user_name { get; set; }
-
         public string permission { get; set; }
-
         public int jobs { get; set; }
     }
 }
