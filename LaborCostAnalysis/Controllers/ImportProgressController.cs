@@ -29,6 +29,7 @@ namespace LaborCostAnalysis.Controllers
         static List<ProgressModel> ipgs;
         static List<ProgressModel> excel_duplicate_pgs;
         static List<ProgressModel> duplicate_pgs;
+        static List<ProgressModel> progress;
 
         public ImportProgressController(IHostingEnvironment hostingEnvironment)
         {
@@ -150,6 +151,66 @@ namespace LaborCostAnalysis.Controllers
             string result = ProgressInterface.InsertProgress(ipgs);
             result = ProgressInterface.UpdateDuplicateProgress(duplicate_pgs);
             return Json(result);
+        }
+
+        public JsonResult ImportProgress()
+        {
+            IFormFile file = Request.Form.Files[0];
+            string folderName = "files";
+            string webRootPath = _hostingEnvironment.WebRootPath;
+            string newPath = Path.Combine(webRootPath, folderName);
+
+            progress = new List<ProgressModel>();
+            if (!Directory.Exists(newPath))
+            {
+                Directory.CreateDirectory(newPath);
+            }
+            if (file.Length > 0)
+            {
+                string sFileExtension = Path.GetExtension(file.FileName).ToLower();
+                ISheet sheet;
+                string fullPath = Path.Combine(newPath, file.FileName);
+                var stream = new FileStream(fullPath, FileMode.Create);
+                file.CopyTo(stream);
+                stream.Position = 0;
+                if (sFileExtension == ".xls")
+                {
+                    HSSFWorkbook hssfwb = new HSSFWorkbook(stream); //This will read the Excel 97-2000 formats
+                    sheet = hssfwb.GetSheetAt(1);
+                }
+                else
+                {
+                    XSSFWorkbook hssfwb = new XSSFWorkbook(stream); //This will read 2007 Excel format
+                    sheet = hssfwb.GetSheetAt(1);
+                }
+
+                IRow headerRow = sheet.GetRow(1);
+                int cellCount = headerRow.LastCellNum;
+                IRow row;
+                for (int i = 2; i < sheet.LastRowNum; i++)
+                {
+                    row = sheet.GetRow(i);
+                    if (row == null)
+                        break;
+                    if (row.Cells.All(d => d.CellType == CellType.Blank))
+                        break;
+                    if (row.GetCell(1).DateCellValue.ToString("dd/MM/yy") == DateTime.MaxValue.ToString("dd/MM/yy"))
+                        break;
+
+                    ProgressModel ipg = new ProgressModel();
+                    DateTime update_time = DateTime.Now;
+                    string[] months = new string[] { "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
+                    ipg.month = Array.IndexOf(months, row.GetCell(1).DateCellValue.ToString("MMM-yy").Split("-")[0].ToUpper());
+                    ipg.year = Convert.ToInt32(row.GetCell(1).DateCellValue.ToString("MMM-yyyy").Split("-")[1]);
+                    ipg.job_id = row.GetCell(3).StringCellValue.Replace("-", String.Empty).Replace(" ", String.Empty);
+                    ipg.job_number = row.GetCell(3).StringCellValue;
+                    ipg.job_name = row.GetCell(2).StringCellValue;
+                    ipg.job_progress = Convert.ToInt32(row.GetCell(5).NumericCellValue);
+                    ipg.invoice = Convert.ToInt32(row.GetCell(6).NumericCellValue);
+                    progress.Add(ipg);
+                }
+            }
+            return Json(progress);
         }
 
         [HttpPost]
