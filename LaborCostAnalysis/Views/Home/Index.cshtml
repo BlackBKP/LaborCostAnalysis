@@ -367,6 +367,8 @@
                 var progress = [];
                 var spent_cost = [];
 
+                var invoice = [];
+
                 for (var i = 0; i < job.length; i++) {
                     var week = months[job[i].month] + ' ' + job[i].week + ' ' + job[i].year;
                     weeks.push(week);
@@ -377,6 +379,7 @@
                     acc_cost.push(job[i].acc_cost);
                     progress.push(job[i].progress);
                     spent_cost.push(job[i].spent_cost);
+                    i > 0 ? invoice.push(invoice[i-1] + 10) : invoice.push(10);
                 }
                 var ctx = document.getElementById('canvas_1').getContext('2d');
                 chart_spent = new Chart(ctx, {
@@ -440,6 +443,15 @@
                                 borderDash: [10, 5],
                                 borderColor: ['rgba(255, 0, 0, 0)'],
                             },
+                            {
+                                type: 'line',
+                                label: 'Invoice',
+                                data: invoice,
+                                fill: false,
+                                backgroundColor: 'rgba(255,0,0,0.75)',
+                                borderColor: 'rgba(255,0,0,1)',
+                                yAxisID: 'progress',
+                            }
                         ]
                     },
                     options: {
