@@ -416,7 +416,7 @@
                                 label: "70% Budget",
                                 data: budget70,
                                 fill: false,
-                                backgroundColor: 'rgba(255,255,255,0.2)',
+                                backgroundColor: 'rgba(255,255,0,0.2)',
                                 borderColor: 'rgba(255, 255, 0, 0.3)',
                             },
                             {
@@ -426,10 +426,9 @@
                                 fill: {
                                     value: budget100[0] * 0.7,
                                     above: 'rgba(255,200,50,0.2)',
-                                    below: 'rgba(255, 255, 255,0)',
                                 },
-                                borderDash: [10, 5],
-                                borderColor: ['rgba(255, 200, 50, 0)'],
+                                borderColor: 'rgba(255, 200, 50, 0.2)',
+                                backgroundColor: 'rgba(255, 200, 50, 0.2)'
                             },
                             {
                                 type: 'line',
@@ -438,10 +437,9 @@
                                 fill: {
                                     value: budget100[0] * 0.8,
                                     above: 'rgba(255,0,0,0.2)',
-                                    below: 'rgba(255, 255, 255,0)',
                                 },
-                                borderDash: [10, 5],
-                                borderColor: ['rgba(255, 0, 0, 0)'],
+                                borderColor: 'rgba(255, 0, 0, 0.2)',
+                                backgroundColor: 'rgba(255, 0, 0, 0.2)'
                             },
                             {
                                 type: 'line',
