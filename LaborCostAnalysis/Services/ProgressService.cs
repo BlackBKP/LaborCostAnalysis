@@ -271,24 +271,33 @@ namespace LaborCostAnalysis.Services
             try
             {
                 con.Open();
-                using (SqlCommand cmd = new SqlCommand("UPDATE Progress SET Job_Progress = @Job_Progress, Invoice = @Invoice " +
-                                                       "WHERE Job_ID = @Job_ID AND Month = @Month AND Year = @Year", con))
+                using (SqlCommand cmd = new SqlCommand("INSERT INTO Progress(" +
+                                                                    "Job_ID, " +
+                                                                    "Job_Progress, " +
+                                                                    "Invoice, " +
+                                                                    "Month, " +
+                                                                    "Year) " +
+                                                         "VALUES(@Job_ID," +
+                                                                "@Job_Progress, " +
+                                                                "@Invoice, " +
+                                                                "@Month, " +
+                                                                "@Year)", con))
                 {
                     cmd.CommandType = CommandType.Text;
                     cmd.Connection = con;
-                    cmd.Parameters.Add("@Job_Progress", SqlDbType.NVarChar);
                     cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Job_Progress", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Invoice", SqlDbType.Int);
                     cmd.Parameters.Add("@Month", SqlDbType.Int);
                     cmd.Parameters.Add("@Year", SqlDbType.Int);
-                    cmd.Parameters.Add("@Invoice", SqlDbType.Int);
 
                     for (int i = 0; i < progress.Count; i++)
                     {
-                        cmd.Parameters[0].Value = progress[i].job_progress;
-                        cmd.Parameters[1].Value = progress[i].job_id;
-                        cmd.Parameters[2].Value = progress[i].month;
-                        cmd.Parameters[3].Value = progress[i].year;
-                        cmd.Parameters[4].Value = progress[i].invoice;
+                        cmd.Parameters[0].Value = progress[i].job_id.Replace("-", String.Empty).Replace(" ", String.Empty);
+                        cmd.Parameters[1].Value = progress[i].job_progress;
+                        cmd.Parameters[2].Value = progress[i].invoice;
+                        cmd.Parameters[3].Value = progress[i].month;
+                        cmd.Parameters[4].Value = progress[i].year;
                         cmd.ExecuteNonQuery();
                     }
                 }
