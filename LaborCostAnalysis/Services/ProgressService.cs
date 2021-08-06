@@ -34,6 +34,7 @@ namespace LaborCostAnalysis.Services
                                     "s1.Cost_to_Date, (cast(job.Estimated_Budget as int) - cast(s1.Cost_to_Date as int)) as Remaining_Cost, " +
                                     "((cast(s1.Cost_to_Date as float) / cast(job.Estimated_Budget as float)) *100) as Cost_Usage, " +
                                     "s4.Last_Progress as Work_Completion, " +
+                                    "s4.Last_Invoice as Invoice, " +
                                     "s2.Hours, " +
                                     "s3.OT_1_5, " +
                                     "s3.OT_3, " +
@@ -44,7 +45,7 @@ namespace LaborCostAnalysis.Services
                                     "left join (select job_ID, SUM(cast(Labor_Cost as int))as Labor_Cost, SUM(cast(OT_Labor_Cost as int)) as OT_Labor_Cost, SUM(cast(Accommodation_Cost as int)) as Accommodation_Cost, SUM(cast(Compensation_Cost as int)) as Compensation_Cost, SUM(isnull(Social_Security,0)) as Social_Security, (SUM(cast(Labor_Cost as int)) + SUM(cast(OT_Labor_Cost as int)) + SUM(cast(Accommodation_Cost as int)) + SUM(cast(Compensation_Cost as int)) + SUM(isnull(Social_Security,0))) as Cost_to_Date from Labor_Costs group by job_ID) as s1 ON s1.job_ID = job.job_ID " +
                                     "left join (select job_ID,SUM(Hours) as Hours from Hour group by Job_ID) as s2 ON s2.job_ID = job.job_ID " +
                                     "left join (select job_ID,SUM(OT_1_5) as OT_1_5 , SUM(OT_3) as OT_3 from OT group by job_ID) as s3 ON s3.job_ID = job.job_ID " +
-                                    "left join (select Job_ID,Max(cast(Job_Progress as int)) as Last_Progress from Progress group by Job_ID) as s4 ON s4.Job_ID = job.Job_ID " +
+                                    "left join (select Job_ID,Max(cast(Job_Progress as int)) as Last_Progress,Max(Invoice) as Last_Invoice from Progress group by Job_ID) as s4 ON s4.Job_ID = job.Job_ID " +
                                     "left join (select Job_ID,Max(cast(No_Of_Labor_Week as int)) as No_Of_Labor_Week from Labor_Costs group by Job_ID) as s5 ON s5.Job_ID = job.Job_ID " +
                                     "where job.Job_ID = '" + job_id + "'";
 
@@ -74,6 +75,7 @@ namespace LaborCostAnalysis.Services
                         total_man_hour = dr["Total_Man_Hour"] != DBNull.Value ? Convert.ToInt32(dr["Total_Man_Hour"]) : 0,
                         no_of_labor = dr["No_Of_Labor"] != DBNull.Value ? Convert.ToInt32(dr["No_Of_Labor"]) : 0,
                         avg_labor_cost_per_hour = dr["avg_labor_cost_per_hour"] != DBNull.Value ? Convert.ToInt32(dr["avg_labor_cost_per_hour"]) : 0,
+                        invoice = dr["Invoice"] != DBNull.Value ? Convert.ToInt32(dr["Invoice"]) : 0,
                     };
                     jobs.Add(job);
                 }
@@ -94,6 +96,7 @@ namespace LaborCostAnalysis.Services
                                     "job.Job_Name, " +
                                     "job.Estimated_Budget, " +
                                     "Progress.Job_Progress, " +
+                                    "Progress.Invoice, " +
                                     "Progress.Month, " +
                                     "Progress.Year, " +
                                     "((cast(s1.Labor_Cost as int) +cast(s1.OT_Labor_Cost as int) + cast(s1.Accommodation_Cost as int) + cast(s1.Compensation_Cost as int) + isnull(s1.Social_Security,0))) as spent_cost, " +
@@ -121,7 +124,8 @@ namespace LaborCostAnalysis.Services
                         month = dr["Month"] != DBNull.Value ? Convert.ToInt32(dr["Month"]) : 0,
                         year = dr["Year"] != DBNull.Value ? Convert.ToInt32(dr["Year"]) : 0,
                         spent_cost = dr["spent_cost"] != DBNull.Value ? Convert.ToInt32(dr["spent_cost"]) : 0,
-                        remainning_cost = dr["remaining_cost"] != DBNull.Value ? Convert.ToInt32(dr["remaining_cost"]) : 0
+                        remainning_cost = dr["remaining_cost"] != DBNull.Value ? Convert.ToInt32(dr["remaining_cost"]) : 0,
+                        invoice = dr["Invoice"] != DBNull.Value ? Convert.ToInt32(dr["Invoice"]) : 0,
                     };
                     pgs.Add(pg);
                 }
@@ -142,6 +146,7 @@ namespace LaborCostAnalysis.Services
                                     "job.Job_Name, " +
                                     "job.Estimated_Budget, " +
                                     "Progress.Job_Progress, " +
+                                    "Progress.Invoice, " +
                                     "Progress.Month, " +
                                     "Progress.Year, " +
                                     "((cast(s1.Labor_Cost as int) + cast(s1.OT_Labor_Cost as int) + cast(s1.Accommodation_Cost as int) + cast(s1.Compensation_Cost as int) + isnull(s1.Social_Security,0))) as spent_cost, " +
@@ -187,7 +192,8 @@ namespace LaborCostAnalysis.Services
                         month = dr["Month"] != DBNull.Value ? Convert.ToInt32(dr["Month"]) : 0,
                         year = dr["Year"] != DBNull.Value ? Convert.ToInt32(dr["Year"]) : 0,
                         spent_cost = dr["spent_cost"] != DBNull.Value ? Convert.ToInt32(dr["spent_cost"]) : 0,
-                        remainning_cost = dr["remaining_cost"] != DBNull.Value ? Convert.ToInt32(dr["remaining_cost"]) : 0
+                        remainning_cost = dr["remaining_cost"] != DBNull.Value ? Convert.ToInt32(dr["remaining_cost"]) : 0,
+                        invoice = dr["Invoice"] != DBNull.Value ? Convert.ToInt32(dr["Invoice"]) : 0,
                     };
                     pgs.Add(pg);
                 }
@@ -206,10 +212,12 @@ namespace LaborCostAnalysis.Services
                 using (SqlCommand cmd = new SqlCommand("INSERT INTO Progress(" +
                                                                     "Job_ID, " +
                                                                     "Job_Progress, " +
+                                                                    "Invoice, " +
                                                                     "Month, " +
                                                                     "Year) " +
                                                          "VALUES(@Job_ID," +
                                                                 "@Job_Progress, " +
+                                                                "@Invoice, " +
                                                                 "@Month, " +
                                                                 "@Year)", con))
                 {
@@ -217,6 +225,7 @@ namespace LaborCostAnalysis.Services
                     cmd.Connection = con;
                     cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
                     cmd.Parameters.Add("@Job_Progress", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Invoice", SqlDbType.Int);
                     cmd.Parameters.Add("@Month", SqlDbType.Int);
                     cmd.Parameters.Add("@Year", SqlDbType.Int);
 
@@ -224,8 +233,9 @@ namespace LaborCostAnalysis.Services
                     {
                         cmd.Parameters[0].Value = progress[i].job_id.Replace("-",String.Empty).Replace(" ",String.Empty);
                         cmd.Parameters[1].Value = progress[i].job_progress;
-                        cmd.Parameters[2].Value = progress[i].month;
-                        cmd.Parameters[3].Value = progress[i].year;
+                        cmd.Parameters[2].Value = progress[i].invoice;
+                        cmd.Parameters[3].Value = progress[i].month;
+                        cmd.Parameters[4].Value = progress[i].year;
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -240,6 +250,45 @@ namespace LaborCostAnalysis.Services
                     {
                         cmd.Parameters[0].Value = progress[i].estimated_budget;
                         cmd.Parameters[1].Value = progress[i].job_id;
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                con.Close();
+            }
+            return "Done";
+        }
+
+        public string InsertProgressInvoice(List<ProgressModel> progress)
+        {
+            SqlConnection con = DB.Connect();
+            try
+            {
+                con.Open();
+                using (SqlCommand cmd = new SqlCommand("UPDATE Progress SET Job_Progress = @Job_Progress, Invoice = @Invoice " +
+                                                       "WHERE Job_ID = @Job_ID AND Month = @Month AND Year = @Year", con))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = con;
+                    cmd.Parameters.Add("@Job_Progress", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Job_ID", SqlDbType.NVarChar);
+                    cmd.Parameters.Add("@Month", SqlDbType.Int);
+                    cmd.Parameters.Add("@Year", SqlDbType.Int);
+                    cmd.Parameters.Add("@Invoice", SqlDbType.Int);
+
+                    for (int i = 0; i < progress.Count; i++)
+                    {
+                        cmd.Parameters[0].Value = progress[i].job_progress;
+                        cmd.Parameters[1].Value = progress[i].job_id;
+                        cmd.Parameters[2].Value = progress[i].month;
+                        cmd.Parameters[3].Value = progress[i].year;
+                        cmd.Parameters[4].Value = progress[i].invoice;
                         cmd.ExecuteNonQuery();
                     }
                 }

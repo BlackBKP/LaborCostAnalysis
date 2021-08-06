@@ -29,7 +29,6 @@ namespace LaborCostAnalysis.Controllers
         static List<ProgressModel> ipgs;
         static List<ProgressModel> excel_duplicate_pgs;
         static List<ProgressModel> duplicate_pgs;
-        static List<ProgressModel> progress;
 
         public ImportProgressController(IHostingEnvironment hostingEnvironment)
         {
@@ -160,7 +159,7 @@ namespace LaborCostAnalysis.Controllers
             string webRootPath = _hostingEnvironment.WebRootPath;
             string newPath = Path.Combine(webRootPath, folderName);
 
-            progress = new List<ProgressModel>();
+            ipgs = new List<ProgressModel>();
             if (!Directory.Exists(newPath))
             {
                 Directory.CreateDirectory(newPath);
@@ -200,17 +199,26 @@ namespace LaborCostAnalysis.Controllers
                     ProgressModel ipg = new ProgressModel();
                     DateTime update_time = DateTime.Now;
                     string[] months = new string[] { "", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
-                    ipg.month = Array.IndexOf(months, row.GetCell(1).DateCellValue.ToString("MMM-yy").Split("-")[0].ToUpper());
+                    ipg.month = Array.IndexOf(months, row.GetCell(1).DateCellValue.ToString("MMM-yyyy").Split("-")[0].ToUpper());
                     ipg.year = Convert.ToInt32(row.GetCell(1).DateCellValue.ToString("MMM-yyyy").Split("-")[1]);
                     ipg.job_id = row.GetCell(3).StringCellValue.Replace("-", String.Empty).Replace(" ", String.Empty);
                     ipg.job_number = row.GetCell(3).StringCellValue;
                     ipg.job_name = row.GetCell(2).StringCellValue;
                     ipg.job_progress = Convert.ToInt32(row.GetCell(5).NumericCellValue);
                     ipg.invoice = Convert.ToInt32(row.GetCell(6).NumericCellValue);
-                    progress.Add(ipg);
+                    ipgs.Add(ipg);
                 }
             }
-            return Json(progress);
+            List<ProgressModel> progress = ProgressInterface.GetProgressViewModels();
+            ipgs = ipgs.Where(w => !progress.Any(a => a.job_id == w.job_id && a.year == w.year && a.month == w.month)).ToList();
+            return Json(ipgs);
+        }
+
+        [HttpPost]
+        public JsonResult ConfirmImportInvoice()
+        {
+            string result = ProgressInterface.InsertProgressInvoice(ipgs);
+            return Json(result);
         }
 
         [HttpPost]

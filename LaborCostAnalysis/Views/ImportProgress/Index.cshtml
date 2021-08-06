@@ -253,8 +253,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary">Close</button>
-                <button class="btn btn-primary">Import</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="btn_confirm_import_invoice" type="button" class="btn btn-primary">Import</button>
             </div>
         </div>
     </div>
@@ -603,7 +603,6 @@
                     }
                 },
             });
-
         });
 
         var new_import_table;
@@ -627,6 +626,25 @@
             new_import_table = $('#table_import_progress').dataTable({
                 data: datas,
             });
+        };
+
+        $('#btn_confirm_import_invoice').on('click', function () {
+            ConfirmImportInvoice();
+        });
+
+        function ConfirmImportInvoice() {
+            $('#btn_confirm_import_invoice').attr('disabled', true);
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ConfirmImportInvoice", "ImportProgress")',
+	            contentType: 'application/x-www-form-urlencoded',
+                data: {
+
+                },
+                success: function (response) {
+                    window.location.reload();
+                }
+            })
         };
 
         function EditProgress(job_number, year, month, budget, progress) {

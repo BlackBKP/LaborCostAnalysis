@@ -16,6 +16,8 @@ namespace LaborCostAnalysis.Interfaces
 
         string InsertProgress(List<ProgressModel> progress);
 
+        string InsertProgressInvoice(List<ProgressModel> progress);
+
         string UpdateDuplicateProgress(List<ProgressModel> progress);
 
         string UpdateProgress(ProgressModel progress);
