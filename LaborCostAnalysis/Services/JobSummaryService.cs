@@ -32,7 +32,7 @@ namespace LaborCostAnalysis.Services
                                     "isnull(s1.Social_Security,0) as Social_Security, " +
                                     "s1.Cost_to_Date, " +
                                     "(cast(job.Estimated_Budget as int) - cast(s1.Cost_to_Date as int)) as Remaining_Cost, " +
-                                    "((cast(s1.Cost_to_Date as float) / cast(job.Estimated_Budget as float)) *100) as Cost_Usage, " +
+                                    "((cast(s1.Cost_to_Date as float) / cast(job.Estimated_Budget as float)) * 100) as Cost_Usage, " +
                                     "s4.Last_Progress as Work_Completion, " +
                                     "s4.Last_Invoice as Invoice, " +
                                     "s2.Hours, " +
@@ -50,8 +50,8 @@ namespace LaborCostAnalysis.Services
                                     "(SUM(cast(Labor_Cost as int)) + SUM(cast(OT_Labor_Cost as int)) + SUM(cast(Accommodation_Cost as int)) + SUM(cast(Compensation_Cost as int)) + SUM(isnull(Social_Security,0))) as Cost_to_Date " +
                                     "from Labor_Costs group by job_ID) as s1 ON s1.job_ID = job.job_ID " +
                                     "left join (select job_ID,SUM(Hours) as Hours from Hour group by Job_ID) as s2 ON s2.job_ID = job.job_ID " +
-                                    "left join (select job_ID,SUM(OT_1_5) as OT_1_5 , SUM(OT_3) as OT_3 from OT group by job_ID) as s3 ON s3.job_ID = job.job_ID " +
-                                    "left join (select Job_ID,Max(cast(Job_Progress as int)) as Last_Progress,Max(Invoice) as Last_Invoice from Progress group by Job_ID) as s4 ON s4.Job_ID = job.job_ID " +
+                                    "left join (select job_ID,SUM(OT_1_5) as OT_1_5, SUM(OT_3) as OT_3 from OT group by job_ID) as s3 ON s3.job_ID = job.job_ID " +
+                                    "left join (select Job_ID,Max(cast(Job_Progress as int)) as Last_Progress, isnull(Max(Invoice),0) as Last_Invoice from Progress group by Job_ID) as s4 ON s4.Job_ID = job.job_ID " +
                                     "left join (select Job_ID,Max(cast(No_Of_Labor_Week as int)) as No_Of_Labor_Week from Labor_Costs group by Job_ID) as s5 ON s5.Job_ID = job.Job_ID";
             
             SqlCommand cmd = new SqlCommand(str_cmd, con);
