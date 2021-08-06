@@ -393,6 +393,7 @@
                                 backgroundColor: 'rgba(2,62,138,0.75)',
                                 borderColor: 'rgba(2,62,138,1)',
                                 yAxisID: 'spent',
+                                order: 0
                             },
                             {
                                 type: 'line',
@@ -401,6 +402,7 @@
                                 backgroundColor: 'rgba(72, 202, 228, 0.75)',
                                 borderColor: 'rgba(72, 202, 228, 1)',
                                 yAxisID: 'spent',
+                                order: 1
                             },
                             {
                                 label: 'Progress',
@@ -409,6 +411,17 @@
                                 backgroundColor: 'rgba(0,255,0,0.75)',
                                 borderColor: 'rgba(0,255,0,1)',
                                 yAxisID: 'progress',
+                                order: 2
+                            },
+                            {
+                                type: 'line',
+                                label: 'Invoice',
+                                data: invoice,
+                                fill: false,
+                                backgroundColor: 'rgba(255,0,0,0.75)',
+                                borderColor: 'rgba(255,0,0,1)',
+                                yAxisID: 'progress',
+                                order: 3
                             },
                             {
                                 type: 'line',
@@ -417,6 +430,7 @@
                                 fill: false,
                                 backgroundColor: 'rgba(255,255,0,0.2)',
                                 borderColor: 'rgba(255, 255, 0, 0.3)',
+                                order: 4
                             },
                             {
                                 type: 'line',
@@ -427,7 +441,8 @@
                                     above: 'rgba(255,200,50,0.2)',
                                 },
                                 borderColor: 'rgba(255, 200, 50, 0.2)',
-                                backgroundColor: 'rgba(255, 200, 50, 0.2)'
+                                backgroundColor: 'rgba(255, 200, 50, 0.2)',
+                                order: 5
                             },
                             {
                                 type: 'line',
@@ -438,17 +453,9 @@
                                     above: 'rgba(255,0,0,0.2)',
                                 },
                                 borderColor: 'rgba(255, 0, 0, 0.2)',
-                                backgroundColor: 'rgba(255, 0, 0, 0.2)'
+                                backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                                order: 6
                             },
-                            {
-                                type: 'line',
-                                label: 'Invoice',
-                                data: invoice,
-                                fill: false,
-                                backgroundColor: 'rgba(255,0,0,0.75)',
-                                borderColor: 'rgba(255,0,0,1)',
-                                yAxisID: 'progress',
-                            }
                         ]
                     },
                     options: {
