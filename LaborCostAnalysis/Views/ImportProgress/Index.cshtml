@@ -563,6 +563,11 @@
 
         //Newly Add Function
         var import_progress = [];
+        $('#import_progress').on('click', function () {
+            $('#import_progress').val(null);
+            $('#import_progress_label').text("Select File");
+        });
+
         $('#import_progress').on('change', async function () {
             var fileExtension = ['xls', 'xlsx'];
             var filename = $('#import_progress').val();
@@ -596,7 +601,7 @@
                 processData: false,
                 success: function (response) {
                     if (response.length == 0)
-                        alert('Some error occured while uploading');
+                        ShowError("Some error occured while uploading or Already Uploaded all data from this file");
                     else {
                         import_progress = response;
                         GenerateImportProgress();
@@ -674,6 +679,27 @@
                 }
             });
         });
+
+        function ShowError(ErrorMessage) {
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": false,
+                "positionClass": "toast-top-center",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": "500",
+                "hideDuration": "150",
+                "timeOut": "3000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+            toastr.error(ErrorMessage);
+        }
 
     </script>
 }
